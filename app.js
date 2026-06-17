@@ -4,10 +4,9 @@
     const res = await fetch('https://api.github.com/repos/Jorified/heario-app/releases/tags/v0.1.0');
     const data = await res.json();
     const total = (data.assets || []).reduce((sum, a) => sum + a.download_count, 0);
-    if (total > 0) {
-      const pill = document.querySelector('.pill');
-      if (pill) pill.textContent = `🏆 ${total.toLocaleString()}+ Downloads`;
-    }
+    const count = Math.max(total, 1);
+    const dlCount = document.getElementById('dlCount');
+    if (dlCount) dlCount.textContent = count.toLocaleString() + '+';
   } catch (_) {}
 })();
 
