@@ -50,13 +50,11 @@
   <clipPath id="innerBox"><rect x="340" y="130" width="520" height="370" rx="20"/></clipPath>
 </defs>
 
-<!-- Full canvas background -->
-<rect x="0" y="0" width="1200" height="630" fill="#0b0e13"/>
-<rect x="0" y="0" width="1200" height="630" fill="url(#aura1)"/>
-<rect x="0" y="0" width="1200" height="630" fill="url(#aura2)"/>
-<rect x="0" y="0" width="1200" height="630" fill="url(#aura3)"/>
-<!-- Inner panel -->
+<!-- Inner panel background only -->
 <rect x="340" y="130" width="520" height="370" rx="20" fill="url(#panelBg)"/>
+<rect x="340" y="130" width="520" height="370" rx="20" fill="url(#aura1)"/>
+<rect x="340" y="130" width="520" height="370" rx="20" fill="url(#aura2)"/>
+<rect x="340" y="130" width="520" height="370" rx="20" fill="url(#aura3)"/>
 
 <!-- Geometrics clipped strictly to inner panel -->
 <g clip-path="url(#innerBox)">
