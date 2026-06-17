@@ -3,16 +3,119 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Heario — AI Copilot for Meetings &amp; Interviews</title>
-    <meta name="description" content="Real-time AI answers in your interviews and meetings. Completely undetectable. Hear the question, get the answer in under 300ms." />
-  <meta property="og:title" content="Heario — AI Copilot for Meetings" />
-  <meta property="og:description" content="Real-time AI answers in your interviews and meetings. Completely undetectable. Under 300ms." />
-  <meta property="og:image" content="https://heario-site.vercel.app/og.svg" />
-  <meta property="og:url" content="https://heario-site.vercel.app" />
+  <title>Heario — AI Interview Copilot: Real-Time Answers in Meetings</title>
+  <meta name="description" content="Heario is an undetectable AI copilot that gives you real-time answers during interviews and meetings — under 300ms, invisible to Zoom, Teams, and Google Meet. Free on Windows." />
+  <link rel="canonical" href="https://heario-site.vercel.app/" />
+
+  <!-- Open Graph -->
+  <meta property="og:site_name" content="Heario" />
+  <meta property="og:title" content="Heario — Undetectable AI Copilot for Interviews &amp; Meetings" />
+  <meta property="og:description" content="Real-time AI answers in your interviews and meetings. Completely undetectable by Zoom, Teams &amp; Google Meet. Under 300ms. Free on Windows." />
+  <meta property="og:image" content="https://heario-site.vercel.app/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://heario-site.vercel.app/" />
   <meta property="og:type" content="website" />
+
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Heario — AI Copilot for Meetings" />
-  <meta name="twitter:description" content="Real-time AI answers. Completely undetectable. Under 300ms." />
+  <meta name="twitter:title" content="Heario — Undetectable AI Copilot for Interviews &amp; Meetings" />
+  <meta name="twitter:description" content="Real-time AI answers in your interviews and meetings. Under 300ms. Invisible to Zoom, Teams &amp; Google Meet." />
+  <meta name="twitter:image" content="https://heario-site.vercel.app/og.png" />
+
+  <!-- JSON-LD: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Heario",
+    "description": "Real-time AI copilot for interviews and meetings. Provides undetectable, sub-300ms AI answers during live Zoom, Teams, and Google Meet calls on Windows.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Windows",
+    "offers": [
+      {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "name": "Free Trial"
+      },
+      {
+        "@type": "Offer",
+        "price": "8",
+        "priceCurrency": "USD",
+        "name": "Standard",
+        "billingIncrement": "P1M"
+      },
+      {
+        "@type": "Offer",
+        "price": "15",
+        "priceCurrency": "USD",
+        "name": "Pro",
+        "billingIncrement": "P1M"
+      }
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5",
+      "ratingCount": "3"
+    },
+    "url": "https://heario-site.vercel.app/",
+    "downloadUrl": "https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario_0.1.0_x64-setup.exe",
+    "softwareVersion": "0.1.0",
+    "screenshot": "https://heario-site.vercel.app/og.png"
+  }
+  </script>
+
+  <!-- JSON-LD: FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Will Zoom / Teams / Google Meet detect Heario?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Heario's overlay uses SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE) — a Windows OS-level flag that excludes the window from all screen-capture pipelines before the frame ever reaches Zoom's encoder. The interviewer's screen share sees nothing."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Heario join the call as a bot?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Never. Heario runs entirely on your local machine. There is no bot, no browser extension injected into the call, and no third-party service that touches your meeting. It listens to your speaker output using a standard Windows audio loopback."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How fast are Heario's AI answers?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Deepgram's streaming STT delivers a transcript in under 300ms from when the interviewer finishes speaking. Claude then streams the answer token-by-token — you start reading within a second. Total time from question to first word on screen is typically 1–2 seconds."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use my own OpenAI or Claude API key with Heario?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Bring your own API keys for OpenAI (GPT-4o) or Anthropic (Claude) in the .env file and you pay only the model's API rate — no markup. Or use the managed plan and we handle keys, rate limits, and billing."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Heario work on Mac?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Currently Windows-only. The undetectable overlay relies on SetWindowDisplayAffinity, a Windows-exclusive API. Mac support is on the roadmap."
+        }
+      }
+    ]
+  }
+  </script>
+
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -74,7 +177,7 @@
   <div class="hero-inner">
     <div class="pill">🏆 56,385+ Downloads</div>
     <img src="og.svg" alt="Heario mic icon" class="hero-mic" />
-    <h1>Intelligent AI<br/>for Meetings</h1>
+    <h1>AI Copilot for<br/>Interviews &amp; Meetings</h1>
     <p class="hero-sub">Heario takes perfect meeting notes and gives real-time answers, all while completely undetectable.</p>
     <div class="hero-actions">
       <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario_0.1.0_x64-setup.exe" target="_blank" rel="noopener" class="btn-primary">Download for Windows</a>
