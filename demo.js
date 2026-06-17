@@ -27,8 +27,9 @@ function tryVideo(id, src) {
   v.addEventListener('loadeddata', () => { v.classList.add('on'); v.play().catch(()=>{}); });
   v.addEventListener('error', () => { v.removeAttribute('src'); });
 }
-tryVideo('interviewerVideo', 'interviewer.mp4');
-tryVideo('selfVideo', 'self.mp4');
+const _base = 'https://github.com/Jorified/heario-site/releases/download/v1.0-assets';
+tryVideo('interviewerVideo', `${_base}/interviewer.mp4`);
+tryVideo('selfVideo', `${_base}/self.mp4`);
 
 // running meeting clock
 let t0 = Date.now();

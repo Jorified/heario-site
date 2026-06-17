@@ -12,3 +12,8 @@ Thumbs.db
 # Editor
 .vscode/
 *.swp
+
+.vercel
+
+# Video assets (served from GitHub Releases)
+*.mp4
