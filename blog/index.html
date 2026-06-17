@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog | Heario</title>
+  <meta name="description" content="Guides, tips, and honest takes on AI interview tools, technical interview strategy, and getting hired faster." />
+  <link rel="canonical" href="https://heario-site.vercel.app/blog/" />
+
+  <meta property="og:site_name" content="Heario" />
+  <meta property="og:title" content="Heario Blog" />
+  <meta property="og:description" content="Guides, tips, and honest takes on AI interview tools, technical interview strategy, and getting hired faster." />
+  <meta property="og:image" content="https://heario-site.vercel.app/og.png" />
+  <meta property="og:url" content="https://heario-site.vercel.app/blog/" />
+  <meta property="og:type" content="website" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Heario Blog" />
+  <meta name="twitter:description" content="Guides and tips on AI interview tools and technical interview strategy." />
+  <meta name="twitter:image" content="https://heario-site.vercel.app/og.png" />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <style>
+    .blog-index-hero {
+      padding: 80px 24px 64px;
+      text-align: center;
+      background: radial-gradient(ellipse 70% 50% at 50% -10%, rgba(79,142,247,.1) 0%, transparent 70%);
+      border-bottom: 1px solid var(--border);
+    }
+    .blog-index-hero h1 {
+      font-size: clamp(36px, 6vw, 60px);
+      font-weight: 800; letter-spacing: -2px; color: #fff;
+      margin-bottom: 14px;
+    }
+    .blog-index-hero p {
+      font-size: 17px; color: var(--muted); max-width: 480px; margin: 0 auto;
+    }
+
+    .blog-index-wrap {
+      max-width: 860px; margin: 0 auto; padding: 60px 24px 100px;
+    }
+
+    .post-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .post-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-decoration: none;
+      transition: border-color .2s, transform .2s;
+    }
+    .post-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      text-decoration: none;
+    }
+    .post-card-meta {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .post-tag {
+      background: rgba(79,142,247,.1); border: 1px solid rgba(79,142,247,.25);
+      color: var(--accent2); padding: 3px 10px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+    }
+    .post-date { font-size: 13px; color: var(--muted); }
+    .post-read { font-size: 13px; color: var(--muted); }
+    .post-card h2 {
+      font-family: var(--font-display);
+      font-size: 22px; font-weight: 700; color: #fff;
+      letter-spacing: -.4px; line-height: 1.25; margin: 0;
+    }
+    .post-card p {
+      font-size: 16px; color: var(--muted); line-height: 1.65; margin: 0;
+    }
+    .post-card .post-arrow {
+      font-size: 14px; color: var(--accent2); font-weight: 500; margin-top: 4px;
+    }
+
+    .site-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+    .g-aurora { position: absolute; border-radius: 50%; filter: blur(100px); opacity: .06; }
+    .g-aurora-1 { width: 600px; height: 600px; background: #4f8ef7; top: -200px; left: -100px; }
+    .g-aurora-2 { width: 500px; height: 500px; background: #7fd1ff; top: 40%; right: -150px; }
+  </style>
+</head>
+<body>
+
+<div class="site-bg" aria-hidden="true">
+  <div class="g-aurora g-aurora-1"></div>
+  <div class="g-aurora g-aurora-2"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/">Heario</a>
+    <div class="nav-links">
+      <a href="https://producthunt.com" target="_blank" rel="noopener">Product Hunt</a>
+      <a href="https://news.ycombinator.com" target="_blank" rel="noopener">Hacker News</a>
+      <a href="https://github.com/Jorified/heario-app" target="_blank" rel="noopener">GitHub</a>
+      <a href="/#pricing" class="nav-cta">Get Pro</a>
+    </div>
+    <div class="nav-meta">
+      <span class="version-badge">v0.1.0</span>
+    </div>
+  </div>
+</nav>
+
+<header class="blog-index-hero">
+  <h1>Blog</h1>
+  <p>Guides, tips, and honest takes on AI interview tools and technical interview strategy.</p>
+</header>
+
+<div class="blog-index-wrap">
+  <div class="post-grid">
+
+    <a href="/blog/how-to-use-ai-in-a-technical-interview.html" class="post-card">
+      <div class="post-card-meta">
+        <span class="post-tag">Strategy</span>
+        <span class="post-date">June 17, 2026</span>
+        <span class="post-read">· 10 min read</span>
+      </div>
+      <h2>How to Use AI in a Technical Interview</h2>
+      <p>A practical guide to using AI tools before and during technical interviews — what works, what gets you caught, and how to use AI answers without sounding like a robot.</p>
+      <span class="post-arrow">Read article →</span>
+    </a>
+
+    <a href="/blog/best-ai-tools-for-job-interviews-2026.html" class="post-card">
+      <div class="post-card-meta">
+        <span class="post-tag">Roundup</span>
+        <span class="post-date">June 17, 2026</span>
+        <span class="post-read">· 11 min read</span>
+      </div>
+      <h2>Best AI Tools for Job Interviews 2026</h2>
+      <p>We tested every major AI interview tool in 2026. Honest breakdown of what each one does, who it's for, and which actually works in a live interview.</p>
+      <span class="post-arrow">Read article →</span>
+    </a>
+
+    <a href="/blog/is-heario-detectable-on-zoom.html" class="post-card">
+      <div class="post-card-meta">
+        <span class="post-tag">Privacy &amp; Security</span>
+        <span class="post-date">June 17, 2026</span>
+        <span class="post-read">· 7 min read</span>
+      </div>
+      <h2>Is Heario Detectable on Zoom?</h2>
+      <p>The definitive technical answer — Heario uses a Windows OS-level API to hide its overlay from Zoom, Teams, and Google Meet before any frame reaches the encoder.</p>
+      <span class="post-arrow">Read article →</span>
+    </a>
+
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo">Heario</div>
+      <p>Intelligent AI for meetings.<br/>Your data stays yours.</p>
+    </div>
+    <div class="footer-col">
+      <div class="footer-head">Product</div>
+      <a href="https://github.com/Jorified/heario-app">GitHub</a>
+      <a href="https://github.com/Jorified/heario-app/releases">Changelog</a>
+      <a href="https://github.com/Jorified/heario-app">Contribute</a>
+      <a href="/blog/">Blog</a>
+      <a href="/license.html">License</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-head">Legal</div>
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms &amp; Conditions</a>
+      <a href="/refund.html">Refund Policy</a>
+      <a href="/security.html">Security</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-head">Support</div>
+      <a href="mailto:jackoreilly10@hotmail.com">Contact</a>
+      <a href="https://github.com/Jorified/heario-app/issues">Report a Bug</a>
+      <a href="https://github.com/sponsors/Jorified" target="_blank">Donate</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 Heario. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
