@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Use AI in a Technical Interview | Heario Blog</title>
+  <meta name="description" content="A practical guide to using AI tools before and during technical interviews — what works, what gets you caught, and how to use AI answers without sounding like a robot." />
+  <link rel="canonical" href="https://heario-site.vercel.app/blog/how-to-use-ai-in-a-technical-interview.html" />
+
+  <meta property="og:site_name" content="Heario" />
+  <meta property="og:title" content="How to Use AI in a Technical Interview" />
+  <meta property="og:description" content="A practical guide to using AI tools before and during technical interviews — what works, what gets you caught, and how to use AI answers without sounding like a robot." />
+  <meta property="og:image" content="https://heario-site.vercel.app/og.png" />
+  <meta property="og:url" content="https://heario-site.vercel.app/blog/how-to-use-ai-in-a-technical-interview.html" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-06-17" />
+  <meta property="article:author" content="Heario" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How to Use AI in a Technical Interview" />
+  <meta name="twitter:description" content="What works, what gets you caught, and how to use AI answers without sounding like a robot." />
+  <meta name="twitter:image" content="https://heario-site.vercel.app/og.png" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "How to Use AI in a Technical Interview",
+    "description": "A practical guide to using AI tools before and during technical interviews — what works, what gets you caught, and how to use AI answers without sounding like a robot.",
+    "datePublished": "2026-06-17",
+    "dateModified": "2026-06-17",
+    "author": { "@type": "Organization", "name": "Heario", "url": "https://heario-site.vercel.app/" },
+    "publisher": { "@type": "Organization", "name": "Heario", "url": "https://heario-site.vercel.app/", "logo": { "@type": "ImageObject", "url": "https://heario-site.vercel.app/og.png" } },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://heario-site.vercel.app/blog/how-to-use-ai-in-a-technical-interview.html" },
+    "image": "https://heario-site.vercel.app/og.png"
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Can interviewers detect if you use AI during a technical interview?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It depends on the tool. Browser-tab AI (ChatGPT, Claude.ai) is visible if you switch windows or the interviewer notices your eye movement. Meeting bots show up in the attendee list. Tools like Heario that use an OS-level hidden overlay are not detectable by Zoom, Teams, or Google Meet."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is it cheating to use AI in a job interview?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This is a personal and ethical decision. AI is widely used in everyday engineering work — using it in an interview reflects a real skill. That said, if you pass an interview with AI assistance and cannot do the job without it, you will struggle once hired. Use AI to augment your answers, not replace your thinking entirely."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the best AI tool for technical interviews?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For live assistance during a technical interview, Heario is the most effective option — it streams AI answers in under 300ms via an overlay that is invisible to screen-sharing software. For preparation, ChatGPT, Interviewing.io, and Pramp are all strong options."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <style>
+    .blog-hero {
+      padding: 80px 24px 56px;
+      text-align: center;
+      background: radial-gradient(ellipse 70% 50% at 50% -10%, rgba(79,142,247,.1) 0%, transparent 70%);
+      border-bottom: 1px solid var(--border);
+    }
+    .blog-hero .breadcrumb { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .blog-hero .breadcrumb a { color: var(--accent2); }
+    .blog-hero .breadcrumb a:hover { text-decoration: underline; }
+    .blog-hero h1 {
+      font-size: clamp(30px, 5vw, 52px);
+      font-weight: 800; letter-spacing: -1.5px; color: #fff;
+      max-width: 760px; margin: 0 auto 20px; line-height: 1.12;
+    }
+    .blog-hero .meta {
+      font-size: 13px; color: var(--muted);
+      display: flex; justify-content: center; align-items: center;
+      gap: 16px; flex-wrap: wrap;
+    }
+    .blog-hero .meta .tag {
+      background: rgba(79,142,247,.1); border: 1px solid rgba(79,142,247,.25);
+      color: var(--accent2); padding: 3px 10px; border-radius: 20px;
+      font-size: 12px; font-weight: 500;
+    }
+
+    .blog-wrap { max-width: 720px; margin: 0 auto; padding: 60px 24px 100px; }
+    .blog-wrap p { color: var(--text); font-size: 17px; line-height: 1.8; margin-bottom: 24px; }
+    .blog-wrap h2 {
+      font-family: var(--font-display); font-size: 26px; font-weight: 700;
+      color: #fff; letter-spacing: -.5px; margin: 52px 0 16px;
+    }
+    .blog-wrap h3 {
+      font-family: var(--font-display); font-size: 19px; font-weight: 600;
+      color: #fff; margin: 36px 0 10px;
+    }
+    .blog-wrap ul, .blog-wrap ol { padding-left: 24px; margin-bottom: 24px; }
+    .blog-wrap li { font-size: 17px; line-height: 1.8; color: var(--text); margin-bottom: 8px; }
+    .blog-wrap code {
+      font-family: var(--font-mono); font-size: 14px; background: var(--bg3);
+      border: 1px solid var(--border); padding: 2px 7px; border-radius: 5px; color: var(--accent2);
+    }
+    .blog-wrap pre {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px 24px; overflow-x: auto; margin-bottom: 28px;
+    }
+    .blog-wrap pre code { background: none; border: none; padding: 0; font-size: 14px; color: var(--text); line-height: 1.7; }
+    .blog-wrap a { color: var(--accent2); text-decoration: underline; text-underline-offset: 3px; }
+    .blog-wrap a:hover { color: #fff; }
+
+    .callout {
+      border-radius: var(--radius); padding: 20px 24px; margin: 32px 0;
+      font-size: 16px; line-height: 1.7;
+    }
+    .callout.green { background: rgba(95,184,95,.08); border: 1px solid rgba(95,184,95,.25); color: #a8e6a8; }
+    .callout.blue { background: rgba(79,142,247,.08); border: 1px solid rgba(79,142,247,.25); color: var(--accent2); }
+    .callout.orange { background: rgba(217,139,58,.08); border: 1px solid rgba(217,139,58,.25); color: #f0b96e; }
+    .callout.red { background: rgba(220,70,70,.08); border: 1px solid rgba(220,70,70,.25); color: #f0a0a0; }
+    .callout strong { color: #fff; }
+
+    /* Step cards */
+    .steps { display: flex; flex-direction: column; gap: 0; margin: 32px 0; }
+    .step-card {
+      display: flex; gap: 20px; padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step-card:last-child { border-bottom: none; }
+    .step-num {
+      flex-shrink: 0; width: 36px; height: 36px;
+      background: rgba(79,142,247,.15); border: 1px solid rgba(79,142,247,.3);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--accent2);
+      margin-top: 2px;
+    }
+    .step-body h4 { font-size: 17px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+    .step-body p { font-size: 16px; margin: 0; color: var(--text); }
+
+    /* Prompt example box */
+    .prompt-box {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; margin: 28px 0;
+    }
+    .prompt-box-bar {
+      background: var(--bg3); padding: 8px 16px;
+      font-size: 11px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .prompt-box-bar .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; }
+    .prompt-box-body { padding: 18px 20px; }
+    .prompt-label { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .prompt-text { font-family: var(--font-mono); font-size: 13px; color: var(--text); line-height: 1.7; white-space: pre-wrap; }
+    .prompt-divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+    .prompt-response { font-size: 14px; color: var(--accent2); line-height: 1.7; }
+
+    /* Red flag table */
+    .rf-table { width: 100%; border-collapse: collapse; margin: 28px 0; font-size: 15px; }
+    .rf-table th {
+      text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .rf-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); color: var(--text); }
+    .rf-table tr:last-child td { border-bottom: none; }
+    .rf-table tr:hover td { background: rgba(255,255,255,.02); }
+    .rf-table .risky { color: #e07070; font-weight: 600; }
+    .rf-table .safe { color: #5fb85f; font-weight: 600; }
+
+    .toc {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 22px 26px; margin: 0 0 40px;
+    }
+    .toc-head { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+    .toc ol { padding-left: 20px; margin: 0; }
+    .toc li { font-size: 15px; margin-bottom: 8px; color: var(--text); }
+    .toc a { color: var(--accent2); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+    .blog-cta {
+      background: linear-gradient(135deg, rgba(79,142,247,.1) 0%, rgba(127,209,255,.06) 100%);
+      border: 1px solid rgba(79,142,247,.25); border-radius: 16px;
+      padding: 40px 36px; text-align: center; margin: 60px 0 0;
+    }
+    .blog-cta h3 { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .blog-cta p { color: var(--muted); font-size: 16px; margin-bottom: 28px; }
+    .blog-cta .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+    .related-posts { margin: 56px 0 0; }
+    .related-posts h3 { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 20px; }
+    .related-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 540px) { .related-grid { grid-template-columns: 1fr; } }
+    .related-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; text-decoration: none; transition: border-color .2s;
+    }
+    .related-card:hover { border-color: var(--accent); text-decoration: none; }
+    .related-card .rc-tag { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent2); margin-bottom: 8px; }
+    .related-card .rc-title { font-size: 15px; font-weight: 600; color: #fff; line-height: 1.4; }
+
+    .site-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+    .g-aurora { position: absolute; border-radius: 50%; filter: blur(100px); opacity: .06; }
+    .g-aurora-1 { width: 600px; height: 600px; background: #4f8ef7; top: -200px; left: -100px; }
+    .g-aurora-2 { width: 500px; height: 500px; background: #7fd1ff; top: 40%; right: -150px; }
+  </style>
+</head>
+<body>
+
+<div class="site-bg" aria-hidden="true">
+  <div class="g-aurora g-aurora-1"></div>
+  <div class="g-aurora g-aurora-2"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/">Heario</a>
+    <div class="nav-links">
+      <a href="https://producthunt.com" target="_blank" rel="noopener">Product Hunt</a>
+      <a href="https://news.ycombinator.com" target="_blank" rel="noopener">Hacker News</a>
+      <a href="https://github.com/Jorified/heario-app" target="_blank" rel="noopener">GitHub</a>
+      <a href="/#pricing" class="nav-cta">Get Pro</a>
+    </div>
+    <div class="nav-meta">
+      <span class="version-badge">v0.1.0</span>
+    </div>
+  </div>
+</nav>
+
+<header class="blog-hero">
+  <p class="breadcrumb"><a href="/">Heario</a> &nbsp;/&nbsp; Blog &nbsp;/&nbsp; How to Use AI in a Technical Interview</p>
+  <h1>How to Use AI in a Technical Interview</h1>
+  <div class="meta">
+    <span class="tag">Strategy</span>
+    <span>June 17, 2026</span>
+    <span>·</span>
+    <span>10 min read</span>
+  </div>
+</header>
+
+<article class="blog-wrap">
+
+  <p>
+    AI is now part of how engineers work every day — autocomplete, code review, architecture brainstorming. It follows that candidates are bringing it into interviews too. The question is not really <em>whether</em> to use AI, but <em>how</em> to use it without getting caught, without sounding like a robot, and without leaning on it so hard that you cannot survive the follow-up questions.
+  </p>
+  <p>
+    This guide covers both phases: using AI effectively to prepare in the days before your interview, and using it intelligently during the live session itself.
+  </p>
+
+  <nav class="toc" aria-label="Table of contents">
+    <div class="toc-head">In this article</div>
+    <ol>
+      <li><a href="#prep">Phase 1 — Preparation (the week before)</a></li>
+      <li><a href="#live">Phase 2 — Live interview assistance</a></li>
+      <li><a href="#dont-sound-like-robot">How to not sound like a robot</a></li>
+      <li><a href="#what-gets-you-caught">What actually gets you caught</a></li>
+      <li><a href="#question-types">Handling each question type</a></li>
+      <li><a href="#ethics">The ethics question</a></li>
+      <li><a href="#setup">Setting up Heario for a technical interview</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="prep">Phase 1 — Preparation (the week before)</h2>
+
+  <p>
+    This is where AI delivers the most value with the least risk. You are in control, you can iterate, and the output makes you genuinely better — not just better in the moment.
+  </p>
+
+  <h3>Generate a targeted question bank</h3>
+  <p>
+    Paste the job description into ChatGPT or Claude and ask it to generate the 20 most likely technical questions for that role. Then ask it to weight them by how often each topic comes up at that company specifically. You will get a sharper list than any generic "top 50 interview questions" article.
+  </p>
+
+  <div class="prompt-box">
+    <div class="prompt-box-bar"><span class="dot"></span> Example prompt</div>
+    <div class="prompt-box-body">
+      <div class="prompt-label">You →</div>
+      <div class="prompt-text">I'm interviewing for a Senior Backend Engineer role at Stripe. Here's the job description: [paste JD]. Generate the 15 most likely technical interview questions, grouped by topic (systems design, coding, infrastructure). For each, give me the key points a strong answer must cover.</div>
+      <div class="prompt-divider"></div>
+      <div class="prompt-label">AI →</div>
+      <div class="prompt-response">1. How would you design Stripe's idempotency key system?<br/>Key points: distributed lock, TTL expiry, idempotency at the DB layer vs application layer, replay safety…<br/><br/>2. Walk me through how you'd rate-limit API consumers at scale…</div>
+    </div>
+  </div>
+
+  <h3>Pressure-test your weak spots</h3>
+  <p>
+    Tell the AI your weak areas and ask it to quiz you. Go back and forth for 15–20 minutes. When you give an answer, ask it to poke holes — "what would a senior interviewer push back on here?" This forces you to think through the second and third layer of a problem, which is exactly where most candidates lose points.
+  </p>
+
+  <h3>Build a cheat sheet of your own answers</h3>
+  <p>
+    For each likely question, write a first-draft answer in your own words, then paste it into the AI and ask it to make it more concise and technically precise without changing your voice. The output becomes your cheat sheet — something you can review the morning of the interview. These are your answers, grounded in your experience, sharpened by AI.
+  </p>
+
+  <h3>Research the interviewer</h3>
+  <p>
+    If you know the interviewer's name, ask the AI to help you identify their public writing — blog posts, conference talks, open source contributions. Knowing that your interviewer wrote a post about distributed tracing last year tells you something about what they find interesting and rigorous.
+  </p>
+
+  <h2 id="live">Phase 2 — Live interview assistance</h2>
+
+  <p>
+    This is where things get more nuanced — and where the tool you use matters enormously.
+  </p>
+
+  <h3>What not to use during a live interview</h3>
+
+  <div class="callout red">
+    <strong>Avoid:</strong> Switching to a browser tab with ChatGPT or Claude.ai. Typing into a visible window. Using a meeting bot that shows up in the attendee list. These are all immediately obvious — to the interviewer directly, or through the jitter in your eye movement and response rhythm.
+  </div>
+
+  <p>
+    The problem with browser-based AI during a live interview is not just detectability — it is the cognitive overhead. Switching tabs, reading a long answer, translating it into something you can actually say out loud — all of that consumes the mental bandwidth you need for the conversation itself.
+  </p>
+
+  <h3>What works during a live interview</h3>
+
+  <p>
+    An overlay tool like Heario solves the core problem: it listens to the interview audio and streams a short, grounded answer directly onto your screen without you doing anything. You keep eye contact, you stay in the conversation, and the answer appears in your peripheral vision — not in a tab you had to navigate to.
+  </p>
+
+  <p>
+    The key word is <em>short</em>. Heario streams a concise answer — a starting point, not a script. You read the first sentence, orient yourself, and then extend it with your own thinking. That is how it is meant to be used.
+  </p>
+
+  <h2 id="dont-sound-like-robot">How to not sound like a robot</h2>
+
+  <p>
+    The single most common mistake when using AI assistance during an interview is reading the answer verbatim. AI-generated answers are technically correct but they lack the texture of lived experience — no hesitation, no personal anecdote, no "we ran into this at my last job and it was actually messier than the textbook version." Interviewers notice when someone sounds like they are reading.
+  </p>
+
+  <p>The framework that works:</p>
+
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Acknowledge the question</h4>
+        <p>Buy yourself one to two seconds with a natural opener. "Good question — this is something I've thought a lot about" or simply "Sure, so..." gives you time to read the first line of the AI answer.</p>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Take the first idea, not the whole answer</h4>
+        <p>Read the first sentence or concept from the overlay. State it in your own words — even slightly rephrased. Do not recite the full answer; just take the first hook and run with it.</p>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Extend with your own experience</h4>
+        <p>Add a sentence from real life. "We actually hit this at [company] when we were scaling the payments service — the thing that bit us was..." This is the detail that AI cannot provide, and it is what makes the answer sound like yours.</p>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Glance back for the next point</h4>
+        <p>Once you are talking, you can glance at the overlay briefly — the same way you might glance at a whiteboard — to pick up the next point. Keep it natural; do not stare.</p>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Invite the follow-up</h4>
+        <p>End your answer with an open door: "Does that match the kind of scale you're dealing with here?" or "Happy to go deeper on any of those." This shows confidence and keeps the conversation collaborative rather than making it feel like a presentation.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 id="what-gets-you-caught">What actually gets you caught</h2>
+
+  <p>
+    Detection is rarely technical — it is almost always behavioural. Here is what raises flags:
+  </p>
+
+  <table class="rf-table">
+    <thead>
+      <tr>
+        <th>Behaviour</th>
+        <th>Risk level</th>
+        <th>Fix</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Answering instantly with no thinking pause</td>
+        <td class="risky">High</td>
+        <td>Add a 1–2 second natural pause before speaking</td>
+      </tr>
+      <tr>
+        <td>Eyes darting to a corner of the screen repeatedly</td>
+        <td class="risky">High</td>
+        <td>Position overlay at screen centre-bottom, near the camera</td>
+      </tr>
+      <tr>
+        <td>Answer sounds nothing like your earlier responses</td>
+        <td class="risky">High</td>
+        <td>Rephrase in your own voice; do not read verbatim</td>
+      </tr>
+      <tr>
+        <td>Cannot answer an obvious follow-up question</td>
+        <td class="risky">High</td>
+        <td>Use AI as a prompt, not a script — understand what you say</td>
+      </tr>
+      <tr>
+        <td>Switching browser tabs mid-conversation</td>
+        <td class="risky">Very high</td>
+        <td>Use an overlay tool — no tab switching needed</td>
+      </tr>
+      <tr>
+        <td>Using a visible bot in the attendee list</td>
+        <td class="risky">Certain</td>
+        <td>Use a local tool with no meeting bot</td>
+      </tr>
+      <tr>
+        <td>Glancing at overlay naturally, near camera line</td>
+        <td class="safe">Low</td>
+        <td>Normal — indistinguishable from thinking</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="question-types">Handling each question type with AI</h2>
+
+  <h3>Algorithms and data structures</h3>
+  <p>
+    AI is excellent for a quick orientation — "use a sliding window here", "this is a classic BFS problem" — but do not let it write your code. If you code up a solution you do not understand and the interviewer asks you to walk through it line by line, you are stuck. Use AI to confirm your approach, then implement it yourself.
+  </p>
+
+  <h3>System design</h3>
+  <p>
+    This is where AI assistance is most valuable. System design questions are open-ended, have many valid answers, and reward breadth of knowledge. A prompt like "design a rate limiter for a public API at 10 billion requests per day" will get you a solid starting framework from Heario within two seconds — data stores, sharding strategy, failure modes. You pick the thread that maps to your experience and run with it.
+  </p>
+
+  <h3>Behavioural (STAR format)</h3>
+  <p>
+    AI cannot give you a real story — only you can. But it can help you structure a half-formed memory. If you remember a situation vaguely, a quick prompt like "help me structure a STAR answer about a time I had to push back on a product decision" will scaffold the response. Fill in the actual events from your own experience.
+  </p>
+
+  <h3>Debugging and code review</h3>
+  <p>
+    These questions require you to look at code and reason about it. AI can help you name what you are seeing — "this looks like an N+1 query problem" — but the investigative process needs to come from you, or the conversation falls apart.
+  </p>
+
+  <h2 id="ethics">The ethics question</h2>
+
+  <p>
+    Let's be honest about it. Using AI in an interview sits in a grey area. It is not categorically different from using notes, a second monitor, or having your friend in the room — all of which people do. AI is also now standard in day-to-day engineering work, so using it in an interview is in some sense demonstrating a real skill.
+  </p>
+
+  <div class="callout orange">
+    <strong>The practical risk worth thinking about:</strong> If you land the job and cannot perform without the tool, you will struggle. Use AI to augment your thinking, not replace it. If you find yourself reading answers you genuinely do not understand — stop, think, and engage with the material instead. The interview is also screening for fit; a job where you are fundamentally out of your depth is not a win.
+  </div>
+
+  <p>
+    That said, nerves are real. A candidate who knows the answer but blanks under pressure is not less capable than someone who does not — they are just more anxious. For many people, having a prompt available is enough to unlock what they already know. That is a legitimate use case.
+  </p>
+
+  <h2 id="setup">Setting up Heario for a technical interview</h2>
+
+  <p>
+    If you decide to use Heario for a live technical interview, here is the optimal setup:
+  </p>
+
+  <ol>
+    <li><strong>Load your context before the interview.</strong> Add your résumé, the job description, and a short paragraph about the company's stack. Heario uses this to ground answers in your background — so when it says "at your previous scale", it is talking about your actual scale, not a generic example.</li>
+    <li><strong>Select the right mode.</strong> Use <em>Technical Interview</em> mode for algorithm and system design questions. Switch to <em>Behavioural Interview</em> mode if the conversation shifts to leadership or collaboration questions — the AI response style changes accordingly.</li>
+    <li><strong>Position the overlay.</strong> Drag it to the centre-bottom of your screen, just below the webcam. Glancing there looks like you are thinking, not reading.</li>
+    <li><strong>Run the Zoom invisibility test.</strong> Before the real interview, open Zoom, share your screen, and confirm the overlay does not appear. It takes 30 seconds and removes any anxiety about detection.</li>
+    <li><strong>Practise using it in a mock interview first.</strong> The first time you use an overlay tool should not be in a real interview. Do one mock run so the mechanics are natural before it counts.</li>
+  </ol>
+
+  <div class="callout blue">
+    <strong>Pro tip:</strong> Use Heario's meeting notes feature alongside the live assist. At the end of the interview, you will have a structured transcript of every question asked and the key points that came up — useful for writing a tailored follow-up email and for debriefing what went well.
+  </div>
+
+  <hr class="divider" />
+
+  <p style="color: var(--muted); font-size: 15px;">
+    Want to know exactly how Heario stays hidden from Zoom, Teams, and Google Meet? Read the technical breakdown: <a href="/blog/is-heario-detectable-on-zoom.html">Is Heario detectable on Zoom?</a>
+  </p>
+
+  <!-- Related posts -->
+  <div class="related-posts">
+    <h3>More from the blog</h3>
+    <div class="related-grid">
+      <a href="/blog/best-ai-tools-for-job-interviews-2026.html" class="related-card">
+        <div class="rc-tag">Roundup</div>
+        <div class="rc-title">Best AI Tools for Job Interviews 2026</div>
+      </a>
+      <a href="/blog/is-heario-detectable-on-zoom.html" class="related-card">
+        <div class="rc-tag">Privacy &amp; Security</div>
+        <div class="rc-title">Is Heario Detectable on Zoom?</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="blog-cta">
+    <h3>Try it in your next interview</h3>
+    <p>Free to download. 10 AI requests included. No card required.</p>
+    <div class="cta-btns">
+      <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario_0.1.0_x64-setup.exe" target="_blank" rel="noopener" class="btn-primary">Download Heario — Free</a>
+      <a href="/" class="btn-ghost">Learn more →</a>
+    </div>
+  </div>
+
+</article>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo">Heario</div>
+      <p>Intelligent AI for meetings.<br/>Your data stays yours.</p>
+    </div>
+    <div class="footer-col">
+      <div class="footer-head">Blog</div>
+      <a href="/blog/how-to-use-ai-in-a-technical-interview.html">AI in Technical Interviews</a>
+      <a href="/blog/best-ai-tools-for-job-interviews-2026.html">Best AI Interview Tools 2026</a>
+      <a href="/blog/is-heario-detectable-on-zoom.html">Is Heario Detectable on Zoom?</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-head">Product</div>
+      <a href="https://github.com/Jorified/heario-app">GitHub</a>
+      <a href="https://github.com/Jorified/heario-app/releases">Changelog</a>
+      <a href="https://github.com/Jorified/heario-app">Contribute</a>
+      <a href="/license.html">License</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-head">Legal</div>
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms &amp; Conditions</a>
+      <a href="/refund.html">Refund Policy</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-head">Support</div>
+      <a href="mailto:jackoreilly10@hotmail.com">Contact</a>
+      <a href="https://github.com/Jorified/heario-app/issues">Report a Bug</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 Heario. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
