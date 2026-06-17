@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heario — Live Demo Capture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="demo.css?v=5" />
+</head>
+<body>
+
+<!-- 16:9 capture stage — record THIS element (1280×720 or scale to 1080p) -->
+<div class="stage" id="stage">
+
+  <!-- ───────── video-call app chrome ───────── -->
+  <div class="meet">
+
+    <!-- top bar -->
+    <div class="meet-top">
+      <div class="meet-title">
+        <span class="rec"><i></i> REC</span>
+        Senior Engineer — Final Round
+      </div>
+      <div class="meet-meta">
+        <span class="meet-time" id="meetTime">00:00</span>
+        <span class="meet-people">👥 3</span>
+        <span class="meet-secure">🔒 Encrypted</span>
+      </div>
+    </div>
+
+    <!-- main stage: active speaker -->
+    <div class="meet-stage">
+
+      <!-- big active-speaker tile (drop a Higgsfield clip into interviewer.mp4 to replace) -->
+      <div class="tile tile-main speaking" id="interviewerTile">
+        <video class="tile-video" id="interviewerVideo" loop muted playsinline></video>
+        <div class="tile-fallback">
+          <div class="avatar avatar-sarah">SC</div>
+        </div>
+        <div class="tile-glow"></div>
+        <div class="waveform" id="wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="tile-name"><span class="name-dot"></span> Sarah Chen · Interviewer</div>
+      </div>
+
+      <!-- filmstrip -->
+      <div class="filmstrip">
+        <div class="tile tile-sm" id="selfTile">
+          <video class="tile-video" id="selfVideo" loop muted playsinline></video>
+          <div class="tile-fallback"><div class="avatar avatar-you">You</div></div>
+          <div class="tile-name sm">You</div>
+          <div class="tile-mic muted">🎤</div>
+        </div>
+        <div class="tile tile-sm">
+          <div class="tile-fallback"><div class="avatar avatar-marcus">MR</div></div>
+          <div class="tile-name sm">Marcus R. · Panel</div>
+          <div class="tile-mic muted off">🎤</div>
+        </div>
+      </div>
+
+      <!-- live captions / subtitles (Meet-style) -->
+      <div class="captions show" id="captions">
+        <span class="cap-badge"><i></i> LIVE CAPTIONS</span>
+        <span class="cap-spk" id="capSpk">Sarah Chen</span>
+        <span class="cap-text" id="capText"></span>
+      </div>
+
+      <!-- ───────── HEARIO overlay (our real product) ───────── -->
+      <div class="heario" id="heario">
+        <div class="nat-top">
+          <span class="nat-dot" id="natDot"></span>
+          <span class="nat-status" id="natStatus">listening</span>
+          <span class="nat-spacer"></span>
+          <span class="nat-pill">💻 Technical</span>
+        </div>
+        <div class="nat-tx" id="natTx"><span class="nat-ph">Waiting for audio…</span></div>
+        <div class="nat-ans-wrap">
+          <div class="nat-ans-label">
+            <span>answer</span>
+            <div class="nat-conf" id="natConf" hidden>
+              <i></i><i></i><i></i><i></i><i></i><b id="natConfN">0/5</b>
+            </div>
+          </div>
+          <div class="nat-ans" id="natAns"><span class="nat-ph">Answer will appear here…</span></div>
+        </div>
+        <div class="nat-actions">
+          <span class="nat-btn">↺ Regen</span>
+          <span class="nat-btn">⧉ Copy</span>
+          <span class="nat-hint">invisible to screen-share ·  Ctrl+Alt+H</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- control bar -->
+    <div class="meet-controls">
+      <div class="ctrl"><span class="ctrl-ic">🎤</span><span>Mute</span></div>
+      <div class="ctrl"><span class="ctrl-ic">📷</span><span>Stop Video</span></div>
+      <div class="ctrl"><span class="ctrl-ic">🖥️</span><span>Share</span></div>
+      <div class="ctrl"><span class="ctrl-ic">💬</span><span>Chat</span></div>
+      <div class="ctrl"><span class="ctrl-ic">👥</span><span>Participants</span></div>
+      <div class="ctrl ctrl-leave"><span>Leave</span></div>
+    </div>
+
+  </div>
+
+  <!-- small replay control (won't show if you crop tight / hide before recording) -->
+  <button class="replay" id="replay" title="Replay">↻ Replay demo</button>
+</div>
+
+<script src="demo.js?v=4"></script>
+</body>
+</html>

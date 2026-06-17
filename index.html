@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heario — Intelligent AI for Meetings</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- GLOBAL ANIMATED BACKDROP (covers the whole page) -->
+<div class="site-bg" aria-hidden="true">
+  <canvas class="particle-canvas-global"></canvas>
+  <div class="g-aurora g-aurora-1"></div>
+  <div class="g-aurora g-aurora-2"></div>
+  <div class="g-aurora g-aurora-3"></div>
+  <div class="g-aurora g-aurora-4"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="#">Heario</a>
+    <div class="nav-links">
+      <a href="https://producthunt.com" target="_blank">Product Hunt</a>
+      <a href="https://news.ycombinator.com" target="_blank">Hacker News</a>
+      <a href="https://github.com" target="_blank">GitHub</a>
+      <a href="#pricing" class="nav-cta">Get Pro</a>
+    </div>
+    <div class="nav-meta">
+      <span class="version-badge">v2.7</span>
+      <span class="lang">EN</span>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg" aria-hidden="true">
+    <div class="beam beam-1"></div>
+    <div class="beam beam-2"></div>
+    <div class="beam beam-3"></div>
+    <div class="conic-glow"></div>
+    <div class="geo-ring geo-ring-1"></div>
+    <div class="geo-ring geo-ring-2"></div>
+    <div class="geo-ring geo-ring-3"></div>
+    <div class="aurora aurora-1"></div>
+    <div class="aurora aurora-2"></div>
+    <div class="aurora aurora-3"></div>
+    <div class="aurora aurora-4"></div>
+    <div class="hero-grid"></div>
+    <div class="scanline"></div>
+  </div>
+  <div class="hero-inner">
+    <div class="pill">🏆 56,385+ Downloads</div>
+    <h1>Intelligent AI<br/>for Meetings</h1>
+    <p class="hero-sub">Heario takes perfect meeting notes and gives real-time answers,<br/>all while completely undetectable.</p>
+    <div class="hero-actions">
+      <a href="#pricing" class="btn-primary">Get Started Free</a>
+      <a href="#features" class="btn-ghost">See how it works →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-n">300ms</span><span class="stat-l">Response time</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-n">95%</span><span class="stat-l">Transcription accuracy</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-n">100%</span><span class="stat-l">Undetectable</span></div>
+    </div>
+
+    <!-- Mockup -->
+    <div class="mockup">
+      <div class="mockup-bar">
+        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+        <span class="mockup-title">Heario — Technical Interview</span>
+      </div>
+      <div class="mockup-body">
+        <div class="mockup-status"><span class="pulse"></span> listening · S0</div>
+        <div class="mockup-q">S0 Q: How would you design a distributed rate limiter? <span class="counter">(1/2)</span></div>
+        <div class="mockup-a">Use a token-bucket algorithm backed by Redis. Each client gets a key with a counter and expiry. On each request, use INCR + EXPIRE in a Lua script (atomic). For distributed accuracy, use Redis Cluster — keys shard by client ID naturally. If you need sliding windows, use a sorted set with timestamps as scores and ZREMRANGEBYSCORE to prune old entries. P99 latency &lt;5ms with this approach...</div>
+        <div class="mockup-shortcuts">[ prev  ] next  r regen  m mode: technical_interview</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO VIDEO -->
+<div class="demo-embed-wrap">
+  <p class="demo-label">See it in action</p>
+  <div class="demo-embed-inner">
+    <iframe src="demo.html" class="demo-embed" scrolling="no" allow="autoplay" allowfullscreen></iframe>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-inner">
+    <h2>Four Ways We Make Your Meetings Better</h2>
+    <p class="section-sub">One AI that listens, thinks, and helps — invisibly.</p>
+
+    <div class="bento">
+
+      <!-- A · Real-time Q&A (large, live demo) -->
+      <article class="bento-card bento-lg reveal" data-d="1">
+        <div class="bento-head">
+          <span class="bento-tag">⚡ Core</span>
+          <h3>Real-time Question Answering</h3>
+          <p>The right answer, right when you need it — Heario listens, understands, and streams exactly what to say in under 300ms.</p>
+        </div>
+        <div class="demo-overlay">
+          <div class="demo-bar">
+            <span class="d-dot"></span><span class="d-dot"></span><span class="d-dot"></span>
+            <span class="demo-status"><i class="live-dot"></i> listening · S0</span>
+          </div>
+          <div class="demo-body">
+            <div class="demo-q">Q: How would you scale this to a million users?</div>
+            <div class="demo-a" data-type="Shard by tenant, cache hot reads in Redis, and put writes behind a queue. Add read-replicas and a CDN edge for static assets — horizontal all the way."></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- B · Universal LLM (cycling chips) -->
+      <article class="bento-card reveal" data-d="2">
+        <div class="bento-tag">🧠 Any model</div>
+        <h3>Universal LLM Interface</h3>
+        <p>Bring your own keys or use our managed plan.</p>
+        <div class="llm-orbit">
+          <div class="llm-core">AI</div>
+          <span class="llm-chip" data-i="0">GPT</span>
+          <span class="llm-chip" data-i="1">Claude</span>
+          <span class="llm-chip" data-i="2">Gemini</span>
+        </div>
+      </article>
+
+      <!-- C · Profile Intelligence (tags light up) -->
+      <article class="bento-card reveal" data-d="3">
+        <div class="bento-tag">🎯 Grounded</div>
+        <h3>Profile Intelligence</h3>
+        <p>Never generic — always you.</p>
+        <div class="profile-tags">
+          <span class="ptag">Résumé</span>
+          <span class="ptag">Job Description</span>
+          <span class="ptag">Custom Context</span>
+          <span class="ptag">Past Answers</span>
+        </div>
+      </article>
+
+      <!-- D · Structured Notes (wide, ticking checklist) -->
+      <article class="bento-card bento-wide reveal" data-d="4">
+        <div class="bento-head">
+          <span class="bento-tag">📝 Auto-captured</span>
+          <h3>Structured Meeting Notes</h3>
+          <p>Searchable, timestamped notes — action items, decisions and key moments, exported automatically at session end.</p>
+        </div>
+        <ul class="notes-list">
+          <li><span class="note-t">00:14</span><span class="note-check">✓</span> Decision: adopt token-bucket rate limiting</li>
+          <li><span class="note-t">02:47</span><span class="note-check">✓</span> Action: benchmark Redis vs. in-memory</li>
+          <li><span class="note-t">05:03</span><span class="note-check">✓</span> Key moment: candidate proposed sharding</li>
+          <li><span class="note-t">08:21</span><span class="note-check">✓</span> Follow-up: send system-design diagram</li>
+        </ul>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- MODES -->
+<section class="modes">
+  <div class="section-inner">
+    <h2>Seven Modes. One AI That Listens.</h2>
+    <p class="section-sub">Switch live mid-session. No restart required.</p>
+    <div class="modes-grid">
+      <div class="mode-pill active">💻 Technical Interview</div>
+      <div class="mode-pill">🧩 Behavioral Interview</div>
+      <div class="mode-pill">💼 Sales Call</div>
+      <div class="mode-pill">📖 Lecture Notes</div>
+      <div class="mode-pill">🤝 Recruiting</div>
+      <div class="mode-pill">🏗 System Design <span class="soon">soon</span></div>
+      <div class="mode-pill">🎭 Mock Interview <span class="soon">soon</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="section-inner">
+    <h2>Completely Undetectable</h2>
+    <p class="section-sub">No meeting bots. No screen recording. Nothing visible to the other side.</p>
+    <div class="how-steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div class="step-body">
+          <h4>Loopback capture</h4>
+          <p>Listens to what your speakers play — the interviewer's voice — via OS-level audio. No mic required.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div class="step-body">
+          <h4>Instant transcription</h4>
+          <p>Streaming speech-to-text with diarization. Knows who's talking. Ignores crosstalk.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div class="step-body">
+          <h4>AI answers</h4>
+          <p>Claude or GPT generates a tailored answer using your background. Streams in under a second.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">4</div>
+        <div class="step-body">
+          <h4>Hidden overlay</h4>
+          <p>An always-on-top window invisible to screen capture. Only you see it. Drag anywhere.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UNDETECTABLE -->
+<section class="undetect">
+  <div class="section-inner">
+    <div class="undetect-inner">
+      <div class="undetect-text">
+        <div class="undetect-badge">🛡 Invisible by design</div>
+        <h2>They Can't See It.<br/>Only You Can.</h2>
+        <p>Heario uses a Windows API call — <code>SetWindowDisplayAffinity</code> — that tells the OS to exclude the overlay from all screen capture pipelines. Zoom, Teams, Google Meet, and OBS all see a blank space where Heario sits. This isn't a trick or a workaround; it's the same mechanism used by banks and DRM software to protect sensitive content.</p>
+        <ul class="undetect-list">
+          <li><span class="ul-icon">✓</span> No browser extensions to detect</li>
+          <li><span class="ul-icon">✓</span> No meeting bots joining your call</li>
+          <li><span class="ul-icon">✓</span> No screen recording of your answers</li>
+          <li><span class="ul-icon">✓</span> No network traffic visible to the interviewer</li>
+        </ul>
+      </div>
+      <div class="undetect-visual">
+        <div class="uv-screen">
+          <div class="uv-label">What the interviewer sees</div>
+          <div class="uv-meeting">
+            <div class="uv-tile interviewer-tile">
+              <div class="uv-avatar">SC</div>
+              <span>Sarah Chen</span>
+            </div>
+            <div class="uv-tile you-tile">
+              <div class="uv-avatar you">You</div>
+              <span>You</span>
+            </div>
+          </div>
+        </div>
+        <div class="uv-your-screen">
+          <div class="uv-label">What you see</div>
+          <div class="uv-meeting">
+            <div class="uv-tile interviewer-tile">
+              <div class="uv-avatar">SC</div>
+              <span>Sarah Chen</span>
+            </div>
+            <div class="uv-tile you-tile">
+              <div class="uv-avatar you">You</div>
+              <span>You</span>
+            </div>
+            <div class="uv-overlay-chip">
+              <div class="uv-chip-dot"></div>
+              <span>Use token-bucket with Redis. Each client key gets INCR + TTL in a Lua script…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="section-inner">
+    <h2>Common Questions</h2>
+    <p class="section-sub">Everything you need to know before your next interview.</p>
+    <div class="faq-grid">
+
+      <details class="faq-item" open>
+        <summary>Will Zoom / Teams / Google Meet detect it?</summary>
+        <p>No. Heario's overlay uses <code>SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE)</code> — a Windows OS-level flag that excludes the window from all screen-capture pipelines before the frame ever reaches Zoom's encoder. The interviewer's screen share sees nothing. This is the same API used by banking apps to protect sensitive data on screen.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Does it join the call as a bot?</summary>
+        <p>Never. Heario runs entirely on your local machine. There is no bot, no browser extension injected into the call, and no third-party service that touches your meeting. It listens to your speaker output using a standard Windows audio loopback — the same way recording software works — and the interviewer sees nothing unusual.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>How fast are the answers?</summary>
+        <p>Deepgram's streaming STT delivers a transcript in under 300ms from when the interviewer finishes speaking. Claude then streams the answer token-by-token — you start reading within a second. Total time from question to first word on screen is typically 1–2 seconds in normal network conditions.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>What if I'm asked a follow-up question?</summary>
+        <p>Heario keeps a rolling conversation memory of the last 4 turns. So if the interviewer says "and how would you scale that?", the AI already knows what "that" refers to and gives a contextually grounded follow-up, not a generic answer.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Can I use my own OpenAI or Claude key?</summary>
+        <p>Yes. Bring your own API keys for OpenAI (GPT-4o) or Anthropic (Claude) in the <code>.env</code> file and you pay only the model's API rate — no markup. Or use our managed plan and we handle keys, rate limits, and billing.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Does it work on Mac?</summary>
+        <p>Currently Windows-only. The undetectable overlay relies on <code>SetWindowDisplayAffinity</code>, a Windows-exclusive API. Mac support is on the roadmap — join the waitlist to get notified.</p>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="section-inner">
+    <h2>Simple Pricing</h2>
+    <p class="section-sub">Start free. No card required. Use promo <code>INSIDER20</code> for 20% off.</p>
+
+    <div class="pricing-toggle">
+      <span class="toggle-label active">Managed Plans</span>
+      <span class="toggle-div">·</span>
+      <span class="toggle-label">Lifetime / Yearly</span>
+    </div>
+
+    <div class="pricing-grid">
+      <!-- Free -->
+      <div class="plan-card">
+        <div class="plan-name">Free Trial</div>
+        <div class="plan-price">$0<span>/mo</span></div>
+        <div class="plan-desc">No card required</div>
+        <ul class="plan-features">
+          <li>✓ 10 AI requests</li>
+          <li>✓ 10 min speech-to-text</li>
+          <li>✓ 2 web searches</li>
+          <li>✓ All 7 modes</li>
+        </ul>
+        <a href="#" class="btn-plan">Start Free</a>
+      </div>
+      <!-- Standard -->
+      <div class="plan-card">
+        <div class="plan-name">Standard</div>
+        <div class="plan-price">$8<span>/mo</span></div>
+        <div class="plan-desc">For regular users</div>
+        <ul class="plan-features">
+          <li>✓ 500 AI requests</li>
+          <li>✓ 200 min speech-to-text</li>
+          <li>✓ 20 web searches</li>
+          <li>✓ All 7 modes</li>
+        </ul>
+        <a href="#" class="btn-plan">Get Standard</a>
+      </div>
+      <!-- Pro -->
+      <div class="plan-card featured">
+        <div class="plan-badge">Most Popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">$15<span>/mo</span></div>
+        <div class="plan-desc">For power users</div>
+        <ul class="plan-features">
+          <li>✓ 1,000 AI requests</li>
+          <li>✓ 500 min speech-to-text</li>
+          <li>✓ 100 web searches</li>
+          <li>✓ All 7 modes</li>
+          <li>✓ Profile intelligence</li>
+        </ul>
+        <a href="#" class="btn-plan-primary">Get Pro</a>
+      </div>
+      <!-- Max -->
+      <div class="plan-card">
+        <div class="plan-name">Max</div>
+        <div class="plan-price">$25<span>/mo</span></div>
+        <div class="plan-desc">For heavy users</div>
+        <ul class="plan-features">
+          <li>✓ 2,000 AI requests</li>
+          <li>✓ 1,000 min speech-to-text</li>
+          <li>✓ 200 web searches</li>
+          <li>✓ All 7 modes</li>
+          <li>✓ Priority support</li>
+        </ul>
+        <a href="#" class="btn-plan">Get Max</a>
+      </div>
+      <!-- Ultra -->
+      <div class="plan-card">
+        <div class="plan-name">Ultra</div>
+        <div class="plan-price">$35<span>/mo</span></div>
+        <div class="plan-desc">For teams</div>
+        <ul class="plan-features">
+          <li>✓ 3,000 AI requests</li>
+          <li>✓ 2,000 min speech-to-text</li>
+          <li>✓ 300 web searches</li>
+          <li>✓ All 7 modes</li>
+          <li>✓ Priority support</li>
+        </ul>
+        <a href="#" class="btn-plan">Get Ultra</a>
+      </div>
+    </div>
+
+    <!-- Lifetime -->
+    <div class="lifetime-row">
+      <div class="lifetime-card">
+        <div class="lifetime-left">
+          <div class="plan-name">Yearly License</div>
+          <p>All features, annual renewal. Resume intelligence, JD analysis, negotiation coaching, 7 expert modes.</p>
+        </div>
+        <a href="#" class="btn-plan">Get Yearly</a>
+      </div>
+      <div class="lifetime-card highlight">
+        <div class="lifetime-left">
+          <div class="plan-name">Lifetime License ✦</div>
+          <p>One-time purchase. All future updates included. Own it forever.</p>
+        </div>
+        <a href="#" class="btn-plan-primary">Get Lifetime</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo">Heario</div>
+      <p>Intelligent AI for meetings.<br/>Your data stays yours.</p>
+    </div>
+    <div class="footer-col">
+      <div class="footer-head">Product</div>
+      <a href="#">GitHub</a>
+      <a href="#">Changelog</a>
+      <a href="#">Contribute</a>
+      <a href="#">License</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-head">Legal</div>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms & Conditions</a>
+      <a href="#">Refund Policy</a>
+      <a href="#">Security</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-head">Support</div>
+      <a href="#">Contact</a>
+      <a href="#">Report a Bug</a>
+      <a href="#">Donate</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2025 Heario. All rights reserved.</div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
