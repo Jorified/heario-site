@@ -27,9 +27,7 @@ function tryVideo(id, src) {
   v.addEventListener('loadeddata', () => { v.classList.add('on'); v.play().catch(()=>{}); });
   v.addEventListener('error', () => { v.removeAttribute('src'); });
 }
-const _base = 'https://github.com/Jorified/heario-site/releases/download/v1.0-assets';
-tryVideo('interviewerVideo', `${_base}/interviewer.mp4`);
-tryVideo('selfVideo', `${_base}/self.mp4`);
+// video assets not yet available — avatar fallbacks are used
 
 // running meeting clock
 let t0 = Date.now();
