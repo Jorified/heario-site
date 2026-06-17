@@ -1,3 +1,16 @@
+// ── Live download count from GitHub ─────────────────────────────────────
+(async () => {
+  try {
+    const res = await fetch('https://api.github.com/repos/Jorified/heario-app/releases/tags/v0.1.0');
+    const data = await res.json();
+    const total = (data.assets || []).reduce((sum, a) => sum + a.download_count, 0);
+    if (total > 0) {
+      const pill = document.querySelector('.pill');
+      if (pill) pill.textContent = `🏆 ${total.toLocaleString()}+ Downloads`;
+    }
+  } catch (_) {}
+})();
+
 // ── Mode pill active toggle ──────────────────────────────────────────────
 document.querySelectorAll('.mode-pill').forEach(pill => {
   pill.addEventListener('click', () => {
