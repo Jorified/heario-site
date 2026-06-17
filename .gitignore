@@ -1,0 +1,14 @@
+# Dev tooling
+.claude/
+
+# Workflow artifacts
+*_frame.jpg
+*_5s.mp4
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
