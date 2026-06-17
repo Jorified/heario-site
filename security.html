@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security — Heario</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    .legal-wrap { max-width: 760px; margin: 0 auto; padding: 120px 24px 80px; }
+    .legal-wrap h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 8px; }
+    .legal-wrap .updated { color: #6b7a99; font-size: 0.9rem; margin-bottom: 48px; }
+    .legal-wrap h2 { font-size: 1.1rem; font-weight: 600; color: #7fd1ff; margin: 36px 0 10px; }
+    .legal-wrap p, .legal-wrap li { color: #a0aec0; line-height: 1.8; font-size: 0.95rem; }
+    .legal-wrap ul { padding-left: 20px; margin: 8px 0; }
+    .legal-wrap a { color: #7fd1ff; }
+    .legal-back { display: inline-block; margin-bottom: 32px; color: #7fd1ff; font-size: 0.9rem; text-decoration: none; }
+    .legal-back:hover { text-decoration: underline; }
+    .security-badge { display: inline-block; background: rgba(79,142,247,0.1); border: 1px solid rgba(79,142,247,0.3); border-radius: 8px; padding: 16px 24px; margin: 24px 0; font-size: 0.9rem; color: #7fd1ff; }
+  </style>
+</head>
+<body>
+<div class="site-bg" aria-hidden="true">
+  <div class="g-aurora g-aurora-1"></div>
+  <div class="g-aurora g-aurora-2"></div>
+</div>
+<div class="legal-wrap">
+  <a href="/" class="legal-back">← Back to Heario</a>
+  <h1>Security</h1>
+  <p class="updated">Last updated: June 2026</p>
+
+  <h2>Our Approach</h2>
+  <p>Heario is built with a local-first architecture — your audio and meeting content are processed on your device and sent only to the AI provider you configure. We minimise the data that ever reaches our servers.</p>
+
+  <h2>Data in Transit</h2>
+  <ul>
+    <li>All communication between Heario and external services uses TLS 1.2 or higher</li>
+    <li>API keys you enter are stored locally in an encrypted config file on your device</li>
+    <li>We never transmit your API keys to our servers</li>
+  </ul>
+
+  <h2>Overlay Protection</h2>
+  <p>Heario's answer overlay uses the Windows <code>SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE)</code> API — the same mechanism used by banks and DRM software. This excludes the window from all screen-capture pipelines at the OS level, before any application (Zoom, Teams, OBS) can access the frame buffer.</p>
+
+  <h2>Payment Security</h2>
+  <p>Payments are handled entirely by <a href="https://stripe.com" target="_blank">Stripe</a>, a PCI DSS Level 1 certified payment processor. Heario never sees, stores, or logs your card details.</p>
+
+  <h2>Open Source</h2>
+  <p>The Heario application is open source. You can audit the code directly on <a href="https://github.com/Jorified/heario-app" target="_blank">GitHub</a>. We believe transparency is the strongest security guarantee we can offer.</p>
+
+  <h2>Responsible Disclosure</h2>
+  <p>If you discover a security vulnerability in Heario, please report it privately before public disclosure. Email <a href="mailto:jackoreilly10@hotmail.com">jackoreilly10@hotmail.com</a> with the subject line <strong>"Security Disclosure"</strong>. We will acknowledge your report within 48 hours and work with you to resolve the issue promptly.</p>
+
+  <div class="security-badge">🛡 Found a vulnerability? Email jackoreilly10@hotmail.com — we take every report seriously.</div>
+</div>
+</body>
+</html>
