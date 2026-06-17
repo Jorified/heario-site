@@ -16,7 +16,14 @@ document.querySelectorAll('.toggle-label').forEach(label => {
 
 // ── Nav: add shadow once scrolled ────────────────────────────────────────
 const nav = document.querySelector('.nav');
-const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+const stickyCta = document.getElementById('stickyCta');
+const heroSection = document.querySelector('.hero');
+const onScroll = () => {
+  nav.classList.toggle('scrolled', window.scrollY > 8);
+  if (stickyCta && heroSection) {
+    stickyCta.classList.toggle('visible', window.scrollY > heroSection.offsetHeight);
+  }
+};
 onScroll();
 window.addEventListener('scroll', onScroll, { passive: true });
 

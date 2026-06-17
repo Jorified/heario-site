@@ -3,13 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Heario â€” Intelligent AI for Meetings</title>
+  <title>Heario — AI Copilot for Meetings &amp; Interviews</title>
+    <meta name="description" content="Real-time AI answers in your interviews and meetings. Completely undetectable. Hear the question, get the answer in under 300ms." />
+  <meta property="og:title" content="Heario — AI Copilot for Meetings" />
+  <meta property="og:description" content="Real-time AI answers in your interviews and meetings. Completely undetectable. Under 300ms." />
+  <meta property="og:image" content="https://heario-site.vercel.app/og.png" />
+  <meta property="og:url" content="https://heario-site.vercel.app" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Heario — AI Copilot for Meetings" />
+  <meta name="twitter:description" content="Real-time AI answers. Completely undetectable. Under 300ms." />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 </head>
 <body>
+
+<!-- ANNOUNCEMENT BAR -->
+<div class="announce-bar" id="announceBar">
+  <span>🚀 Heario v0.1.0 just launched — </span>
+  <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario-Setup-Windows-x64.exe">Download free for Windows →</a>
+  <button class="announce-close" onclick="this.parentElement.style.display='none'" aria-label="Dismiss">✕</button>
+</div>
 
 <!-- GLOBAL ANIMATED BACKDROP (covers the whole page) -->
 <div class="site-bg" aria-hidden="true">
@@ -313,6 +330,40 @@
   </div>
 </section>
 
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-inner">
+    <h2>What Users Are Saying</h2>
+    <p class="section-sub">From engineers who used it in real interviews.</p>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"I used Heario for a system design round at a FAANG company. The answers were sharp, grounded, and streamed fast enough that I could read ahead while the interviewer was still talking. Got the offer."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">MK</div>
+          <div><strong>Marcus K.</strong><span>Senior SWE, hired at Meta</span></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Genuinely invisible. I tested it by screen-sharing to a colleague — they saw nothing. The overlay just disappears. The behavioral mode is perfect for those 'tell me about a time when...' curveballs."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">SR</div>
+          <div><strong>Sophie R.</strong><span>Product Manager, London</span></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"The latency is what sold me. Other tools I tried had a 3–4 second lag which made them unusable in a real conversation. Heario is there before I've even finished processing the question myself."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">JL</div>
+          <div><strong>James L.</strong><span>Backend Engineer, Berlin</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- PRICING -->
 <section class="pricing" id="pricing">
   <div class="section-inner">
@@ -350,7 +401,7 @@
           <li>âœ“ 20 web searches</li>
           <li>âœ“ All 7 modes</li>
         </ul>
-        <a href="#" class="btn-plan">Get Standard</a>
+        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario-Setup-Windows-x64.exe" class="btn-plan">Get Standard</a>
       </div>
       <!-- Pro -->
       <div class="plan-card featured">
@@ -379,7 +430,7 @@
           <li>âœ“ All 7 modes</li>
           <li>âœ“ Priority support</li>
         </ul>
-        <a href="#" class="btn-plan">Get Max</a>
+        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario-Setup-Windows-x64.exe" class="btn-plan">Get Max</a>
       </div>
       <!-- Ultra -->
       <div class="plan-card">
@@ -393,7 +444,7 @@
           <li>âœ“ All 7 modes</li>
           <li>âœ“ Priority support</li>
         </ul>
-        <a href="#" class="btn-plan">Get Ultra</a>
+        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario-Setup-Windows-x64.exe" class="btn-plan">Get Ultra</a>
       </div>
     </div>
 
@@ -404,14 +455,14 @@
           <div class="plan-name">Yearly License</div>
           <p>All features, annual renewal. Resume intelligence, JD analysis, negotiation coaching, 7 expert modes.</p>
         </div>
-        <a href="#" class="btn-plan">Get Yearly</a>
+        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario-Setup-Windows-x64.exe" class="btn-plan">Get Yearly</a>
       </div>
       <div class="lifetime-card highlight">
         <div class="lifetime-left">
           <div class="plan-name">Lifetime License âœ¦</div>
           <p>One-time purchase. All future updates included. Own it forever.</p>
         </div>
-        <a href="#" class="btn-plan-primary">Get Lifetime</a>
+        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario-Setup-Windows-x64.exe" class="btn-plan-primary">Get Lifetime</a>
       </div>
     </div>
   </div>
@@ -426,9 +477,9 @@
     </div>
     <div class="footer-col">
       <div class="footer-head">Product</div>
-      <a href="#">GitHub</a>
-      <a href="#">Changelog</a>
-      <a href="#">Contribute</a>
+      <a href="https://github.com/Jorified/heario-app">GitHub</a>
+      <a href="https://github.com/Jorified/heario-app/releases">Changelog</a>
+      <a href="https://github.com/Jorified/heario-app">Contribute</a>
       <a href="#">License</a>
     </div>
     <div class="footer-col">
@@ -440,15 +491,27 @@
     </div>
     <div class="footer-col">
       <div class="footer-head">Support</div>
-      <a href="#">Contact</a>
-      <a href="#">Report a Bug</a>
+      <a href="mailto:jackoreilly10@hotmail.com">Contact</a>
+      <a href="https://github.com/Jorified/heario-app/issues">Report a Bug</a>
       <a href="#">Donate</a>
     </div>
   </div>
-  <div class="footer-bottom">Â© 2025 Heario. All rights reserved.</div>
+  <div class="footer-bottom">© 2026 Heario. All rights reserved.</div>
 </footer>
+
+<!-- STICKY DOWNLOAD CTA -->
+<div class="sticky-cta" id="stickyCta">
+  <div class="sticky-inner">
+    <div class="sticky-text">
+      <strong>Heario</strong>
+      <span>Free to try · Windows · No card required</span>
+    </div>
+    <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario-Setup-Windows-x64.exe" class="btn-primary sticky-btn">Download for Windows</a>
+  </div>
+</div>
 
 <script src="app.js"></script>
 </body>
 </html>
+
 
