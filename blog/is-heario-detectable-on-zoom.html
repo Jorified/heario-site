@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Is Heario Detectable on Zoom? | Heario Blog</title>
+  <meta name="description" content="The definitive technical answer: Heario uses a Windows OS-level API to hide its overlay from Zoom, Teams, and Google Meet screen capture — completely undetectable." />
+  <link rel="canonical" href="https://heario-site.vercel.app/blog/is-heario-detectable-on-zoom.html" />
+
+  <meta property="og:site_name" content="Heario" />
+  <meta property="og:title" content="Is Heario Detectable on Zoom?" />
+  <meta property="og:description" content="The definitive technical answer: Heario uses a Windows OS-level API to hide its overlay from Zoom, Teams, and Google Meet — completely undetectable." />
+  <meta property="og:image" content="https://heario-site.vercel.app/og.png" />
+  <meta property="og:url" content="https://heario-site.vercel.app/blog/is-heario-detectable-on-zoom.html" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-06-17" />
+  <meta property="article:author" content="Heario" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Is Heario Detectable on Zoom?" />
+  <meta name="twitter:description" content="Heario uses a Windows OS-level API to hide from Zoom, Teams & Google Meet. Here's the technical proof." />
+  <meta name="twitter:image" content="https://heario-site.vercel.app/og.png" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Is Heario Detectable on Zoom?",
+    "description": "The definitive technical answer: Heario uses a Windows OS-level API to hide its overlay from Zoom, Teams, and Google Meet screen capture — completely undetectable.",
+    "datePublished": "2026-06-17",
+    "dateModified": "2026-06-17",
+    "author": { "@type": "Organization", "name": "Heario", "url": "https://heario-site.vercel.app/" },
+    "publisher": { "@type": "Organization", "name": "Heario", "url": "https://heario-site.vercel.app/", "logo": { "@type": "ImageObject", "url": "https://heario-site.vercel.app/og.png" } },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://heario-site.vercel.app/blog/is-heario-detectable-on-zoom.html" },
+    "image": "https://heario-site.vercel.app/og.png"
+  }
+  </script>
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <style>
+    /* ── Blog layout ── */
+    .blog-hero {
+      padding: 80px 24px 56px;
+      text-align: center;
+      background: radial-gradient(ellipse 70% 50% at 50% -10%, rgba(79,142,247,.1) 0%, transparent 70%);
+      border-bottom: 1px solid var(--border);
+    }
+    .blog-hero .breadcrumb {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .blog-hero .breadcrumb a { color: var(--accent2); }
+    .blog-hero .breadcrumb a:hover { text-decoration: underline; }
+    .blog-hero h1 {
+      font-size: clamp(30px, 5vw, 52px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      color: #fff;
+      max-width: 760px;
+      margin: 0 auto 20px;
+      line-height: 1.12;
+    }
+    .blog-hero .meta {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .blog-hero .meta .tag {
+      background: rgba(79,142,247,.1);
+      border: 1px solid rgba(79,142,247,.25);
+      color: var(--accent2);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* ── Article body ── */
+    .blog-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 60px 24px 100px;
+    }
+    .blog-wrap p {
+      color: var(--text);
+      font-size: 17px;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+    .blog-wrap h2 {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -.5px;
+      margin: 52px 0 16px;
+    }
+    .blog-wrap h3 {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 600;
+      color: #fff;
+      margin: 36px 0 12px;
+    }
+    .blog-wrap ul, .blog-wrap ol {
+      padding-left: 24px;
+      margin-bottom: 24px;
+    }
+    .blog-wrap li {
+      font-size: 17px;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .blog-wrap code {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 2px 7px;
+      border-radius: 5px;
+      color: var(--accent2);
+    }
+    .blog-wrap pre {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin-bottom: 28px;
+    }
+    .blog-wrap pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .blog-wrap a { color: var(--accent2); text-decoration: underline; text-underline-offset: 3px; }
+    .blog-wrap a:hover { color: #fff; }
+
+    /* ── Callout boxes ── */
+    .callout {
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin: 32px 0;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+    .callout.green {
+      background: rgba(95,184,95,.08);
+      border: 1px solid rgba(95,184,95,.25);
+      color: #a8e6a8;
+    }
+    .callout.blue {
+      background: rgba(79,142,247,.08);
+      border: 1px solid rgba(79,142,247,.25);
+      color: var(--accent2);
+    }
+    .callout.orange {
+      background: rgba(217,139,58,.08);
+      border: 1px solid rgba(217,139,58,.25);
+      color: #f0b96e;
+    }
+    .callout strong { color: #fff; }
+
+    /* ── Verdict table ── */
+    .verdict-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 28px 0;
+      font-size: 15px;
+    }
+    .verdict-table th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .verdict-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    .verdict-table tr:last-child td { border-bottom: none; }
+    .verdict-table tr:hover td { background: rgba(255,255,255,.02); }
+    .badge-safe { color: #5fb85f; font-weight: 600; }
+    .badge-warn { color: var(--orange); font-weight: 600; }
+
+    /* ── CTA block ── */
+    .blog-cta {
+      background: linear-gradient(135deg, rgba(79,142,247,.1) 0%, rgba(127,209,255,.06) 100%);
+      border: 1px solid rgba(79,142,247,.25);
+      border-radius: 16px;
+      padding: 40px 36px;
+      text-align: center;
+      margin: 60px 0 0;
+    }
+    .blog-cta h3 { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .blog-cta p { color: var(--muted); font-size: 16px; margin-bottom: 28px; }
+    .blog-cta .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .blog-cta .btn-primary { font-size: 15px; }
+    .blog-cta .btn-ghost { font-size: 15px; }
+
+    /* ── Separator ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 48px 0;
+    }
+
+    /* ── Site background (same as index) ── */
+    .site-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+    .g-aurora { position: absolute; border-radius: 50%; filter: blur(100px); opacity: .06; }
+    .g-aurora-1 { width: 600px; height: 600px; background: #4f8ef7; top: -200px; left: -100px; }
+    .g-aurora-2 { width: 500px; height: 500px; background: #7fd1ff; top: 30%; right: -150px; }
+  </style>
+</head>
+<body>
+
+<div class="site-bg" aria-hidden="true">
+  <div class="g-aurora g-aurora-1"></div>
+  <div class="g-aurora g-aurora-2"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/">Heario</a>
+    <div class="nav-links">
+      <a href="https://producthunt.com" target="_blank" rel="noopener">Product Hunt</a>
+      <a href="https://news.ycombinator.com" target="_blank" rel="noopener">Hacker News</a>
+      <a href="https://github.com/Jorified/heario-app" target="_blank" rel="noopener">GitHub</a>
+      <a href="/#pricing" class="nav-cta">Get Pro</a>
+    </div>
+    <div class="nav-meta">
+      <span class="version-badge">v0.1.0</span>
+    </div>
+  </div>
+</nav>
+
+<!-- BLOG HERO -->
+<header class="blog-hero">
+  <p class="breadcrumb"><a href="/">Heario</a> &nbsp;/&nbsp; Blog &nbsp;/&nbsp; Is Heario Detectable on Zoom?</p>
+  <h1>Is Heario Detectable on&nbsp;Zoom?</h1>
+  <div class="meta">
+    <span class="tag">Privacy &amp; Security</span>
+    <span>June 17, 2026</span>
+    <span>·</span>
+    <span>7 min read</span>
+  </div>
+</header>
+
+<!-- ARTICLE -->
+<article class="blog-wrap">
+
+  <p>
+    This is the question we get asked more than any other. And it deserves a real answer — not a vague "trust us", but a technical one you can verify yourself. Here it is: <strong>no, Heario is not detectable on Zoom, Microsoft Teams, or Google Meet</strong>. Below we explain exactly why, and how you can confirm it for yourself.
+  </p>
+
+  <div class="callout green">
+    <strong>Short answer:</strong> Heario's overlay is hidden at the Windows OS level — before Zoom, Teams, or any screen-capture software ever gets a chance to see it. There is nothing for them to detect.
+  </div>
+
+  <h2>How screen sharing actually works</h2>
+
+  <p>
+    When you share your screen on Zoom, Zoom calls a Windows API to capture frames from your display. This process runs entirely in userspace — it can only see what the OS exposes to it. It has no way to inspect memory, intercept other processes, or enumerate windows beyond what Windows explicitly hands over.
+  </p>
+
+  <p>
+    This matters because Windows gives every window owner direct control over whether that window appears in capture output. The relevant API is <code>SetWindowDisplayAffinity</code>.
+  </p>
+
+  <h2>The API that makes Heario invisible</h2>
+
+  <p>
+    Heario calls <code>SetWindowDisplayAffinity(hwnd, WDA_EXCLUDEFROMCAPTURE)</code> on its overlay window at startup. This is a documented, first-party Windows API introduced in Windows 10 Build 2004. When set, Windows strips that window from the Desktop Duplication API output — the same pipeline that Zoom, Teams, OBS, and ShareX all use to capture your screen.
+  </p>
+
+  <pre><code>// Heario's overlay window initialisation (simplified)
+SetWindowDisplayAffinity(overlayHwnd, WDA_EXCLUDEFROMCAPTURE);</code></pre>
+
+  <p>
+    The result: from Zoom's perspective, the pixels where Heario sits show whatever is behind it — your meeting window, your desktop, whatever. Heario does not exist as far as the screen capturer is concerned.
+  </p>
+
+  <p>
+    This is <em>not</em> a hack or exploit. It is the same mechanism banks use to prevent banking apps from being screen-captured, and the same one DRM software uses to protect video playback. Microsoft built this API specifically for this use case.
+  </p>
+
+  <h2>What Zoom, Teams, and Google Meet can and can't detect</h2>
+
+  <table class="verdict-table">
+    <thead>
+      <tr>
+        <th>Detection method</th>
+        <th>Can it catch Heario?</th>
+        <th>Why</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Screen capture / screen share</td>
+        <td class="badge-safe">No</td>
+        <td><code>WDA_EXCLUDEFROMCAPTURE</code> removes the window from all capture pipelines</td>
+      </tr>
+      <tr>
+        <td>OBS / recording software</td>
+        <td class="badge-safe">No</td>
+        <td>OBS uses Desktop Duplication API — same pipeline, same exclusion</td>
+      </tr>
+      <tr>
+        <td>Window enumeration (EnumWindows)</td>
+        <td class="badge-safe">No</td>
+        <td>Heario's window title and class name are generic; nothing identifies it as Heario</td>
+      </tr>
+      <tr>
+        <td>Process list scanning</td>
+        <td class="badge-safe">No</td>
+        <td>Zoom and Teams do not scan running processes — they have no such permission</td>
+      </tr>
+      <tr>
+        <td>Network traffic analysis</td>
+        <td class="badge-safe">No</td>
+        <td>Heario's API calls go directly from your machine to OpenAI/Anthropic, indistinguishable from any browser tab doing the same</td>
+      </tr>
+      <tr>
+        <td>AI-based eye tracking / gaze detection</td>
+        <td class="badge-warn">Behavioural risk</td>
+        <td>Not a Heario detection — but reading text off-screen could look suspicious to a human. Use the overlay in your natural field of view.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>What about meeting bots?</h2>
+
+  <p>
+    Some AI meeting tools work by joining your call as a separate participant — a bot account that shows up in the attendee list. These are trivially detectable: anyone can see an extra participant. Heario has no bot. It never joins the call. It runs entirely on your local machine and never touches the meeting platform.
+  </p>
+
+  <div class="callout blue">
+    <strong>No bot. No browser extension. No third-party server in the call.</strong> Heario listens to your speaker output using a standard Windows audio loopback — the same mechanism recording software has used for years.
+  </div>
+
+  <h2>Can Zoom detect the audio loopback?</h2>
+
+  <p>
+    No. Heario captures audio from the <em>output</em> side of your sound card (what your speakers play), not from the microphone input. Zoom only has visibility into your microphone stream — the audio it sends from you to others. What you <em>hear</em> is completely outside Zoom's reach.
+  </p>
+
+  <p>
+    The loopback capture is performed by the Windows WASAPI (Windows Audio Session API) in loopback mode — the same API used by tools like Audacity, OBS, and every screen recorder that lets you "also capture system audio." It is completely standard.
+  </p>
+
+  <h2>Verify it yourself in 60 seconds</h2>
+
+  <p>Here is the exact test to confirm Heario is invisible before your next real interview:</p>
+
+  <ol>
+    <li>Open Heario and start a session so the overlay is visible on your screen.</li>
+    <li>Open Zoom and start a meeting (you can join alone or with a trusted friend).</li>
+    <li>Click <strong>Share Screen</strong> and share your full desktop.</li>
+    <li>Open the Zoom window on a second monitor, or ask your friend to look — the overlay will not appear in the shared view.</li>
+    <li>Alterheario, click <strong>Record</strong> in Zoom, record 10 seconds, and play it back. Heario will not appear in the recording.</li>
+  </ol>
+
+  <p>
+    Every user we have spoken to who ran this test reported the same result: the overlay is completely absent from the shared or recorded output.
+  </p>
+
+  <h2>The one risk worth knowing about</h2>
+
+  <p>
+    The only genuine detection risk is behavioural, not technical. If you are visibly reading text that is not on your screen, an attentive human interviewer might notice your eyes moving to an unusual position. This is not a Heario issue — it applies to any note you might have on a second monitor, a notepad, or sticky notes on your wall.
+  </p>
+
+  <div class="callout orange">
+    <strong>Tip:</strong> Position the Heario overlay at the centre-bottom of your screen, just below your webcam. This way, when you glance at it, you are looking close to the camera — indistinguishable from normal eye movement during thought.
+  </div>
+
+  <h2>Frequently asked follow-up questions</h2>
+
+  <h3>Does this work in Google Meet?</h3>
+  <p>
+    Yes. Google Meet uses the browser's <code>getDisplayMedia()</code> API, which itself calls the Windows Desktop Duplication API under the hood. The same exclusion applies. Heario is invisible.
+  </p>
+
+  <h3>Does this work in Microsoft Teams?</h3>
+  <p>
+    Yes. Teams uses Electron's screen capture, which routes through the same Windows pipeline. Confirmed invisible.
+  </p>
+
+  <h3>What about Webex or other platforms?</h3>
+  <p>
+    Any screen-sharing platform on Windows uses Desktop Duplication API or the older GDI mirror driver. Both are excluded by <code>WDA_EXCLUDEFROMCAPTURE</code>. Heario is invisible on all of them.
+  </p>
+
+  <h3>Will this still work after a Zoom update?</h3>
+  <p>
+    Yes. <code>SetWindowDisplayAffinity</code> is a Windows OS-level API. Zoom cannot override it without Microsoft changing Windows itself. It is not something Zoom can patch out in an update.
+  </p>
+
+  <hr class="divider" />
+
+  <p style="color: var(--muted); font-size: 15px;">
+    Still have questions about how Heario works? Check the <a href="/#faq">full FAQ on the homepage</a> or <a href="mailto:jackoreilly10@hotmail.com">email us directly</a>.
+  </p>
+
+  <!-- CTA -->
+  <div class="blog-cta">
+    <h3>Ready to try it?</h3>
+    <p>Free to download. No card required. Works on Windows 10 and 11.</p>
+    <div class="cta-btns">
+      <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario_0.1.0_x64-setup.exe" target="_blank" rel="noopener" class="btn-primary">Download for Windows — Free</a>
+      <a href="/" class="btn-ghost">Learn more →</a>
+    </div>
+  </div>
+
+</article>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo">Heario</div>
+      <p>Intelligent AI for meetings.<br/>Your data stays yours.</p>
+    </div>
+    <div class="footer-col">
+      <div class="footer-head">Product</div>
+      <a href="https://github.com/Jorified/heario-app">GitHub</a>
+      <a href="https://github.com/Jorified/heario-app/releases">Changelog</a>
+      <a href="/license.html">License</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-head">Legal</div>
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms &amp; Conditions</a>
+      <a href="/refund.html">Refund Policy</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-head">Support</div>
+      <a href="mailto:jackoreilly10@hotmail.com">Contact</a>
+      <a href="https://github.com/Jorified/heario-app/issues">Report a Bug</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 Heario. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
