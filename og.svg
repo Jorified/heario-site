@@ -50,11 +50,13 @@
   <clipPath id="innerBox"><rect x="340" y="130" width="520" height="370" rx="20"/></clipPath>
 </defs>
 
-<!-- Inner panel only — NO full-canvas background fill -->
+<!-- Full canvas background -->
+<rect x="0" y="0" width="1200" height="630" fill="#0b0e13"/>
+<rect x="0" y="0" width="1200" height="630" fill="url(#aura1)"/>
+<rect x="0" y="0" width="1200" height="630" fill="url(#aura2)"/>
+<rect x="0" y="0" width="1200" height="630" fill="url(#aura3)"/>
+<!-- Inner panel -->
 <rect x="340" y="130" width="520" height="370" rx="20" fill="url(#panelBg)"/>
-<rect x="340" y="130" width="520" height="370" rx="20" fill="url(#aura1)"/>
-<rect x="340" y="130" width="520" height="370" rx="20" fill="url(#aura2)"/>
-<rect x="340" y="130" width="520" height="370" rx="20" fill="url(#aura3)"/>
 
 <!-- Geometrics clipped strictly to inner panel -->
 <g clip-path="url(#innerBox)">
@@ -119,61 +121,41 @@
 <g filter="url(#micGlow)" transform="translate(600,205)">
   <!-- Capsule outline -->
   <rect x="-18" y="-32" width="36" height="48" rx="18" fill="none" stroke="url(#waveGrad)" stroke-width="3"/>
-  <!-- Mic body -->
-  <circle cx="0" cy="-8" r="7" fill="#4f8ef7" fill-opacity="0.4"/>
-  <!-- LED glow halo — very dramatic -->
-  <circle cx="0" cy="-8" r="12" fill="#7fd1ff" fill-opacity="0">
-    <animate attributeName="r"           values="8;22;8;16;8"        dur="1.4s" repeatCount="indefinite"/>
-    <animate attributeName="fill-opacity" values="0;0.35;0;0.18;0"   dur="1.4s" repeatCount="indefinite"/>
-  </circle>
-  <!-- LED dot -->
-  <circle cx="0" cy="-8" r="4" fill="#7fd1ff" filter="url(#ledGlow)">
-    <animate attributeName="r"           values="4;9;3;7;4"          dur="1.4s" repeatCount="indefinite"/>
-    <animate attributeName="fill-opacity" values="1;0.2;1;0.5;1"     dur="1.4s" repeatCount="indefinite"/>
-    <animate attributeName="cy"          values="-8;-14;-8;-6;-8"    dur="1.4s" repeatCount="indefinite"/>
-    <animate attributeName="fill"        values="#7fd1ff;#ffffff;#7fd1ff;#a0e8ff;#7fd1ff" dur="1.4s" repeatCount="indefinite"/>
-  </circle>
   <!-- Mic stand -->
   <path d="M-28 16 Q-28 44 0 44 Q28 44 28 16" fill="none" stroke="url(#waveGrad)" stroke-width="2.5" stroke-linecap="round"/>
   <line x1="0" y1="44" x2="0" y2="58" stroke="#7fd1ff" stroke-width="2.5" stroke-linecap="round"/>
   <line x1="-20" y1="58" x2="20" y2="58" stroke="#7fd1ff" stroke-width="2.5" stroke-linecap="round"/>
 </g>
 
-<!-- Left sound waves — dramatic vibration -->
+<!-- Left sound waves -->
 <g filter="url(#glow)" fill="none" stroke="#4f8ef7" stroke-linecap="round">
   <path d="M 536 228 Q 524 243 536 258" stroke-width="2.5">
-    <animate attributeName="stroke-opacity" values="0.9;0.05;1;0.1;0.9"          dur="1.0s" begin="0s"    repeatCount="indefinite"/>
-    <animate attributeName="d"             values="M 536 228 Q 524 243 536 258;M 532 222 Q 516 243 532 264;M 536 228 Q 526 243 536 258;M 533 224 Q 518 243 533 262;M 536 228 Q 524 243 536 258" dur="1.0s" begin="0s" repeatCount="indefinite"/>
-    <animate attributeName="stroke-width"  values="2.5;4;2.5;3.5;2.5"            dur="1.0s" begin="0s"    repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values="0.85;0.4;0.85"   dur="1.4s" begin="0s"    repeatCount="indefinite"/>
+    <animate attributeName="d"             values="M 536 228 Q 524 243 536 258;M 534 225 Q 520 243 534 261;M 536 228 Q 524 243 536 258" dur="1.4s" begin="0s" repeatCount="indefinite"/>
   </path>
   <path d="M 520 215 Q 500 243 520 271" stroke-width="2">
-    <animate attributeName="stroke-opacity" values="0.55;0.05;0.7;0.05;0.55"     dur="1.0s" begin="0.12s" repeatCount="indefinite"/>
-    <animate attributeName="d"             values="M 520 215 Q 500 243 520 271;M 514 207 Q 490 243 514 279;M 520 215 Q 504 243 520 271;M 515 209 Q 492 243 515 277;M 520 215 Q 500 243 520 271" dur="1.0s" begin="0.12s" repeatCount="indefinite"/>
-    <animate attributeName="stroke-width"  values="2;3.5;2;3;2"                  dur="1.0s" begin="0.12s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values="0.55;0.22;0.55"  dur="1.4s" begin="0.18s" repeatCount="indefinite"/>
+    <animate attributeName="d"             values="M 520 215 Q 500 243 520 271;M 517 210 Q 494 243 517 276;M 520 215 Q 500 243 520 271" dur="1.4s" begin="0.18s" repeatCount="indefinite"/>
   </path>
   <path d="M 504 202 Q 478 243 504 284" stroke-width="1.5">
-    <animate attributeName="stroke-opacity" values="0.3;0.02;0.45;0.02;0.3"      dur="1.0s" begin="0.24s" repeatCount="indefinite"/>
-    <animate attributeName="d"             values="M 504 202 Q 478 243 504 284;M 496 192 Q 462 243 496 294;M 504 202 Q 482 243 504 284;M 497 194 Q 465 243 497 292;M 504 202 Q 478 243 504 284" dur="1.0s" begin="0.24s" repeatCount="indefinite"/>
-    <animate attributeName="stroke-width"  values="1.5;3;1.5;2.5;1.5"            dur="1.0s" begin="0.24s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values="0.3;0.1;0.3"     dur="1.4s" begin="0.36s" repeatCount="indefinite"/>
+    <animate attributeName="d"             values="M 504 202 Q 478 243 504 284;M 500 196 Q 470 243 500 290;M 504 202 Q 478 243 504 284" dur="1.4s" begin="0.36s" repeatCount="indefinite"/>
   </path>
 </g>
 
-<!-- Right sound waves — dramatic vibration -->
+<!-- Right sound waves -->
 <g filter="url(#glow)" fill="none" stroke="#7fd1ff" stroke-linecap="round">
   <path d="M 664 228 Q 676 243 664 258" stroke-width="2.5">
-    <animate attributeName="stroke-opacity" values="0.9;0.05;1;0.1;0.9"          dur="1.0s" begin="0s"    repeatCount="indefinite"/>
-    <animate attributeName="d"             values="M 664 228 Q 676 243 664 258;M 668 222 Q 684 243 668 264;M 664 228 Q 674 243 664 258;M 667 224 Q 682 243 667 262;M 664 228 Q 676 243 664 258" dur="1.0s" begin="0s" repeatCount="indefinite"/>
-    <animate attributeName="stroke-width"  values="2.5;4;2.5;3.5;2.5"            dur="1.0s" begin="0s"    repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values="0.85;0.4;0.85"   dur="1.4s" begin="0s"    repeatCount="indefinite"/>
+    <animate attributeName="d"             values="M 664 228 Q 676 243 664 258;M 666 225 Q 680 243 666 261;M 664 228 Q 676 243 664 258" dur="1.4s" begin="0s" repeatCount="indefinite"/>
   </path>
   <path d="M 680 215 Q 700 243 680 271" stroke-width="2">
-    <animate attributeName="stroke-opacity" values="0.55;0.05;0.7;0.05;0.55"     dur="1.0s" begin="0.12s" repeatCount="indefinite"/>
-    <animate attributeName="d"             values="M 680 215 Q 700 243 680 271;M 686 207 Q 710 243 686 279;M 680 215 Q 696 243 680 271;M 685 209 Q 708 243 685 277;M 680 215 Q 700 243 680 271" dur="1.0s" begin="0.12s" repeatCount="indefinite"/>
-    <animate attributeName="stroke-width"  values="2;3.5;2;3;2"                  dur="1.0s" begin="0.12s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values="0.55;0.22;0.55"  dur="1.4s" begin="0.18s" repeatCount="indefinite"/>
+    <animate attributeName="d"             values="M 680 215 Q 700 243 680 271;M 683 210 Q 706 243 683 276;M 680 215 Q 700 243 680 271" dur="1.4s" begin="0.18s" repeatCount="indefinite"/>
   </path>
   <path d="M 696 202 Q 722 243 696 284" stroke-width="1.5">
-    <animate attributeName="stroke-opacity" values="0.3;0.02;0.45;0.02;0.3"      dur="1.0s" begin="0.24s" repeatCount="indefinite"/>
-    <animate attributeName="d"             values="M 696 202 Q 722 243 696 284;M 704 192 Q 738 243 704 294;M 696 202 Q 718 243 696 284;M 703 194 Q 735 243 703 292;M 696 202 Q 722 243 696 284" dur="1.0s" begin="0.24s" repeatCount="indefinite"/>
-    <animate attributeName="stroke-width"  values="1.5;3;1.5;2.5;1.5"            dur="1.0s" begin="0.24s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values="0.3;0.1;0.3"     dur="1.4s" begin="0.36s" repeatCount="indefinite"/>
+    <animate attributeName="d"             values="M 696 202 Q 722 243 696 284;M 700 196 Q 730 243 700 290;M 696 202 Q 722 243 696 284" dur="1.4s" begin="0.36s" repeatCount="indefinite"/>
   </path>
 </g>
 
