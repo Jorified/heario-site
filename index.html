@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -87,18 +87,9 @@
       <div class="stat"><span class="stat-n">100%</span><span class="stat-l">Undetectable</span></div>
     </div>
 
-    <!-- Mockup -->
-    <div class="mockup">
-      <div class="mockup-bar">
-        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-        <span class="mockup-title">Heario â€” Technical Interview</span>
-      </div>
-      <div class="mockup-body">
-        <div class="mockup-status"><span class="pulse"></span> listening Â· S0</div>
-        <div class="mockup-q">S0 Q: How would you design a distributed rate limiter? <span class="counter">(1/2)</span></div>
-        <div class="mockup-a">Use a token-bucket algorithm backed by Redis. Each client gets a key with a counter and expiry. On each request, use INCR + EXPIRE in a Lua script (atomic). For distributed accuracy, use Redis Cluster â€” keys shard by client ID naturally. If you need sliding windows, use a sorted set with timestamps as scores and ZREMRANGEBYSCORE to prune old entries. P99 latency &lt;5ms with this approach...</div>
-        <div class="mockup-shortcuts">[ prev  ] next  r regen  m mode: technical_interview</div>
-      </div>
+    <!-- Hero image -->
+    <div class=”hero-img-wrap”>
+      <img src=”og.png” alt=”Heario — AI Copilot for Meetings” class=”hero-img” width=”1200” height=”630” />
     </div>
   </div>
 </section>
