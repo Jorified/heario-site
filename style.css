@@ -565,7 +565,7 @@ h1 {
 }
 
 /* ── HERO MIC ICON ── */
-.hero-mic { width: 160px; height: auto; display: block; margin: 0 auto 8px; }
+.hero-mic { width: 480px; max-width: 90vw; height: auto; display: block; margin: 0 auto 16px; }
 
 /* ── MOCKUP: glow, float, glass ── */
 .mockup {

@@ -1,10 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="470 155 260 140" width="260" height="140" role="img">
-<title>Heario mic icon</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="360 165 480 300" width="480" height="300" role="img">
+<title>Heario — AI Copilot for Meetings</title>
 <defs>
   <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
     <stop offset="0%" stop-color="#4f8ef7"/>
     <stop offset="50%" stop-color="#7fd1ff"/>
     <stop offset="100%" stop-color="#a855f7"/>
+  </linearGradient>
+  <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#ffffff"/>
+    <stop offset="40%" stop-color="#cfe0ff"/>
+    <stop offset="80%" stop-color="#7fd1ff"/>
+    <stop offset="100%" stop-color="#ffffff"/>
   </linearGradient>
   <filter id="glow">
     <feGaussianBlur stdDeviation="3" result="blur"/>
@@ -27,15 +33,15 @@
 <!-- Left sound waves -->
 <g filter="url(#glow)" fill="none" stroke="#4f8ef7" stroke-linecap="round">
   <path d="M 536 228 Q 524 243 536 258" stroke-width="2.5">
-    <animate attributeName="stroke-opacity" values="0.85;0.4;0.85"   dur="1.4s" begin="0s"    repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values="0.85;0.4;0.85"  dur="1.4s" begin="0s"    repeatCount="indefinite"/>
     <animate attributeName="d"             values="M 536 228 Q 524 243 536 258;M 534 225 Q 520 243 534 261;M 536 228 Q 524 243 536 258" dur="1.4s" begin="0s" repeatCount="indefinite"/>
   </path>
   <path d="M 520 215 Q 500 243 520 271" stroke-width="2">
-    <animate attributeName="stroke-opacity" values="0.55;0.22;0.55"  dur="1.4s" begin="0.18s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values="0.55;0.22;0.55" dur="1.4s" begin="0.18s" repeatCount="indefinite"/>
     <animate attributeName="d"             values="M 520 215 Q 500 243 520 271;M 517 210 Q 494 243 517 276;M 520 215 Q 500 243 520 271" dur="1.4s" begin="0.18s" repeatCount="indefinite"/>
   </path>
   <path d="M 504 202 Q 478 243 504 284" stroke-width="1.5">
-    <animate attributeName="stroke-opacity" values="0.3;0.1;0.3"     dur="1.4s" begin="0.36s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values="0.3;0.1;0.3"    dur="1.4s" begin="0.36s" repeatCount="indefinite"/>
     <animate attributeName="d"             values="M 504 202 Q 478 243 504 284;M 500 196 Q 470 243 500 290;M 504 202 Q 478 243 504 284" dur="1.4s" begin="0.36s" repeatCount="indefinite"/>
   </path>
 </g>
@@ -43,16 +49,29 @@
 <!-- Right sound waves -->
 <g filter="url(#glow)" fill="none" stroke="#7fd1ff" stroke-linecap="round">
   <path d="M 664 228 Q 676 243 664 258" stroke-width="2.5">
-    <animate attributeName="stroke-opacity" values="0.85;0.4;0.85"   dur="1.4s" begin="0s"    repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values="0.85;0.4;0.85"  dur="1.4s" begin="0s"    repeatCount="indefinite"/>
     <animate attributeName="d"             values="M 664 228 Q 676 243 664 258;M 666 225 Q 680 243 666 261;M 664 228 Q 676 243 664 258" dur="1.4s" begin="0s" repeatCount="indefinite"/>
   </path>
   <path d="M 680 215 Q 700 243 680 271" stroke-width="2">
-    <animate attributeName="stroke-opacity" values="0.55;0.22;0.55"  dur="1.4s" begin="0.18s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values="0.55;0.22;0.55" dur="1.4s" begin="0.18s" repeatCount="indefinite"/>
     <animate attributeName="d"             values="M 680 215 Q 700 243 680 271;M 683 210 Q 706 243 683 276;M 680 215 Q 700 243 680 271" dur="1.4s" begin="0.18s" repeatCount="indefinite"/>
   </path>
   <path d="M 696 202 Q 722 243 696 284" stroke-width="1.5">
-    <animate attributeName="stroke-opacity" values="0.3;0.1;0.3"     dur="1.4s" begin="0.36s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values="0.3;0.1;0.3"    dur="1.4s" begin="0.36s" repeatCount="indefinite"/>
     <animate attributeName="d"             values="M 696 202 Q 722 243 696 284;M 700 196 Q 730 243 700 290;M 696 202 Q 722 243 696 284" dur="1.4s" begin="0.36s" repeatCount="indefinite"/>
   </path>
 </g>
+
+<!-- Title -->
+<text x="600" y="336" text-anchor="middle" font-family="'Space Grotesk','Sora',system-ui,sans-serif" font-size="82" font-weight="800" letter-spacing="-3" fill="url(#titleGrad)">Heario</text>
+<line x1="440" y1="354" x2="760" y2="354" stroke="url(#waveGrad)" stroke-width="1" stroke-opacity="0.5"/>
+<text x="600" y="390" text-anchor="middle" font-family="'Sora',system-ui,sans-serif" font-size="22" font-weight="400" fill="#7fd1ff" letter-spacing="0.5" fill-opacity="0.9">AI Copilot for Meetings &amp; Interviews</text>
+
+<!-- Stat pills -->
+<rect x="380" y="416" width="130" height="34" rx="17" fill="#4f8ef7" fill-opacity="0.12" stroke="#4f8ef7" stroke-opacity="0.35" stroke-width="1"/>
+<text x="445" y="438" text-anchor="middle" font-family="'Sora',system-ui,sans-serif" font-size="13" font-weight="600" fill="#7fd1ff">&#9889; &lt;300ms</text>
+<rect x="535" y="416" width="130" height="34" rx="17" fill="#a855f7" fill-opacity="0.12" stroke="#a855f7" stroke-opacity="0.35" stroke-width="1"/>
+<text x="600" y="438" text-anchor="middle" font-family="'Sora',system-ui,sans-serif" font-size="13" font-weight="600" fill="#c084fc">&#128737; Undetectable</text>
+<rect x="690" y="416" width="130" height="34" rx="17" fill="#5fb85f" fill-opacity="0.12" stroke="#5fb85f" stroke-opacity="0.35" stroke-width="1"/>
+<text x="755" y="438" text-anchor="middle" font-family="'Sora',system-ui,sans-serif" font-size="13" font-weight="600" fill="#86efac">&#127992; Windows</text>
 </svg>
