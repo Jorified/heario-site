@@ -17,3 +17,7 @@ Thumbs.db
 
 # Video assets (served from GitHub Releases)
 *.mp4
+
+node_modules/
+package.json
+package-lock.json
