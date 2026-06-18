@@ -68,7 +68,7 @@
 <!-- Title -->
 <text x="600" y="336" text-anchor="middle" font-family="'Space Grotesk','Sora',system-ui,sans-serif" font-size="82" font-weight="800" letter-spacing="-3" fill="url(#titleGrad)">Heario</text>
 <line x1="440" y1="354" x2="760" y2="354" stroke="url(#waveGrad)" stroke-width="1" stroke-opacity="0.5"/>
-<text x="600" y="390" text-anchor="middle" font-family="'Sora',system-ui,sans-serif" font-size="22" font-weight="400" fill="#7fd1ff" letter-spacing="0.5" fill-opacity="0.9">AI Copilot for Meetings &amp; Interviews</text>
+<text x="600" y="390" text-anchor="middle" font-family="'Sora',system-ui,sans-serif" font-size="22" font-weight="400" fill="#7fd1ff" letter-spacing="0.5" fill-opacity="0.9">Your secret weapon.</text>
 
 <!-- Stat pills -->
 <rect x="380" y="416" width="130" height="34" rx="17" fill="#4f8ef7" fill-opacity="0.12" stroke="#4f8ef7" stroke-opacity="0.35" stroke-width="1"/>
