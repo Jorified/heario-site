@@ -290,7 +290,7 @@
 
   <link rel="manifest" href="manifest.json" />
 
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=2" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
 
@@ -580,17 +580,192 @@
 
 
 
-<!-- WHAT'S NEW -->
+<!-- WHAT'S NEW · SHOWROOM -->
 
-<section class="whats-new" id="whats-new">
+<section class="showroom" id="whats-new">
   <div class="section-inner">
 
     <p class="wn-eyebrow reveal" data-d="1">✦ v1.2 · Just Shipped</p>
-    <h2 class="reveal" data-d="2">8 New Features</h2>
-    <p class="section-sub reveal" data-d="3">Everything you asked for. Shipped.</p>
+    <h2 class="reveal" data-d="2">Eight reasons to update</h2>
+    <p class="section-sub reveal" data-d="3">A whole new layer of control — type, switch, brief, and go fully offline. Watch each one work, live.</p>
 
-    <div class="wn-ticker reveal" data-d="4">
+    <div class="showroom-stage reveal" data-d="4">
 
+      <!-- LEFT · feature rail -->
+      <div class="sr-rail" role="tablist" aria-label="New features">
+
+        <button class="sr-tab active" data-i="0" style="--c:#4f8ef7" role="tab">
+          <span class="sr-ic">⌨</span>
+          <span class="sr-meta"><strong>Type to Ask</strong><em>Manual question input</em></span>
+          <span class="sr-prog"><i></i></span>
+        </button>
+
+        <button class="sr-tab" data-i="1" style="--c:#9b7ef7" role="tab">
+          <span class="sr-ic">🧠</span>
+          <span class="sr-meta"><strong>GPT-4o + Claude</strong><em>Bring either brain</em></span>
+          <span class="sr-prog"><i></i></span>
+        </button>
+
+        <button class="sr-tab" data-i="2" style="--c:#5fb85f" role="tab">
+          <span class="sr-ic">📐</span>
+          <span class="sr-meta"><strong>Answer Length</strong><em>Brief → Detailed</em></span>
+          <span class="sr-prog"><i></i></span>
+        </button>
+
+        <button class="sr-tab" data-i="3" style="--c:#f5bf4f" role="tab">
+          <span class="sr-ic">🤫</span>
+          <span class="sr-meta"><strong>Auto-Pause</strong><em>Knows when you talk</em></span>
+          <span class="sr-prog"><i></i></span>
+        </button>
+
+        <button class="sr-tab" data-i="4" style="--c:#5fd1ff" role="tab">
+          <span class="sr-ic">📤</span>
+          <span class="sr-meta"><strong>Session Export</strong><em>PDF &amp; .txt</em></span>
+          <span class="sr-prog"><i></i></span>
+        </button>
+
+        <button class="sr-tab" data-i="5" style="--c:#e06fc8" role="tab">
+          <span class="sr-ic">🔍</span>
+          <span class="sr-meta"><strong>Company Briefing</strong><em>Auto-researched</em></span>
+          <span class="sr-prog"><i></i></span>
+        </button>
+
+        <button class="sr-tab" data-i="6" style="--c:#3bc9d1" role="tab">
+          <span class="sr-ic">🔌</span>
+          <span class="sr-meta"><strong>Works Offline</strong><em>Zero signup</em></span>
+          <span class="sr-prog"><i></i></span>
+        </button>
+
+        <button class="sr-tab" data-i="7" style="--c:#f0883e" role="tab">
+          <span class="sr-ic">🎙</span>
+          <span class="sr-meta"><strong>Three STT Options</strong><em>Auto-selected</em></span>
+          <span class="sr-prog"><i></i></span>
+        </button>
+
+      </div>
+
+      <!-- RIGHT · live stage -->
+      <div class="sr-screen">
+        <div class="sr-bar">
+          <span class="sr-dots"><i></i><i></i><i></i></span>
+          <span class="sr-status"><i class="sr-live"></i> <span class="sr-status-tx">listening</span></span>
+          <span class="sr-brand">Heario</span>
+        </div>
+
+        <div class="sr-stagewrap">
+
+          <!-- 0 · Type to Ask -->
+          <div class="sr-panel active" data-i="0" style="--c:#4f8ef7">
+            <div class="sp-askbar">
+              <span class="sp-ask-ic">⌨</span>
+              <span class="sp-ask-text">How does a bloom filter work?</span>
+              <span class="sp-send">↵</span>
+            </div>
+            <div class="sp-answer">
+              <span class="sp-conf">C5</span>
+              <p>A bloom filter is a space-efficient probabilistic set. It answers "definitely not present" or "possibly present" using a bit array and <em>k</em> hash functions — no false negatives, tunable false positives.</p>
+            </div>
+            <div class="sp-foot">Typed by you · answered in 280&nbsp;ms</div>
+          </div>
+
+          <!-- 1 · GPT-4o + Claude -->
+          <div class="sr-panel" data-i="1" style="--c:#9b7ef7">
+            <div class="sp-switch" data-p="claude">
+              <span class="sp-opt sp-opt-a">Claude</span>
+              <span class="sp-opt sp-opt-b">GPT-4o</span>
+              <i class="sp-switch-ind"></i>
+            </div>
+            <div class="sp-prov">
+              <div class="sp-badges">
+                <span class="sp-badge sp-badge-a">claude-opus-4.8</span>
+                <span class="sp-badge sp-badge-b">gpt-4o</span>
+              </div>
+              <p>One interface, your choice of brain. Drop in either key — switch mid-session, no restart.</p>
+            </div>
+            <div class="sp-foot">Provider · live swap</div>
+          </div>
+
+          <!-- 2 · Answer Length -->
+          <div class="sr-panel" data-i="2" style="--c:#5fb85f">
+            <div class="sp-seg">
+              <span class="sp-seg-o">Brief</span><span class="sp-seg-o">Normal</span><span class="sp-seg-o">Detailed</span>
+              <i class="sp-seg-ind"></i>
+            </div>
+            <div class="sp-len">
+              <p class="sp-len-l l1">Use a queue to decouple writes.</p>
+              <p class="sp-len-l l2">Use a queue to decouple writes from reads, so spikes drain smoothly instead of overwhelming the DB.</p>
+              <p class="sp-len-l l3">Use a queue to decouple writes from reads, so traffic spikes drain smoothly. Add idempotency keys, a dead-letter queue for poison messages, and back-pressure so producers slow when consumers lag.</p>
+            </div>
+            <div class="sp-foot">One key cycles the depth</div>
+          </div>
+
+          <!-- 3 · Auto-Pause -->
+          <div class="sr-panel" data-i="3" style="--c:#f5bf4f">
+            <div class="sp-wave">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+            <div class="sp-pause-state">
+              <span class="sp-st sp-st-them"><i></i> Interviewer speaking — answering</span>
+              <span class="sp-st sp-st-you"><i></i> You're speaking — holding the answer</span>
+            </div>
+            <div class="sp-foot">Diarization-aware · never interrupts</div>
+          </div>
+
+          <!-- 4 · Session Export -->
+          <div class="sr-panel" data-i="4" style="--c:#5fd1ff">
+            <div class="sp-doc">
+              <span class="sp-doc-line"><b>00:14</b> Decision: token-bucket rate limiting</span>
+              <span class="sp-doc-line"><b>02:47</b> Action: benchmark Redis vs in-memory</span>
+              <span class="sp-doc-line"><b>05:03</b> Key moment: candidate proposed sharding</span>
+            </div>
+            <div class="sp-chips">
+              <span class="sp-chip">📄 session.pdf</span>
+              <span class="sp-chip">📄 session.txt</span>
+            </div>
+            <div class="sp-foot">Exported automatically at session end</div>
+          </div>
+
+          <!-- 5 · Company Briefing -->
+          <div class="sr-panel" data-i="5" style="--c:#e06fc8">
+            <div class="sp-field"><span class="sp-field-ic">🔍</span><span class="sp-field-tx">Stripe</span><span class="sp-field-spin"></span></div>
+            <ul class="sp-brief">
+              <li><b>Industry</b> — payments infrastructure for the internet</li>
+              <li><b>Stage</b> — late-stage private, ~$95B valuation</li>
+              <li><b>Recent</b> — expanded into billing, tax &amp; issuing</li>
+              <li><b>Values</b> — rigor, low ego, "developers first"</li>
+            </ul>
+            <div class="sp-foot">Injected into your AI context</div>
+          </div>
+
+          <!-- 6 · Works Offline -->
+          <div class="sr-panel" data-i="6" style="--c:#3bc9d1">
+            <div class="sp-net">
+              <span class="sp-cloud">☁ Cloud STT <i class="sp-x">✕</i></span>
+              <span class="sp-arrow">→</span>
+              <span class="sp-local">🔌 Local Whisper <i class="sp-on"></i></span>
+            </div>
+            <div class="sp-offline-tx"><span class="sp-otx">and that's how I'd scale it.</span></div>
+            <div class="sp-foot">No internet · no signup · no per-minute spend</div>
+          </div>
+
+          <!-- 7 · Three STT Options -->
+          <div class="sr-panel" data-i="7" style="--c:#f0883e">
+            <div class="sp-engines">
+              <div class="sp-engine" data-k="dg"><span class="sp-eng-n">Deepgram</span><span class="sp-eng-t">streaming · diarized</span><span class="sp-eng-pick">selected</span></div>
+              <div class="sp-engine" data-k="oai"><span class="sp-eng-n">OpenAI Whisper</span><span class="sp-eng-t">cloud · your key</span><span class="sp-eng-pick">selected</span></div>
+              <div class="sp-engine" data-k="loc"><span class="sp-eng-n">Local Whisper</span><span class="sp-eng-t">offline · free</span><span class="sp-eng-pick">selected</span></div>
+              <i class="sp-scan"></i>
+            </div>
+            <div class="sp-foot"><b>Auto</b> picks the best key you have — or override it</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ambient footer ticker -->
+    <div class="wn-ticker reveal" data-d="4" aria-hidden="true">
       <div class="wn-track wn-track--fwd">
         <div class="wn-items">
           <span class="wn-item">⌨ Type to Ask</span>
@@ -600,7 +775,7 @@
           <span class="wn-item">📤 Session Export</span>
           <span class="wn-item">🔍 Company Briefing</span>
           <span class="wn-item">🔌 Works Offline</span>
-          <span class="wn-item">🎙 Three STT Modes</span>
+          <span class="wn-item">🎙 Three STT Options</span>
         </div>
         <div class="wn-items" aria-hidden="true">
           <span class="wn-item">⌨ Type to Ask</span>
@@ -610,101 +785,9 @@
           <span class="wn-item">📤 Session Export</span>
           <span class="wn-item">🔍 Company Briefing</span>
           <span class="wn-item">🔌 Works Offline</span>
-          <span class="wn-item">🎙 Three STT Modes</span>
+          <span class="wn-item">🎙 Three STT Options</span>
         </div>
       </div>
-
-      <div class="wn-track wn-track--rev">
-        <div class="wn-items">
-          <span class="wn-item">🤫 Auto-Pause</span>
-          <span class="wn-item">🔌 Works Offline</span>
-          <span class="wn-item">📤 Session Export</span>
-          <span class="wn-item">⌨ Type to Ask</span>
-          <span class="wn-item">🎙 Three STT Modes</span>
-          <span class="wn-item">🧠 GPT-4o + Claude</span>
-          <span class="wn-item">🔍 Company Briefing</span>
-          <span class="wn-item">📐 Answer Length</span>
-        </div>
-        <div class="wn-items" aria-hidden="true">
-          <span class="wn-item">🤫 Auto-Pause</span>
-          <span class="wn-item">🔌 Works Offline</span>
-          <span class="wn-item">📤 Session Export</span>
-          <span class="wn-item">⌨ Type to Ask</span>
-          <span class="wn-item">🎙 Three STT Modes</span>
-          <span class="wn-item">🧠 GPT-4o + Claude</span>
-          <span class="wn-item">🔍 Company Briefing</span>
-          <span class="wn-item">📐 Answer Length</span>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="wn-grid">
-
-      <article class="wn-card reveal" data-d="1"
-        style="--card-c:rgba(79,142,247,.2);--dot-c:#4f8ef7;--icon-bg:rgba(79,142,247,.1);--icon-bd:rgba(79,142,247,.25)">
-        <span class="wn-dot"></span>
-        <div class="wn-icon">⌨</div>
-        <h4>Type to Ask</h4>
-        <p>Manual question input — type anything the mic missed and get an instant AI answer.</p>
-      </article>
-
-      <article class="wn-card reveal" data-d="2"
-        style="--card-c:rgba(217,139,58,.2);--dot-c:#d98b3a;--icon-bg:rgba(217,139,58,.1);--icon-bd:rgba(217,139,58,.25)">
-        <span class="wn-dot"></span>
-        <div class="wn-icon">🧠</div>
-        <h4>GPT-4o + Claude</h4>
-        <p>Both providers, both keys — switch live without restarting. Double the addressable models.</p>
-      </article>
-
-      <article class="wn-card reveal" data-d="3"
-        style="--card-c:rgba(95,184,95,.2);--dot-c:#5fb85f;--icon-bg:rgba(95,184,95,.1);--icon-bd:rgba(95,184,95,.25)">
-        <span class="wn-dot"></span>
-        <div class="wn-icon">📐</div>
-        <h4>Answer Length</h4>
-        <p>Brief soundbite, normal answer, or full breakdown — toggle mid-session with one key.</p>
-      </article>
-
-      <article class="wn-card reveal" data-d="4"
-        style="--card-c:rgba(155,126,247,.2);--dot-c:#9b7ef7;--icon-bg:rgba(155,126,247,.1);--icon-bd:rgba(155,126,247,.25)">
-        <span class="wn-dot"></span>
-        <div class="wn-icon">🤫</div>
-        <h4>Auto-Pause</h4>
-        <p>Detects when you speak and suppresses new answers. No AI interruptions mid-sentence.</p>
-      </article>
-
-      <article class="wn-card reveal" data-d="5"
-        style="--card-c:rgba(59,201,209,.2);--dot-c:#3bc9d1;--icon-bg:rgba(59,201,209,.1);--icon-bd:rgba(59,201,209,.25)">
-        <span class="wn-dot"></span>
-        <div class="wn-icon">📤</div>
-        <h4>Session Export</h4>
-        <p>Save the full transcript and AI answers as PDF or .txt after every session.</p>
-      </article>
-
-      <article class="wn-card reveal" data-d="6"
-        style="--card-c:rgba(224,111,200,.2);--dot-c:#e06fc8;--icon-bg:rgba(224,111,200,.1);--icon-bd:rgba(224,111,200,.25)">
-        <span class="wn-dot"></span>
-        <div class="wn-icon">🔍</div>
-        <h4>Company Briefing</h4>
-        <p>Type the company name — Heario researches it and injects a brief into your AI context.</p>
-      </article>
-
-      <article class="wn-card reveal" data-d="7"
-        style="--card-c:rgba(95,209,255,.2);--dot-c:#5fd1ff;--icon-bg:rgba(95,209,255,.1);--icon-bd:rgba(95,209,255,.25)">
-        <span class="wn-dot"></span>
-        <div class="wn-icon">🔌</div>
-        <h4>Works Offline</h4>
-        <p>Local Whisper transcription — zero signup, no cloud, no per-minute spend. Just works.</p>
-      </article>
-
-      <article class="wn-card reveal" data-d="8"
-        style="--card-c:rgba(245,191,79,.2);--dot-c:#f5bf4f;--icon-bg:rgba(245,191,79,.1);--icon-bd:rgba(245,191,79,.25)">
-        <span class="wn-dot"></span>
-        <div class="wn-icon">🎙</div>
-        <h4>Three STT Options</h4>
-        <p>Deepgram, OpenAI Whisper, or local — auto-selected by your keys, manually overrideable.</p>
-      </article>
-
     </div>
 
   </div>
@@ -1398,7 +1481,7 @@
 
 
 
-<script src="app.js"></script>
+<script src="app.js?v=4"></script>
 
 </body>
 

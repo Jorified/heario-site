@@ -31,7 +31,7 @@ const nav = document.querySelector('.nav');
 const stickyCta = document.getElementById('stickyCta');
 const heroSection = document.querySelector('.hero');
 const onScroll = () => {
-  nav.classList.toggle('scrolled', window.scrollY > 8);
+  if (nav) nav.classList.toggle('scrolled', window.scrollY > 8);
   if (stickyCta && heroSection) {
     stickyCta.classList.toggle('visible', window.scrollY > heroSection.offsetHeight);
   }
@@ -247,3 +247,48 @@ if (answerEl) {
   }, { threshold: 0.4 });
   obs.observe(answerEl);
 }
+
+// ── Showroom: interactive feature stage ──────────────────────────────────
+// Auto-advances through the 8 feature panels. Advancement is driven off the
+// active tab's progress-bar animationend, so motion, progress, and timing
+// stay perfectly in sync — and a single CSS :hover pause freezes all three.
+(() => {
+  const stage = document.querySelector('.showroom-stage');
+  if (!stage) return;
+  const tabs   = [...stage.querySelectorAll('.sr-tab')];
+  const panels = [...stage.querySelectorAll('.sr-panel')];
+  const screen = stage.querySelector('.sr-screen');
+  const statusTx = stage.querySelector('.sr-status-tx');
+  if (!tabs.length || tabs.length !== panels.length) return;
+
+  // status text shown in the stage title-bar per feature
+  const STATUS = ['listening', 'answering', 'answering', 'listening',
+                  'exporting', 'researching', 'offline · local', 'auto-selecting'];
+  let idx = 0;
+
+  const setActive = (i) => {
+    idx = (i + tabs.length) % tabs.length;
+    tabs.forEach((t, k)   => t.classList.toggle('active', k === idx));
+    panels.forEach((p, k) => p.classList.toggle('active', k === idx));
+    // retint the whole screen (glow + live dot) to the active feature colour
+    const c = (tabs[idx].style.getPropertyValue('--c') || '#4f8ef7').trim();
+    if (screen) screen.style.setProperty('--c', c);
+    if (statusTx) statusTx.textContent = STATUS[idx] || 'listening';
+  };
+
+  // advance the moment the active tab's progress bar finishes filling
+  stage.addEventListener('animationend', (e) => {
+    if (e.animationName === 'srProg') setActive(idx + 1);
+  });
+
+  // click any tab to jump straight to it
+  tabs.forEach((t, i) => t.addEventListener('click', () => setActive(i)));
+
+  // only run while the stage is on-screen (pauses + resets when scrolled away)
+  const io = new IntersectionObserver((es) => {
+    es.forEach(en => stage.classList.toggle('running', en.isIntersecting));
+  }, { threshold: 0.25 });
+  io.observe(stage);
+
+  setActive(0);
+})();
