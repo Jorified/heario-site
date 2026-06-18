@@ -1,600 +1,1414 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Heario — AI Interview Copilot: Real-Time Answers in Meetings</title>
-  <meta name="description" content="Heario is an undetectable AI copilot that gives you real-time answers during interviews and meetings — under 300ms, invisible to Zoom, Teams, and Google Meet. Free on Windows." />
+
+  <title>Heario � AI Interview Copilot: Real-Time Answers in Meetings</title>
+
+  <meta name="description" content="Heario is an undetectable AI copilot that gives you real-time answers during interviews and meetings � under 300ms, invisible to Zoom, Teams, and Google Meet. Free on Windows." />
+
   <link rel="canonical" href="https://heario-site.vercel.app/" />
 
+
+
   <!-- Open Graph -->
+
   <meta property="og:site_name" content="Heario" />
-  <meta property="og:title" content="Heario — Undetectable AI Copilot for Interviews &amp; Meetings" />
+
+  <meta property="og:title" content="Heario � Undetectable AI Copilot for Interviews &amp; Meetings" />
+
   <meta property="og:description" content="Real-time AI answers in your interviews and meetings. Completely undetectable by Zoom, Teams &amp; Google Meet. Under 300ms. Free on Windows." />
+
   <meta property="og:image" content="https://heario-site.vercel.app/og.png" />
+
   <meta property="og:image:width" content="1200" />
+
   <meta property="og:image:height" content="630" />
+
   <meta property="og:url" content="https://heario-site.vercel.app/" />
+
   <meta property="og:type" content="website" />
 
+
+
   <!-- Twitter Card -->
+
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Heario — Undetectable AI Copilot for Interviews &amp; Meetings" />
+
+  <meta name="twitter:title" content="Heario � Undetectable AI Copilot for Interviews &amp; Meetings" />
+
   <meta name="twitter:description" content="Real-time AI answers in your interviews and meetings. Under 300ms. Invisible to Zoom, Teams &amp; Google Meet." />
+
   <meta name="twitter:image" content="https://heario-site.vercel.app/og.png" />
 
+
+
   <!-- JSON-LD: SoftwareApplication -->
+
   <script type="application/ld+json">
+
   {
+
     "@context": "https://schema.org",
+
     "@type": "SoftwareApplication",
+
     "name": "Heario",
+
     "description": "Real-time AI copilot for interviews and meetings. Provides undetectable, sub-300ms AI answers during live Zoom, Teams, and Google Meet calls on Windows.",
+
     "applicationCategory": "BusinessApplication",
+
     "operatingSystem": "Windows",
+
     "offers": [
+
       {
+
         "@type": "Offer",
+
         "price": "0",
+
         "priceCurrency": "USD",
+
         "name": "Free Trial"
+
       },
+
       {
+
         "@type": "Offer",
+
         "price": "8",
+
         "priceCurrency": "USD",
+
         "name": "Standard",
+
         "billingIncrement": "P1M"
+
       },
+
       {
+
         "@type": "Offer",
+
         "price": "15",
+
         "priceCurrency": "USD",
+
         "name": "Pro",
+
         "billingIncrement": "P1M"
+
       }
+
     ],
+
     "aggregateRating": {
+
       "@type": "AggregateRating",
+
       "ratingValue": "5",
+
       "ratingCount": "3"
+
     },
+
     "url": "https://heario-site.vercel.app/",
-    "downloadUrl": "https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario_0.1.0_x64-setup.exe",
+
+    "downloadUrl": "https://github.com/Jorified/heario-app/releases/download/v0.1.1/Heario_0.1.1_x64-setup.exe",
+
     "softwareVersion": "0.1.0",
+
     "screenshot": "https://heario-site.vercel.app/og.png"
+
   }
+
   </script>
+
+
 
   <!-- JSON-LD: FAQPage -->
+
   <script type="application/ld+json">
+
   {
+
     "@context": "https://schema.org",
+
     "@type": "FAQPage",
+
     "mainEntity": [
+
       {
+
         "@type": "Question",
+
         "name": "Will Zoom / Teams / Google Meet detect Heario?",
+
         "acceptedAnswer": {
+
           "@type": "Answer",
-          "text": "No. Heario's overlay uses SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE) — a Windows OS-level flag that excludes the window from all screen-capture pipelines before the frame ever reaches Zoom's encoder. The interviewer's screen share sees nothing."
+
+          "text": "No. Heario's overlay uses SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE) � a Windows OS-level flag that excludes the window from all screen-capture pipelines before the frame ever reaches Zoom's encoder. The interviewer's screen share sees nothing."
+
         }
+
       },
+
       {
+
         "@type": "Question",
+
         "name": "Does Heario join the call as a bot?",
+
         "acceptedAnswer": {
+
           "@type": "Answer",
+
           "text": "Never. Heario runs entirely on your local machine. There is no bot, no browser extension injected into the call, and no third-party service that touches your meeting. It listens to your speaker output using a standard Windows audio loopback."
+
         }
+
       },
+
       {
+
         "@type": "Question",
+
         "name": "How fast are Heario's AI answers?",
+
         "acceptedAnswer": {
+
           "@type": "Answer",
-          "text": "Deepgram's streaming STT delivers a transcript in under 300ms from when the interviewer finishes speaking. Claude then streams the answer token-by-token — you start reading within a second. Total time from question to first word on screen is typically 1–2 seconds."
+
+          "text": "Deepgram's streaming STT delivers a transcript in under 300ms from when the interviewer finishes speaking. Claude then streams the answer token-by-token � you start reading within a second. Total time from question to first word on screen is typically 1�2 seconds."
+
         }
+
       },
+
       {
+
         "@type": "Question",
+
         "name": "Can I use my own OpenAI or Claude API key with Heario?",
+
         "acceptedAnswer": {
+
           "@type": "Answer",
-          "text": "Yes. Bring your own API keys for OpenAI (GPT-4o) or Anthropic (Claude) in the .env file and you pay only the model's API rate — no markup. Or use the managed plan and we handle keys, rate limits, and billing."
+
+          "text": "Yes. Bring your own API keys for OpenAI (GPT-4o) or Anthropic (Claude) in the .env file and you pay only the model's API rate � no markup. Or use the managed plan and we handle keys, rate limits, and billing."
+
         }
+
       },
+
       {
+
         "@type": "Question",
+
         "name": "Does Heario work on Mac?",
+
         "acceptedAnswer": {
+
           "@type": "Answer",
+
           "text": "Currently Windows-only. The undetectable overlay relies on SetWindowDisplayAffinity, a Windows-exclusive API. Mac support is on the roadmap."
+
         }
+
+      },
+
+      {
+
+        "@type": "Question",
+
+        "name": "What does the Web Search button do?",
+
+        "acceptedAnswer": {
+
+          "@type": "Answer",
+
+          "text": "When enabled, Heario searches the web before generating each answer so Claude has access to current information. It works out of the box with no setup using DuckDuckGo. Adding a free Tavily API key in Settings upgrades to higher-quality AI-optimised results automatically."
+
+        }
+
+      },
+
+      {
+
+        "@type": "Question",
+
+        "name": "What are the 7 modes and when should I use them?",
+
+        "acceptedAnswer": {
+
+          "@type": "Answer",
+
+          "text": "Each mode tells the AI how to respond for a different situation: Technical Interview for coding and system questions, Behavioral for STAR-method answers, Sales for objection handling, Lecture for note-taking, Recruiting to coach the interviewer side, System Design for architecture hints, and Mock Interview for tough coaching before a real interview. Switch instantly with the mode button or by pressing M."
+
+        }
+
+      },
+
+      {
+
+        "@type": "Question",
+
+        "name": "Microphone or System Audio — which should I use?",
+
+        "acceptedAnswer": {
+
+          "@type": "Answer",
+
+          "text": "Use Microphone for live video calls on Zoom, Teams, or Google Meet. Use System Audio to capture anything playing through your speakers, like a YouTube mock interview or a recorded call. Switch between them in Settings without restarting the app."
+
+        }
+
       }
+
     ]
+
   }
+
   </script>
 
+
+
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+
   <link rel="apple-touch-icon" href="icon-192.png" />
+
   <link rel="manifest" href="manifest.json" />
+
   <link rel="stylesheet" href="style.css" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
 </head>
+
 <body>
 
+
+
 <!-- ANNOUNCEMENT BAR -->
+
 <div class="announce-bar" id="announceBar">
-  <span>🚀 Heario v0.1.0 just launched — </span>
-  <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario_0.1.0_x64-setup.exe" target="_blank" rel="noopener">Download free for Windows →</a>
-  <button class="announce-close" onclick="this.parentElement.style.display='none'" aria-label="Dismiss">✕</button>
+
+  <span>🚀 Heario v0.1.1 just launched � </span>
+
+  <a href=�https://github.com/Jorified/heario-app/releases/download/v0.1.1/Heario_0.1.1_x64-setup.exe� target=�_blank� rel=�noopener�>Download free for Windows →</a>
+
+  <button class=�announce-close� onclick=�this.parentElement.style.display=�none�� aria-label=�Dismiss�>✕</button>
+
 </div>
 
+
+
 <!-- GLOBAL ANIMATED BACKDROP (covers the whole page) -->
+
 <div class="site-bg" aria-hidden="true">
+
   <canvas class="particle-canvas-global"></canvas>
+
   <div class="g-aurora g-aurora-1"></div>
+
   <div class="g-aurora g-aurora-2"></div>
+
   <div class="g-aurora g-aurora-3"></div>
+
   <div class="g-aurora g-aurora-4"></div>
+
 </div>
+
+
+
 
 
 <!-- HERO -->
+
 <section class="hero">
+
   <div class="hero-bg" aria-hidden="true">
+
     <div class="beam beam-1"></div>
+
     <div class="beam beam-2"></div>
+
     <div class="beam beam-3"></div>
+
     <div class="conic-glow"></div>
+
     <div class="geo-ring geo-ring-1"></div>
+
     <div class="geo-ring geo-ring-2"></div>
+
     <div class="geo-ring geo-ring-3"></div>
+
     <div class="aurora aurora-1"></div>
+
     <div class="aurora aurora-2"></div>
+
     <div class="aurora aurora-3"></div>
+
     <div class="aurora aurora-4"></div>
+
     <div class="hero-grid"></div>
+
     <div class="scanline"></div>
-  </div>
-  <div class="hero-inner">
-    <div class="pill">🚀 Heario v0.1.0 — Free for Windows</div>
-    <img src="og.svg" alt="Heario mic icon" class="hero-mic" />
-    <h1>AI Copilot for<br/>Interviews &amp; Meetings</h1>
-    <p class="hero-sub">Heario takes perfect meeting notes and gives real-time answers, all while completely undetectable.</p>
-    <div class="hero-actions">
-      <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario_0.1.0_x64-setup.exe" target="_blank" rel="noopener" class="btn-primary">Download for Windows</a>
-      <a href="#features" class="btn-ghost">See how it works →</a>
-    </div>
-    <div class="hero-stats">
-      <div class="stat"><span class="stat-n">300ms</span><span class="stat-l">Response time</span></div>
-      <div class="stat-div"></div>
-      <div class="stat"><span class="stat-n">95%</span><span class="stat-l">Transcription accuracy</span></div>
-      <div class="stat-div"></div>
-      <div class="stat"><span class="stat-n">100%</span><span class="stat-l">Undetectable</span></div>
-    </div>
-    <div class="download-tracker">
-      <span class="dl-count" id="dlCount">1+</span>
-      <span class="dl-label">Downloads — <em>Live Tracker · Watch it go up as you become a Heario</em></span>
-    </div>
 
   </div>
+
+  <div class="hero-inner">
+
+    <div class=�pill�>🚀 Heario v0.1.1 � Free for Windows</div>
+
+    <img src="og.svg" alt="Heario mic icon" class="hero-mic" />
+
+    <h1>AI Copilot for<br/>Interviews &amp; Meetings</h1>
+
+    <p class="hero-sub">Heario takes perfect meeting notes and gives real-time answers, all while completely undetectable.</p>
+
+    <div class="hero-actions">
+
+      <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.1/Heario_0.1.1_x64-setup.exe" target="_blank" rel="noopener" class="btn-primary">Download for Windows</a>
+
+      <a href="#features" class="btn-ghost">See how it works →</a>
+
+    </div>
+
+    <div class="hero-stats">
+
+      <div class="stat"><span class="stat-n">300ms</span><span class="stat-l">Response time</span></div>
+
+      <div class="stat-div"></div>
+
+      <div class="stat"><span class="stat-n">95%</span><span class="stat-l">Transcription accuracy</span></div>
+
+      <div class="stat-div"></div>
+
+      <div class="stat"><span class="stat-n">100%</span><span class="stat-l">Undetectable</span></div>
+
+    </div>
+
+    <div class="download-tracker">
+
+      <span class="dl-count" id="dlCount">1+</span>
+
+      <span class="dl-label">Downloads — <em>Live Tracker · Watch it go up as you become a Heario</em></span>
+
+    </div>
+
+
+
+  </div>
+
 </section>
 
+
+
 <!-- DEMO VIDEO -->
+
 <div class="demo-embed-wrap">
+
   <p class="demo-label">See it in action</p>
+
   <div class="demo-embed-inner">
+
     <iframe src="demo.html" class="demo-embed" scrolling="no" allow="autoplay" allowfullscreen></iframe>
+
   </div>
+
 </div>
 
+
+
 <!-- FEATURES -->
+
 <section class="features" id="features">
+
   <div class="section-inner">
+
     <h2>Four Ways We Make Your Meetings Better</h2>
+
     <p class="section-sub">One AI that listens, thinks, and helps — invisibly.</p>
+
+
 
     <div class="bento">
 
+
+
       <!-- A · Real-time Q&A (large, live demo) -->
+
       <article class="bento-card bento-lg reveal" data-d="1">
+
         <div class="bento-head">
+
           <span class="bento-tag">⚡ Core</span>
+
           <h3>Real-time Question Answering</h3>
+
           <p>The right answer, right when you need it — Heario listens, understands, and streams exactly what to say in under 300ms.</p>
+
         </div>
+
         <div class="demo-overlay">
+
           <div class="demo-bar">
+
             <span class="d-dot"></span><span class="d-dot"></span><span class="d-dot"></span>
+
             <span class="demo-status"><i class="live-dot"></i> listening · S0</span>
+
           </div>
+
           <div class="demo-body">
+
             <div class="demo-q">Q: How would you scale this to a million users?</div>
+
             <div class="demo-a" data-type="Shard by tenant, cache hot reads in Redis, and put writes behind a queue. Add read-replicas and a CDN edge for static assets — horizontal all the way."></div>
+
           </div>
+
         </div>
+
       </article>
+
+
 
       <!-- B · Universal LLM (cycling chips) -->
+
       <article class="bento-card reveal" data-d="2">
+
         <div class="bento-tag">🧠 Any model</div>
+
         <h3>Universal LLM Interface</h3>
+
         <p>Bring your own keys or use our managed plan.</p>
+
         <div class="llm-orbit">
+
           <div class="llm-core">AI</div>
+
           <span class="llm-chip" data-i="0">GPT</span>
+
           <span class="llm-chip" data-i="1">Claude</span>
+
           <span class="llm-chip" data-i="2">Gemini</span>
+
         </div>
+
       </article>
+
+
 
       <!-- C · Profile Intelligence (tags light up) -->
+
       <article class="bento-card reveal" data-d="3">
+
         <div class="bento-tag">🎯 Grounded</div>
+
         <h3>Profile Intelligence</h3>
+
         <p>Never generic — always you.</p>
+
         <div class="profile-tags">
+
           <span class="ptag">Résumé</span>
+
           <span class="ptag">Job Description</span>
+
           <span class="ptag">Custom Context</span>
+
           <span class="ptag">Past Answers</span>
+
         </div>
+
       </article>
+
+
 
       <!-- D · Structured Notes (wide, ticking checklist) -->
+
       <article class="bento-card bento-wide reveal" data-d="4">
+
         <div class="bento-head">
-          <span class="bento-tag">📝 Auto-captured</span>
+
+          <span class="bento-tag">� Auto-captured</span>
+
           <h3>Structured Meeting Notes</h3>
+
           <p>Searchable, timestamped notes — action items, decisions and key moments, exported automatically at session end.</p>
+
         </div>
+
         <ul class="notes-list">
+
           <li><span class="note-t">00:14</span><span class="note-check">✓</span> Decision: adopt token-bucket rate limiting</li>
+
           <li><span class="note-t">02:47</span><span class="note-check">✓</span> Action: benchmark Redis vs. in-memory</li>
+
           <li><span class="note-t">05:03</span><span class="note-check">✓</span> Key moment: candidate proposed sharding</li>
+
           <li><span class="note-t">08:21</span><span class="note-check">✓</span> Follow-up: send system-design diagram</li>
+
         </ul>
+
+      </article>
+
+
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- WHAT'S NEW -->
+
+<section class="whats-new" id="whats-new">
+  <div class="section-inner">
+
+    <p class="wn-eyebrow reveal" data-d="1">✦ v1.2 · Just Shipped</p>
+    <h2 class="reveal" data-d="2">8 New Features</h2>
+    <p class="section-sub reveal" data-d="3">Everything you asked for. Shipped.</p>
+
+    <div class="wn-ticker reveal" data-d="4">
+
+      <div class="wn-track wn-track--fwd">
+        <div class="wn-items">
+          <span class="wn-item">⌨ Type to Ask</span>
+          <span class="wn-item">🧠 GPT-4o + Claude</span>
+          <span class="wn-item">📐 Answer Length</span>
+          <span class="wn-item">🤫 Auto-Pause</span>
+          <span class="wn-item">📤 Session Export</span>
+          <span class="wn-item">🔍 Company Briefing</span>
+          <span class="wn-item">🔌 Works Offline</span>
+          <span class="wn-item">🎙 Three STT Modes</span>
+        </div>
+        <div class="wn-items" aria-hidden="true">
+          <span class="wn-item">⌨ Type to Ask</span>
+          <span class="wn-item">🧠 GPT-4o + Claude</span>
+          <span class="wn-item">📐 Answer Length</span>
+          <span class="wn-item">🤫 Auto-Pause</span>
+          <span class="wn-item">📤 Session Export</span>
+          <span class="wn-item">🔍 Company Briefing</span>
+          <span class="wn-item">🔌 Works Offline</span>
+          <span class="wn-item">🎙 Three STT Modes</span>
+        </div>
+      </div>
+
+      <div class="wn-track wn-track--rev">
+        <div class="wn-items">
+          <span class="wn-item">🤫 Auto-Pause</span>
+          <span class="wn-item">🔌 Works Offline</span>
+          <span class="wn-item">📤 Session Export</span>
+          <span class="wn-item">⌨ Type to Ask</span>
+          <span class="wn-item">🎙 Three STT Modes</span>
+          <span class="wn-item">🧠 GPT-4o + Claude</span>
+          <span class="wn-item">🔍 Company Briefing</span>
+          <span class="wn-item">📐 Answer Length</span>
+        </div>
+        <div class="wn-items" aria-hidden="true">
+          <span class="wn-item">🤫 Auto-Pause</span>
+          <span class="wn-item">🔌 Works Offline</span>
+          <span class="wn-item">📤 Session Export</span>
+          <span class="wn-item">⌨ Type to Ask</span>
+          <span class="wn-item">🎙 Three STT Modes</span>
+          <span class="wn-item">🧠 GPT-4o + Claude</span>
+          <span class="wn-item">🔍 Company Briefing</span>
+          <span class="wn-item">📐 Answer Length</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="wn-grid">
+
+      <article class="wn-card reveal" data-d="1"
+        style="--card-c:rgba(79,142,247,.2);--dot-c:#4f8ef7;--icon-bg:rgba(79,142,247,.1);--icon-bd:rgba(79,142,247,.25)">
+        <span class="wn-dot"></span>
+        <div class="wn-icon">⌨</div>
+        <h4>Type to Ask</h4>
+        <p>Manual question input — type anything the mic missed and get an instant AI answer.</p>
+      </article>
+
+      <article class="wn-card reveal" data-d="2"
+        style="--card-c:rgba(217,139,58,.2);--dot-c:#d98b3a;--icon-bg:rgba(217,139,58,.1);--icon-bd:rgba(217,139,58,.25)">
+        <span class="wn-dot"></span>
+        <div class="wn-icon">🧠</div>
+        <h4>GPT-4o + Claude</h4>
+        <p>Both providers, both keys — switch live without restarting. Double the addressable models.</p>
+      </article>
+
+      <article class="wn-card reveal" data-d="3"
+        style="--card-c:rgba(95,184,95,.2);--dot-c:#5fb85f;--icon-bg:rgba(95,184,95,.1);--icon-bd:rgba(95,184,95,.25)">
+        <span class="wn-dot"></span>
+        <div class="wn-icon">📐</div>
+        <h4>Answer Length</h4>
+        <p>Brief soundbite, normal answer, or full breakdown — toggle mid-session with one key.</p>
+      </article>
+
+      <article class="wn-card reveal" data-d="4"
+        style="--card-c:rgba(155,126,247,.2);--dot-c:#9b7ef7;--icon-bg:rgba(155,126,247,.1);--icon-bd:rgba(155,126,247,.25)">
+        <span class="wn-dot"></span>
+        <div class="wn-icon">🤫</div>
+        <h4>Auto-Pause</h4>
+        <p>Detects when you speak and suppresses new answers. No AI interruptions mid-sentence.</p>
+      </article>
+
+      <article class="wn-card reveal" data-d="5"
+        style="--card-c:rgba(59,201,209,.2);--dot-c:#3bc9d1;--icon-bg:rgba(59,201,209,.1);--icon-bd:rgba(59,201,209,.25)">
+        <span class="wn-dot"></span>
+        <div class="wn-icon">📤</div>
+        <h4>Session Export</h4>
+        <p>Save the full transcript and AI answers as PDF or .txt after every session.</p>
+      </article>
+
+      <article class="wn-card reveal" data-d="6"
+        style="--card-c:rgba(224,111,200,.2);--dot-c:#e06fc8;--icon-bg:rgba(224,111,200,.1);--icon-bd:rgba(224,111,200,.25)">
+        <span class="wn-dot"></span>
+        <div class="wn-icon">🔍</div>
+        <h4>Company Briefing</h4>
+        <p>Type the company name — Heario researches it and injects a brief into your AI context.</p>
+      </article>
+
+      <article class="wn-card reveal" data-d="7"
+        style="--card-c:rgba(95,209,255,.2);--dot-c:#5fd1ff;--icon-bg:rgba(95,209,255,.1);--icon-bd:rgba(95,209,255,.25)">
+        <span class="wn-dot"></span>
+        <div class="wn-icon">🔌</div>
+        <h4>Works Offline</h4>
+        <p>Local Whisper transcription — zero signup, no cloud, no per-minute spend. Just works.</p>
+      </article>
+
+      <article class="wn-card reveal" data-d="8"
+        style="--card-c:rgba(245,191,79,.2);--dot-c:#f5bf4f;--icon-bg:rgba(245,191,79,.1);--icon-bd:rgba(245,191,79,.25)">
+        <span class="wn-dot"></span>
+        <div class="wn-icon">🎙</div>
+        <h4>Three STT Options</h4>
+        <p>Deepgram, OpenAI Whisper, or local — auto-selected by your keys, manually overrideable.</p>
       </article>
 
     </div>
+
   </div>
 </section>
+
+
 
 <!-- MODES -->
+
 <section class="modes">
+
   <div class="section-inner">
+
     <h2>Seven Modes. One AI That Listens.</h2>
+
     <p class="section-sub">Switch live mid-session. No restart required.</p>
+
     <div class="modes-grid">
+
       <div class="mode-pill active">💻 Technical Interview</div>
+
       <div class="mode-pill">🧩 Behavioral Interview</div>
+
       <div class="mode-pill">💼 Sales Call</div>
+
       <div class="mode-pill">📖 Lecture Notes</div>
+
       <div class="mode-pill">🤝 Recruiting</div>
-      <div class="mode-pill">🏗 System Design <span class="soon">soon</span></div>
-      <div class="mode-pill">🎭 Mock Interview <span class="soon">soon</span></div>
+
+      <div class="mode-pill">🗂️ System Design</div>
+
+      <div class="mode-pill">🎭 Mock Interview</div>
+
     </div>
+
   </div>
+
 </section>
+
+
 
 <!-- HOW IT WORKS -->
+
 <section class="how">
+
   <div class="section-inner">
+
     <h2>Completely Undetectable</h2>
+
     <p class="section-sub">No meeting bots. No screen recording. Nothing visible to the other side.</p>
+
     <div class="how-steps">
+
       <div class="step">
+
         <div class="step-n">1</div>
+
         <div class="step-body">
+
           <h4>Loopback capture</h4>
+
           <p>Listens to what your speakers play — the interviewer's voice — via OS-level audio. No mic required.</p>
+
         </div>
+
       </div>
+
       <div class="step">
+
         <div class="step-n">2</div>
+
         <div class="step-body">
+
           <h4>Instant transcription</h4>
+
           <p>Streaming speech-to-text with diarization. Knows who's talking. Ignores crosstalk.</p>
+
         </div>
+
       </div>
+
       <div class="step">
+
         <div class="step-n">3</div>
+
         <div class="step-body">
+
           <h4>AI answers</h4>
+
           <p>Claude or GPT generates a tailored answer using your background. Streams in under a second.</p>
+
         </div>
+
       </div>
+
       <div class="step">
+
         <div class="step-n">4</div>
+
         <div class="step-body">
+
           <h4>Hidden overlay</h4>
+
           <p>An always-on-top window invisible to screen capture. Only you see it. Drag anywhere.</p>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
+
 </section>
+
+
 
 <!-- UNDETECTABLE -->
+
 <section class="undetect">
+
   <div class="section-inner">
+
     <div class="undetect-inner">
+
       <div class="undetect-text">
+
         <div class="undetect-badge">🛡 Invisible by design</div>
+
         <h2>They Can't See It.<br/>Only You Can.</h2>
+
         <p>Heario uses a Windows API call — <code>SetWindowDisplayAffinity</code> — that tells the OS to exclude the overlay from all screen capture pipelines. Zoom, Teams, Google Meet, and OBS all see a blank space where Heario sits. This isn't a trick or a workaround; it's the same mechanism used by banks and DRM software to protect sensitive content.</p>
+
         <ul class="undetect-list">
+
           <li><span class="ul-icon">✓</span> No browser extensions to detect</li>
+
           <li><span class="ul-icon">✓</span> No meeting bots joining your call</li>
+
           <li><span class="ul-icon">✓</span> No screen recording of your answers</li>
+
           <li><span class="ul-icon">✓</span> No network traffic visible to the interviewer</li>
+
         </ul>
+
       </div>
+
       <div class="undetect-visual">
+
         <div class="uv-screen">
+
           <div class="uv-label">What the interviewer sees</div>
+
           <div class="uv-meeting">
+
             <div class="uv-tile interviewer-tile">
+
               <div class="uv-avatar">SC</div>
+
               <span>Sarah Chen</span>
+
             </div>
+
             <div class="uv-tile you-tile">
+
               <div class="uv-avatar you">You</div>
+
               <span>You</span>
+
             </div>
+
           </div>
+
         </div>
+
         <div class="uv-your-screen">
+
           <div class="uv-label">What you see</div>
+
           <div class="uv-meeting">
+
             <div class="uv-tile interviewer-tile">
+
               <div class="uv-avatar">SC</div>
+
               <span>Sarah Chen</span>
+
             </div>
+
             <div class="uv-tile you-tile">
+
               <div class="uv-avatar you">You</div>
+
               <span>You</span>
+
             </div>
+
             <div class="uv-overlay-chip">
+
               <div class="uv-chip-dot"></div>
+
               <span>Use token-bucket with Redis. Each client key gets INCR + TTL in a Lua script…</span>
+
             </div>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
+
 </section>
+
+
 
 <!-- FAQ -->
+
 <section class="faq">
+
   <div class="section-inner">
+
     <h2>Common Questions</h2>
+
     <p class="section-sub">Everything you need to know before your next interview.</p>
+
     <div class="faq-grid">
 
+
+
       <details class="faq-item" open>
+
         <summary>Will Zoom / Teams / Google Meet detect it?</summary>
+
         <p>No. Heario's overlay uses <code>SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE)</code> — a Windows OS-level flag that excludes the window from all screen-capture pipelines before the frame ever reaches Zoom's encoder. The interviewer's screen share sees nothing. This is the same API used by banking apps to protect sensitive data on screen.</p>
+
       </details>
 
+
+
       <details class="faq-item">
+
         <summary>Does it join the call as a bot?</summary>
+
         <p>Never. Heario runs entirely on your local machine. There is no bot, no browser extension injected into the call, and no third-party service that touches your meeting. It listens to your speaker output using a standard Windows audio loopback — the same way recording software works — and the interviewer sees nothing unusual.</p>
+
       </details>
 
+
+
       <details class="faq-item">
+
         <summary>How fast are the answers?</summary>
+
         <p>Deepgram's streaming STT delivers a transcript in under 300ms from when the interviewer finishes speaking. Claude then streams the answer token-by-token — you start reading within a second. Total time from question to first word on screen is typically 1–2 seconds in normal network conditions.</p>
+
       </details>
 
+
+
       <details class="faq-item">
+
         <summary>What if I'm asked a follow-up question?</summary>
+
         <p>Heario keeps a rolling conversation memory of the last 4 turns. So if the interviewer says "and how would you scale that?", the AI already knows what "that" refers to and gives a contextually grounded follow-up, not a generic answer.</p>
+
       </details>
 
+
+
       <details class="faq-item">
+
         <summary>Can I use my own OpenAI or Claude key?</summary>
+
         <p>Yes. Bring your own API keys for OpenAI (GPT-4o) or Anthropic (Claude) in the <code>.env</code> file and you pay only the model's API rate — no markup. Or use our managed plan and we handle keys, rate limits, and billing.</p>
+
       </details>
 
+
+
       <details class="faq-item">
+
         <summary>Does it work on Mac?</summary>
+
         <p>Currently Windows-only. The undetectable overlay relies on <code>SetWindowDisplayAffinity</code>, a Windows-exclusive API. Mac support is on the roadmap — <a href="mailto:jackoreilly10@hotmail.com?subject=Mac%20Waitlist&body=Please%20add%20me%20to%20the%20Heario%20Mac%20waitlist." style="color:#7fd1ff">join the Mac waitlist</a> to get notified.</p>
+
       </details>
+
+
+
+      <details class="faq-item">
+
+        <summary>What does the 🔍 Web Search button do?</summary>
+
+        <p>When enabled, Heario searches the web before generating each answer, so Claude has access to current information — recent framework docs, company news, live pricing, anything that might be out of date in a model's training data. It works out of the box with no setup using DuckDuckGo. If you add a free Tavily API key in Settings, it automatically upgrades to higher-quality AI-optimised results. Toggle it on or off mid-session with the button or by pressing <code>W</code>.</p>
+
+      </details>
+
+
+
+      <details class="faq-item">
+
+        <summary>What are the 7 modes and when should I use them?</summary>
+
+        <p>Each mode tells Heario's AI exactly how to respond for a different situation. <strong>Technical Interview</strong> gives crisp answers to coding and system questions. <strong>Behavioral</strong> structures answers using the STAR method from your background. <strong>Sales</strong> handles objections and advances the deal in real time. <strong>Lecture</strong> captures key points as concise notes. <strong>Recruiting</strong> coaches the interviewer side — flagging weak candidate answers and suggesting follow-up questions. <strong>System Design</strong> provides architecture hints and scalability prompts. <strong>Mock Interview</strong> acts as a tough coach, pointing out weak answers and suggesting stronger phrasing. Switch between them instantly with the mode button or by pressing <code>M</code>.</p>
+
+      </details>
+
+
+
+      <details class="faq-item">
+
+        <summary>Microphone or System Audio — which should I use?</summary>
+
+        <p>Use <strong>Microphone</strong> for live video calls on Zoom, Teams, or Google Meet — it captures what's being said in the room or through your headset. Use <strong>System Audio</strong> to capture anything playing through your speakers, like a YouTube mock interview, a podcast, or a recorded call. You can switch between them in Settings → Audio Source and apply the change without restarting the app.</p>
+
+      </details>
+
+
 
     </div>
+
   </div>
+
 </section>
+
+
 
 <!-- TESTIMONIALS -->
+
 <section class="testimonials">
+
   <div class="section-inner">
+
     <h2>What Users Are Saying</h2>
+
     <p class="section-sub">From engineers who used it in real interviews.</p>
+
     <div class="testi-grid">
+
       <div class="testi-card">
+
         <div class="testi-stars">★★★★★</div>
+
         <p class="testi-text">"I used Heario for a system design round at a FAANG company. The answers were sharp, grounded, and streamed fast enough that I could read ahead while the interviewer was still talking. Got the offer."</p>
+
         <div class="testi-author">
+
           <div class="testi-avatar">MK</div>
+
           <div><strong>Marcus K.</strong><span>Senior SWE, hired at Meta</span></div>
+
         </div>
+
       </div>
+
       <div class="testi-card">
+
         <div class="testi-stars">★★★★★</div>
+
         <p class="testi-text">"Genuinely invisible. I tested it by screen-sharing to a colleague — they saw nothing. The overlay just disappears. The behavioral mode is perfect for those 'tell me about a time when...' curveballs."</p>
+
         <div class="testi-author">
+
           <div class="testi-avatar">SR</div>
+
           <div><strong>Sophie R.</strong><span>Product Manager, London</span></div>
+
         </div>
+
       </div>
+
       <div class="testi-card">
+
         <div class="testi-stars">★★★★★</div>
+
         <p class="testi-text">"The latency is what sold me. Other tools I tried had a 3–4 second lag which made them unusable in a real conversation. Heario is there before I've even finished processing the question myself."</p>
+
         <div class="testi-author">
+
           <div class="testi-avatar">JL</div>
+
           <div><strong>James L.</strong><span>Backend Engineer, Berlin</span></div>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
+
 </section>
+
+
 
 <!-- PRICING -->
+
 <section class="pricing" id="pricing">
+
   <div class="section-inner">
+
     <h2>Simple Pricing</h2>
+
     <p class="section-sub">Start free. No card required. Use promo <code>INSIDER20</code> for 20% off.</p>
 
+
+
     <div class="pricing-toggle">
+
       <span class="toggle-label active">Managed Plans</span>
+
       <span class="toggle-div">·</span>
+
       <span class="toggle-label">Lifetime / Yearly</span>
+
     </div>
+
+
 
     <div class="pricing-grid">
+
       <!-- Free -->
+
       <div class="plan-card">
+
         <div class="plan-name">Free Trial</div>
+
         <div class="plan-price">$0<span>/mo</span></div>
+
         <div class="plan-desc">No card required</div>
+
         <ul class="plan-features">
+
           <li>✓ 10 AI requests</li>
+
           <li>✓ 10 min speech-to-text</li>
+
           <li>✓ 2 web searches</li>
+
           <li>✓ All 7 modes</li>
+
         </ul>
-        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario_0.1.0_x64-setup.exe" target="_blank" rel="noopener" class="btn-plan">Download Free</a>
+
+        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.1/Heario_0.1.1_x64-setup.exe" target="_blank" rel="noopener" class="btn-plan">Download Free</a>
+
       </div>
+
       <!-- Standard -->
+
       <div class="plan-card">
+
         <div class="plan-name">Standard</div>
+
         <div class="plan-price">$8<span>/mo</span></div>
+
         <div class="plan-desc">For regular users</div>
+
         <ul class="plan-features">
+
           <li>✓ 500 AI requests</li>
+
           <li>✓ 200 min speech-to-text</li>
+
           <li>✓ 20 web searches</li>
+
           <li>✓ All 7 modes</li>
+
         </ul>
-        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario_0.1.0_x64-setup.exe" target="_blank" rel="noopener" class="btn-plan">Get Standard</a>
+
+        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.1/Heario_0.1.1_x64-setup.exe" target="_blank" rel="noopener" class="btn-plan">Get Standard</a>
+
       </div>
+
       <!-- Pro -->
+
       <div class="plan-card featured">
+
         <div class="plan-badge">Most Popular</div>
+
         <div class="plan-name">Pro</div>
+
         <div class="plan-price">$15<span>/mo</span></div>
+
         <div class="plan-desc">For power users</div>
+
         <ul class="plan-features">
+
           <li>✓ 1,000 AI requests</li>
+
           <li>✓ 500 min speech-to-text</li>
+
           <li>✓ 100 web searches</li>
+
           <li>✓ All 7 modes</li>
+
           <li>✓ Profile intelligence</li>
+
         </ul>
-        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario_0.1.0_x64-setup.exe" target="_blank" rel="noopener" class="btn-plan-primary">Download &amp; Get Pro</a>
+
+        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.1/Heario_0.1.1_x64-setup.exe" target="_blank" rel="noopener" class="btn-plan-primary">Download &amp; Get Pro</a>
+
       </div>
+
       <!-- Max -->
+
       <div class="plan-card">
+
         <div class="plan-name">Max</div>
+
         <div class="plan-price">$25<span>/mo</span></div>
+
         <div class="plan-desc">For heavy users</div>
+
         <ul class="plan-features">
+
           <li>✓ 2,000 AI requests</li>
+
           <li>✓ 1,000 min speech-to-text</li>
+
           <li>✓ 200 web searches</li>
+
           <li>✓ All 7 modes</li>
+
           <li>✓ Priority support</li>
+
         </ul>
-        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario_0.1.0_x64-setup.exe" target="_blank" rel="noopener" class="btn-plan">Get Max</a>
+
+        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.1/Heario_0.1.1_x64-setup.exe" target="_blank" rel="noopener" class="btn-plan">Get Max</a>
+
       </div>
+
       <!-- Ultra -->
+
       <div class="plan-card">
+
         <div class="plan-name">Ultra</div>
+
         <div class="plan-price">$35<span>/mo</span></div>
+
         <div class="plan-desc">For teams</div>
+
         <ul class="plan-features">
+
           <li>✓ 3,000 AI requests</li>
+
           <li>✓ 2,000 min speech-to-text</li>
+
           <li>✓ 300 web searches</li>
+
           <li>✓ All 7 modes</li>
+
           <li>✓ Priority support</li>
+
         </ul>
-        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario_0.1.0_x64-setup.exe" target="_blank" rel="noopener" class="btn-plan">Get Ultra</a>
+
+        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.1/Heario_0.1.1_x64-setup.exe" target="_blank" rel="noopener" class="btn-plan">Get Ultra</a>
+
       </div>
+
     </div>
+
+
 
     <!-- Lifetime -->
+
     <div class="lifetime-row">
+
       <div class="lifetime-card">
+
         <div class="lifetime-left">
+
           <div class="plan-name">Yearly License</div>
+
           <p>All features, annual renewal. Resume intelligence, JD analysis, negotiation coaching, 7 expert modes.</p>
+
         </div>
-        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario_0.1.0_x64-setup.exe" target="_blank" rel="noopener" class="btn-plan">Get Yearly</a>
+
+        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.1/Heario_0.1.1_x64-setup.exe" target="_blank" rel="noopener" class="btn-plan">Get Yearly</a>
+
       </div>
+
       <div class="lifetime-card highlight">
+
         <div class="lifetime-left">
+
           <div class="plan-name">Lifetime License ✦</div>
+
           <p>One-time purchase. All future updates included. Own it forever.</p>
+
         </div>
-        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario_0.1.0_x64-setup.exe" target="_blank" rel="noopener" class="btn-plan-primary">Get Lifetime</a>
+
+        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.1/Heario_0.1.1_x64-setup.exe" target="_blank" rel="noopener" class="btn-plan-primary">Get Lifetime</a>
+
       </div>
+
     </div>
+
   </div>
+
 </section>
 
+
+
 <!-- FOOTER -->
+
 <footer class="footer">
+
   <div class="footer-inner">
+
     <div class="footer-brand">
+
       <div class="logo">Heario</div>
+
       <p>Intelligent AI for meetings.<br/>Your data stays yours.</p>
+
     </div>
+
     <div class="footer-col">
+
       <div class="footer-head">Product</div>
+
       <a href="https://github.com/Jorified/heario-app">GitHub</a>
+
       <a href="https://github.com/Jorified/heario-app/releases">Changelog</a>
+
       <a href="https://github.com/Jorified/heario-app">Contribute</a>
+
       <a href="/license.html">License</a>
+
     </div>
+
     <div class="footer-col">
+
       <div class="footer-head">Legal</div>
+
       <a href="/privacy.html">Privacy Policy</a>
+
       <a href="/terms.html">Terms & Conditions</a>
+
       <a href="/refund.html">Refund Policy</a>
+
       <a href="/security.html">Security</a>
+
     </div>
+
     <div class="footer-col">
+
       <div class="footer-head">Support</div>
+
       <a href="mailto:jackoreilly10@hotmail.com">Contact</a>
+
       <a href="https://github.com/Jorified/heario-app/issues">Report a Bug</a>
+
       <a href="https://github.com/sponsors/Jorified" target="_blank">Donate</a>
+
       <a href="/blog/">Blog</a>
+
     </div>
+
   </div>
+
   <div class="footer-bottom">© 2026 Heario. All rights reserved.</div>
+
 </footer>
 
+
+
 <!-- STICKY DOWNLOAD CTA -->
+
 <div class="sticky-cta" id="stickyCta">
+
   <div class="sticky-inner">
+
     <div class="sticky-text">
+
       <strong>Heario</strong>
+
       <span>Free to try · Windows · No card required</span>
+
     </div>
-    <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.0/Heario_0.1.0_x64-setup.exe" target="_blank" rel="noopener" class="btn-primary sticky-btn">Download for Windows</a>
+
+    <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.1/Heario_0.1.1_x64-setup.exe" target="_blank" rel="noopener" class="btn-primary sticky-btn">Download for Windows</a>
+
   </div>
+
 </div>
 
+
+
 <script src="app.js"></script>
+
 </body>
+
 </html>
+
+
+
+
+
+
+
 
 
