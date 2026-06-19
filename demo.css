@@ -129,7 +129,7 @@ html,body { height:100%; background:#05070b; font-family:var(--font); color:var(
 @keyframes natLogoSpin { to { transform:rotate(360deg); } }
 .nat-pill { font-size:11px; font-family:var(--display); color:var(--muted);
   border:1px solid var(--border); border-radius:20px; padding:2px 9px; }
-.nat-brand { font-family:var(--display); font-weight:700; font-size:12px;
+.nat-brand { font-family:var(--display); font-weight:700; font-size:11px; letter-spacing:.02em;
   background:linear-gradient(120deg,#fff,var(--accent2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
 
 .nat-tx { padding:9px 13px; font-family:var(--mono); font-size:11.5px; color:var(--accent2);
