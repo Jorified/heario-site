@@ -268,7 +268,7 @@ if (answerEl) {
 
   // status text shown in the stage title-bar per feature
   const STATUS = ['listening', 'answering', 'answering', 'listening',
-                  'exporting', 'researching', 'offline · local', 'auto-selecting'];
+                  'exporting', 'researching', 'offline · local', 'auto-selecting', 'reasoning'];
   let idx = 0;
 
   const setActive = (i) => {
