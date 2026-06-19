@@ -163,7 +163,7 @@ html,body { height:100%; background:#05070b; font-family:var(--font); color:var(
   border:1px solid var(--border); border-radius:7px; padding:7px 12px; }
 
 .nat-actions { display:flex; align-items:center; gap:8px; padding:8px 13px; border-top:1px solid #1b2334; }
-.nat-actions-2 { padding-top:0; }
+.nat-actions-3, .nat-actions-2 { padding-top:0; border-top:none; }
 .nat-btn { font-size:10.5px; font-family:var(--display); color:var(--muted);
   border:1px solid var(--border); border-radius:6px; padding:3px 8px; }
 .nat-btn-sq { padding:3px 6px; }
