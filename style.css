@@ -276,15 +276,158 @@ code { background: rgba(79,142,247,.1); color: var(--accent2); padding: 2px 7px;
 .lifetime-left p { font-size: 14px; color: var(--muted); margin-top: 4px; }
 .lifetime-card .btn-plan, .lifetime-card .btn-plan-primary { min-width: 130px; }
 
-/* ── FOOTER ── */
-.footer { padding: 64px 24px 0; border-top: 1px solid var(--border); }
-.footer-inner { max-width: 1040px; margin: auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 48px; }
-.footer-brand p { font-size: 14px; color: var(--muted); margin-top: 10px; line-height: 1.7; }
-.footer-col { display: flex; flex-direction: column; gap: 10px; }
-.footer-head { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .5px; }
-.footer-col a { font-size: 14px; color: var(--muted); transition: color .2s; }
-.footer-col a:hover { color: var(--text); }
-.footer-bottom { max-width: 1040px; margin: auto; padding: 20px 0; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); text-align: center; }
+/* ── FOOTER · futuristic command deck ── */
+.footer { position: relative; overflow: hidden; padding: 100px 24px 0; border-top: 1px solid var(--border); }
+
+/* luminous horizon glow rising from the deck */
+.footer::after {
+  content: ''; position: absolute; left: 50%; bottom: -130px; transform: translateX(-50%);
+  width: 780px; max-width: 92%; height: 360px; z-index: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(79,142,247,.22), rgba(167,139,250,.1) 42%, transparent 72%);
+  filter: blur(26px);
+}
+
+/* animated horizon glow line riding the top edge */
+.footer-glow {
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 6%, var(--accent2) 38%, var(--accent3) 62%, transparent 94%);
+  background-size: 200% 100%;
+  filter: drop-shadow(0 0 10px rgba(79,142,247,.65));
+  animation: fGlowSlide 9s linear infinite;
+}
+@keyframes fGlowSlide { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+
+/* receding perspective grid — the deck floor on the horizon */
+.footer-floor {
+  position: absolute; left: -25%; right: -25%; bottom: 0; height: 300px;
+  background:
+    linear-gradient(to right,  rgba(99,160,255,.22) 1px, transparent 1px) 0 0 / 56px 56px,
+    linear-gradient(to bottom, rgba(99,160,255,.22) 1px, transparent 1px) 0 0 / 56px 56px;
+  transform: perspective(340px) rotateX(64deg);
+  transform-origin: bottom center;
+  -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.5) 42%, transparent 82%);
+  mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.5) 42%, transparent 82%);
+  opacity: .65; pointer-events: none;
+  animation: fFloor 5.5s linear infinite;
+}
+@keyframes fFloor { from { background-position: 0 0, 0 0; } to { background-position: 0 56px, 0 56px; } }
+
+.footer-inner {
+  position: relative; z-index: 2;
+  max-width: 1080px; margin: auto;
+  display: grid; grid-template-columns: 2.2fr 1fr 1fr 1fr; gap: 48px;
+  padding-bottom: 44px;
+}
+
+/* brand block */
+.footer-logo { display: flex; align-items: center; gap: 12px; }
+.fl-orb {
+  width: 20px; height: 20px; border-radius: 6px;
+  background: conic-gradient(from 140deg, var(--accent), var(--accent3), var(--accent2), var(--accent));
+  box-shadow: 0 0 18px rgba(79,142,247,.7), inset 0 0 6px rgba(255,255,255,.45);
+  animation: flOrb 6s linear infinite;
+}
+@keyframes flOrb { to { transform: rotate(360deg); } }
+.fl-word {
+  font-family: var(--font-display); font-weight: 700; font-size: 30px; letter-spacing: -.5px;
+  background: linear-gradient(110deg, #fff 8%, var(--accent2) 52%, var(--accent3) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.footer-tag { font-size: 14px; color: var(--muted); margin-top: 16px; line-height: 1.7; }
+
+.footer-status {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 20px;
+  padding: 6px 13px; border-radius: 999px;
+  border: 1px solid rgba(95,184,95,.3); background: rgba(95,184,95,.07);
+  font-family: var(--font-mono); font-size: 12px; color: #aee0ae; letter-spacing: .2px;
+}
+.fs-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+  box-shadow: 0 0 0 0 rgba(95,184,95,.55); animation: fsPulse 2.4s infinite;
+}
+@keyframes fsPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(95,184,95,.55); }
+  70%  { box-shadow: 0 0 0 8px rgba(95,184,95,0); }
+  100% { box-shadow: 0 0 0 0 rgba(95,184,95,0); }
+}
+
+.footer-social { display: flex; gap: 10px; margin-top: 22px; }
+.fsoc {
+  width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center;
+  color: var(--muted); border: 1px solid var(--border); background: rgba(255,255,255,.02);
+  transition: transform .25s, box-shadow .25s, color .25s, border-color .25s, background .25s;
+}
+.fsoc svg { width: 19px; height: 19px; }
+.fsoc:hover {
+  color: #fff; transform: translateY(-4px); border-color: rgba(127,209,255,.5);
+  background: linear-gradient(145deg, rgba(79,142,247,.28), rgba(167,139,250,.2));
+  box-shadow: 0 12px 28px -8px rgba(79,142,247,.6);
+}
+
+/* link columns */
+.footer-col { display: flex; flex-direction: column; gap: 13px; }
+.footer-head {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 12px; font-weight: 600; color: #fff; margin-bottom: 6px;
+  text-transform: uppercase; letter-spacing: 1.2px;
+}
+.footer-head::before {
+  content: ''; width: 16px; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent2), var(--accent3));
+  box-shadow: 0 0 8px var(--glow);
+}
+.footer-col a {
+  position: relative; width: fit-content; display: inline-flex; align-items: center;
+  font-size: 14px; color: var(--muted);
+  transition: color .22s, transform .22s;
+}
+.footer-col a::before {
+  content: ''; position: absolute; left: -14px; top: 50%; width: 0; height: 1px;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, var(--accent2), var(--accent3));
+  box-shadow: 0 0 6px var(--glow); transition: width .22s;
+}
+.footer-col a:hover { color: #fff; transform: translateX(3px); }
+.footer-col a:hover::before { width: 10px; }
+
+/* giant ghost wordmark sitting on the horizon */
+.footer-mega {
+  position: relative; z-index: 1;
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(74px, 17vw, 232px); line-height: .78;
+  text-align: center; letter-spacing: -.05em; margin-top: 24px;
+  background: linear-gradient(180deg, rgba(127,209,255,.18) 0%, rgba(167,139,250,.07) 55%, rgba(167,139,250,0) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  -webkit-text-stroke: 1px rgba(127,209,255,.12);
+  user-select: none; pointer-events: none;
+}
+
+/* bottom bar */
+.footer-bottom {
+  position: relative; z-index: 2;
+  max-width: 1080px; margin: auto; padding: 22px 0 26px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  font-size: 13px; color: var(--muted);
+}
+.footer-top {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  padding: 8px 16px; border-radius: 999px;
+  border: 1px solid var(--border); background: rgba(255,255,255,.02);
+  color: var(--muted); font-family: var(--font-display); font-size: 12.5px; font-weight: 500;
+  transition: color .22s, border-color .22s, box-shadow .22s, transform .22s, background .22s;
+}
+.footer-top span { transition: transform .22s; }
+.footer-top:hover {
+  color: #fff; border-color: rgba(127,209,255,.5);
+  background: linear-gradient(145deg, rgba(79,142,247,.25), rgba(167,139,250,.18));
+  box-shadow: 0 10px 26px -8px rgba(79,142,247,.55);
+}
+.footer-top:hover span { transform: translateY(-3px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-glow, .footer-floor, .fl-orb, .fs-dot { animation: none; }
+}
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
@@ -295,10 +438,12 @@ code { background: rgba(79,142,247,.1); color: var(--accent2); padding: 2px 7px;
   .hero-stats { gap: 0; }
   .stat { padding: 0 20px; }
   .lifetime-row { grid-template-columns: 1fr; }
-  .footer-inner { grid-template-columns: 1fr 1fr; }
+  .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .footer-brand { grid-column: 1 / -1; }
 }
 @media (max-width: 480px) {
   .footer-inner { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column-reverse; gap: 14px; text-align: center; }
   .hero-stats { flex-direction: column; gap: 16px; }
   .stat-div { display: none; }
 }
@@ -417,7 +562,7 @@ body::after {
 .modes   { background: rgba(17,21,32,.5); }
 .pricing { background: rgba(17,21,32,.42); }
 .proof-bar { background: rgba(11,14,19,.4); }
-.footer  { background: rgba(11,14,19,.35); }
+.footer  { background: linear-gradient(180deg, rgba(11,14,19,0) 0%, rgba(12,15,23,.5) 26%, rgba(17,13,30,.72) 100%); }
 /* cards stay readable but pick up a touch of translucency */
 .feature-card, .plan-card, .lifetime-card, .mode-pill {
   background: linear-gradient(180deg, rgba(22,28,40,.82), rgba(17,21,32,.7));

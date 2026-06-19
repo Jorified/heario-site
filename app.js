@@ -30,10 +30,15 @@ document.querySelectorAll('.toggle-label').forEach(label => {
 const nav = document.querySelector('.nav');
 const stickyCta = document.getElementById('stickyCta');
 const heroSection = document.querySelector('.hero');
+const footerEl = document.querySelector('.footer');
 const onScroll = () => {
   if (nav) nav.classList.toggle('scrolled', window.scrollY > 8);
   if (stickyCta && heroSection) {
-    stickyCta.classList.toggle('visible', window.scrollY > heroSection.offsetHeight);
+    const pastHero = window.scrollY > heroSection.offsetHeight;
+    // retract the sticky bar once the footer is in view — it's redundant there
+    // and would otherwise cover the footer's bottom row
+    const atFooter = footerEl && (window.scrollY + window.innerHeight) > (footerEl.offsetTop + 140);
+    stickyCta.classList.toggle('visible', pastHero && !atFooter);
   }
 };
 onScroll();
