@@ -122,6 +122,11 @@ html,body { height:100%; background:#05070b; font-family:var(--font); color:var(
 .nat-status { font-size:12px; font-family:var(--mono); color:var(--green); }
 .nat-status.answering, .nat-status.transcribing { color:var(--accent2); }
 .nat-spacer { flex:1; }
+.nat-logo { width:13px; height:13px; border-radius:4px; flex-shrink:0;
+  background:conic-gradient(from 140deg, var(--accent2), #fff, var(--green), var(--accent2));
+  box-shadow:0 0 10px rgba(127,209,255,.7), inset 0 0 4px rgba(255,255,255,.45);
+  animation:natLogoSpin 6s linear infinite; }
+@keyframes natLogoSpin { to { transform:rotate(360deg); } }
 .nat-pill { font-size:11px; font-family:var(--display); color:var(--muted);
   border:1px solid var(--border); border-radius:20px; padding:2px 9px; }
 .nat-brand { font-family:var(--display); font-weight:700; font-size:12px;
