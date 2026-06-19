@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="demo.css?v=7" />
+  <link rel="stylesheet" href="demo.css?v=8" />
 </head>
 <body>
 
@@ -86,10 +86,28 @@
           </div>
           <div class="nat-ans" id="natAns"><span class="nat-ph">Answer will appear here…</span></div>
         </div>
+        <div class="nat-ask">
+          <input class="nat-ask-input" placeholder="Ask something… (Enter to send)" readonly />
+          <span class="nat-ask-btn">Ask</span>
+        </div>
         <div class="nat-actions">
           <span class="nat-btn">↺ Regen</span>
+          <span class="nat-btn">✕ Clear</span>
           <span class="nat-btn">⧉ Copy</span>
+          <span class="nat-spacer"></span>
+          <span class="nat-seg">
+            <span class="nat-seg-btn">Brief</span>
+            <span class="nat-seg-btn active">Normal</span>
+            <span class="nat-seg-btn">Detailed</span>
+          </span>
+          <span class="nat-btn nat-btn-sq">A−</span>
+          <span class="nat-btn nat-btn-sq">A+</span>
+        </div>
+        <div class="nat-actions nat-actions-2">
           <span class="nat-hint">invisible to screen-share ·  Ctrl+Alt+H</span>
+          <span class="nat-spacer"></span>
+          <span class="nat-opacity-label">opacity</span>
+          <span class="nat-opacity-track"><span class="nat-opacity-fill"></span><span class="nat-opacity-knob"></span></span>
         </div>
       </div>
 
