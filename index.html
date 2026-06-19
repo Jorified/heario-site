@@ -402,7 +402,7 @@
 
   <link rel="manifest" href="manifest.json" />
 
-  <link rel="stylesheet" href="style.css?v=9" />
+  <link rel="stylesheet" href="style.css?v=10" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
 
@@ -697,9 +697,9 @@
 <section class="showroom" id="whats-new">
   <div class="section-inner">
 
-    <p class="wn-eyebrow reveal" data-d="1">✦ v1.2 · Just Shipped</p>
-    <h2 class="reveal" data-d="2">Nine reasons to update</h2>
-    <p class="section-sub reveal" data-d="3">A whole new layer of control — type, switch, brief, and go fully offline. Watch each one work, live.</p>
+    <p class="wn-eyebrow reveal" data-d="1">✦ v1.3 · Just Shipped</p>
+    <h2 class="reveal" data-d="2">Thirteen reasons to update</h2>
+    <p class="section-sub reveal" data-d="3">A whole new layer of control — type, switch, pin, hide, and go fully offline. Watch each one work, live.</p>
 
     <div class="showroom-stage reveal" data-d="4">
 
@@ -757,6 +757,30 @@
         <button class="sr-tab" data-i="8" style="--c:#a3e635" role="tab">
           <span class="sr-ic">🎯</span>
           <span class="sr-meta"><strong>Approach-First</strong><em>Reasoning before the answer</em></span>
+          <span class="sr-prog"><i></i></span>
+        </button>
+
+        <button class="sr-tab" data-i="9" style="--c:#2dd4bf" role="tab">
+          <span class="sr-ic">🏢</span>
+          <span class="sr-meta"><strong>Company Presets</strong><em>One-click full setup</em></span>
+          <span class="sr-prog"><i></i></span>
+        </button>
+
+        <button class="sr-tab" data-i="10" style="--c:#ffc857" role="tab">
+          <span class="sr-ic">📌</span>
+          <span class="sr-meta"><strong>Pin Answers</strong><em>Save the best replies</em></span>
+          <span class="sr-prog"><i></i></span>
+        </button>
+
+        <button class="sr-tab" data-i="11" style="--c:#b06ab3" role="tab">
+          <span class="sr-ic">🕶</span>
+          <span class="sr-meta"><strong>Discreet Mode</strong><em>Shrinks to a tiny pill</em></span>
+          <span class="sr-prog"><i></i></span>
+        </button>
+
+        <button class="sr-tab" data-i="12" style="--c:#ff5f6d" role="tab">
+          <span class="sr-ic">🙈</span>
+          <span class="sr-meta"><strong>Panic Hide</strong><em>Ctrl + Shift + H</em></span>
           <span class="sr-prog"><i></i></span>
         </button>
 
@@ -887,6 +911,73 @@
             <div class="sp-foot">Toggle on/off · says <em>why</em> before <em>what</em></div>
           </div>
 
+          <!-- 9 · Company Presets -->
+          <div class="sr-panel" data-i="9" style="--c:#2dd4bf">
+            <div class="sp-copick">
+              <span class="sp-co-ic">🏢</span>
+              <span class="sp-co-stack">
+                <span class="sp-co-name sp-co-1">Stripe</span>
+                <span class="sp-co-name sp-co-2">Anthropic</span>
+                <span class="sp-co-name sp-co-3">Datadog</span>
+              </span>
+              <span class="sp-co-caret">▾</span>
+            </div>
+            <div class="sp-co-load">
+              <span class="sp-co-tag">📄 Job description</span>
+              <span class="sp-co-tag">🔍 Company brief</span>
+              <span class="sp-co-tag">🎚 Default mode</span>
+              <span class="sp-co-tag">🧠 Mode prompts</span>
+            </div>
+            <div class="sp-foot">Save a whole setup per company — <b>switch in one click</b></div>
+          </div>
+
+          <!-- 10 · Pin Answers -->
+          <div class="sr-panel" data-i="10" style="--c:#ffc857">
+            <div class="sp-pinrow">
+              <div class="sp-answer sp-pin-ans">
+                <span class="sp-conf">C5</span>
+                <p>Shard by tenant, cache hot reads in Redis, and put writes behind a queue.</p>
+              </div>
+              <span class="sp-pin-btn">📌 Pin</span>
+            </div>
+            <div class="sp-pinned">
+              <span class="sp-pinned-head">📌 Pinned <span class="sp-pin-badge">1</span></span>
+              <span class="sp-pinned-item">💻 Shard by tenant, cache hot reads in Redis…</span>
+            </div>
+            <div class="sp-foot">Keep your best answers one tap away — <b>copy or revisit any time</b></div>
+          </div>
+
+          <!-- 11 · Discreet Mode -->
+          <div class="sr-panel" data-i="11" style="--c:#b06ab3">
+            <div class="sp-shrink">
+              <div class="sp-shrink-full">
+                <div class="sp-sk-bar"><i></i><i></i><i></i><span class="sp-sk-tag">Heario</span></div>
+                <div class="sp-sk-lines"><i></i><i></i><i></i></div>
+              </div>
+              <div class="sp-shrink-pill"><i class="sp-pill-dot"></i> Heario</div>
+            </div>
+            <div class="sp-foot">Collapse the overlay to a <b>tiny status pill</b> — then expand right back</div>
+          </div>
+
+          <!-- 12 · Panic Hide -->
+          <div class="sr-panel" data-i="12" style="--c:#ff5f6d">
+            <div class="sp-keys">
+              <span class="sp-key sp-key-1">Ctrl</span>
+              <span class="sp-plus">+</span>
+              <span class="sp-key sp-key-2">Shift</span>
+              <span class="sp-plus">+</span>
+              <span class="sp-key sp-key-3">H</span>
+            </div>
+            <div class="sp-vanish">
+              <div class="sp-vanish-card">
+                <span class="sp-conf">C5</span>
+                <p>Use a token bucket in Redis — INCR with a TTL per client key…</p>
+              </div>
+              <span class="sp-vanish-tag">✓ Gone — instantly</span>
+            </div>
+            <div class="sp-foot">A global hotkey that works <b>even when Heario isn't focused</b></div>
+          </div>
+
         </div>
       </div>
 
@@ -905,6 +996,10 @@
           <span class="wn-item">🔌 Works Offline</span>
           <span class="wn-item">🎙 Three STT Options</span>
           <span class="wn-item">🎯 Approach-First</span>
+          <span class="wn-item">🏢 Company Presets</span>
+          <span class="wn-item">📌 Pin Answers</span>
+          <span class="wn-item">🕶 Discreet Mode</span>
+          <span class="wn-item">🙈 Panic Hide</span>
         </div>
         <div class="wn-items" aria-hidden="true">
           <span class="wn-item">⌨ Type to Ask</span>
@@ -916,6 +1011,10 @@
           <span class="wn-item">🔌 Works Offline</span>
           <span class="wn-item">🎙 Three STT Options</span>
           <span class="wn-item">🎯 Approach-First</span>
+          <span class="wn-item">🏢 Company Presets</span>
+          <span class="wn-item">📌 Pin Answers</span>
+          <span class="wn-item">🕶 Discreet Mode</span>
+          <span class="wn-item">🙈 Panic Hide</span>
         </div>
       </div>
     </div>
@@ -1687,7 +1786,7 @@
 
 
 
-<script src="app.js?v=6"></script>
+<script src="app.js?v=7"></script>
 
 </body>
 

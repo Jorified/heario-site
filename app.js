@@ -254,7 +254,7 @@ if (answerEl) {
 }
 
 // ── Showroom: interactive feature stage ──────────────────────────────────
-// Auto-advances through the 8 feature panels. Advancement is driven off the
+// Auto-advances through the feature panels. Advancement is driven off the
 // active tab's progress-bar animationend, so motion, progress, and timing
 // stay perfectly in sync — and a single CSS :hover pause freezes all three.
 (() => {
@@ -268,7 +268,8 @@ if (answerEl) {
 
   // status text shown in the stage title-bar per feature
   const STATUS = ['listening', 'answering', 'answering', 'listening',
-                  'exporting', 'researching', 'offline · local', 'auto-selecting', 'reasoning'];
+                  'exporting', 'researching', 'offline · local', 'auto-selecting', 'reasoning',
+                  'switching', 'pinned', 'discreet', 'hidden'];
   let idx = 0;
 
   const setActive = (i) => {
