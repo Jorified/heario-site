@@ -182,6 +182,118 @@
 
         "@type": "Question",
 
+        "name": "Do I need to sign up for anything to use Heario?",
+
+        "acceptedAnswer": {
+
+          "@type": "Answer",
+
+          "text": "No. It works immediately with no account and no API key, using your computer's own Whisper speech-to-text."
+
+        }
+
+      },
+
+      {
+
+        "@type": "Question",
+
+        "name": "Does Heario cost anything by default?",
+
+        "acceptedAnswer": {
+
+          "@type": "Answer",
+
+          "text": "No. The built-in fallback (Local Whisper) is free and runs on your machine."
+
+        }
+
+      },
+
+      {
+
+        "@type": "Question",
+
+        "name": "Is my audio sent to the cloud?",
+
+        "acceptedAnswer": {
+
+          "@type": "Answer",
+
+          "text": "Not by default. With no keys configured, transcription happens locally. Answers (the AI's replies) still go to Claude or GPT's cloud by default — only the transcription is local out of the box."
+
+        }
+
+      },
+
+      {
+
+        "@type": "Question",
+
+        "name": "The first time I open it, it says \"downloading 150MB\" — is that normal?",
+
+        "acceptedAnswer": {
+
+          "@type": "Answer",
+
+          "text": "Yes. The first time Local Whisper runs, it downloads its speech model once. After that, it's cached and starts instantly every time."
+
+        }
+
+      },
+
+      {
+
+        "@type": "Question",
+
+        "name": "Can I make the AI's answers fully local too, not just transcription?",
+
+        "acceptedAnswer": {
+
+          "@type": "Answer",
+
+          "text": "Yes, but that part isn't automatic. You need to separately install a free program called Ollama on your computer, then point Heario at it. It's an optional, one-time setup — not something that happens by default."
+
+        }
+
+      },
+
+      {
+
+        "@type": "Question",
+
+        "name": "If I add a Deepgram or OpenAI key, what changes?",
+
+        "acceptedAnswer": {
+
+          "@type": "Answer",
+
+          "text": "Transcription switches from local Whisper to that cloud service instead — faster and more accurate, but no longer offline, and (for Deepgram) usage-based."
+
+        }
+
+      },
+
+      {
+
+        "@type": "Question",
+
+        "name": "So what's actually \"zero data breach risk\"?",
+
+        "acceptedAnswer": {
+
+          "@type": "Answer",
+
+          "text": "Only the fully-local combo (Local Whisper + Ollama) is 100% offline end-to-end. Local Whisper alone is offline for transcription only; if you're using Claude/GPT for answers, that part still leaves your machine."
+
+        }
+
+      },
+
+      {
+
+        "@type": "Question",
+
         "name": "How fast are Heario's AI answers?",
 
         "acceptedAnswer": {
@@ -290,7 +402,7 @@
 
   <link rel="manifest" href="manifest.json" />
 
-  <link rel="stylesheet" href="style.css?v=6" />
+  <link rel="stylesheet" href="style.css?v=9" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
 
@@ -746,12 +858,12 @@
           <!-- 6 · Works Offline -->
           <div class="sr-panel" data-i="6" style="--c:#3bc9d1">
             <div class="sp-net">
-              <span class="sp-cloud">☁ Cloud STT <i class="sp-x">✕</i></span>
+              <span class="sp-cloud">☁ Cloud STT + LLM <i class="sp-x">✕</i></span>
               <span class="sp-arrow">→</span>
-              <span class="sp-local">🔌 Local Whisper <i class="sp-on"></i></span>
+              <span class="sp-local">🔌 Local Whisper + Ollama <i class="sp-on"></i></span>
             </div>
             <div class="sp-offline-tx"><span class="sp-otx">and that's how I'd scale it.</span></div>
-            <div class="sp-foot">No internet · no signup · no per-minute spend</div>
+            <div class="sp-foot">Optional fully-local mode (via Ollama) · zero data breaches · no internet required</div>
           </div>
 
           <!-- 7 · Three STT Options -->
@@ -1061,6 +1173,76 @@
 
       <details class="faq-item">
 
+        <summary>Do I need to sign up for anything to use Heario?</summary>
+
+        <p>No. It works immediately with no account and no API key, using your computer's own Whisper speech-to-text.</p>
+
+      </details>
+
+
+
+      <details class="faq-item">
+
+        <summary>Does it cost anything by default?</summary>
+
+        <p>No. The built-in fallback (Local Whisper) is free and runs on your machine.</p>
+
+      </details>
+
+
+
+      <details class="faq-item">
+
+        <summary>Is my audio sent to the cloud?</summary>
+
+        <p>Not by default. With no keys configured, transcription happens locally. Answers (the AI's replies) still go to Claude or GPT's cloud by default — only the transcription is local out of the box.</p>
+
+      </details>
+
+
+
+      <details class="faq-item">
+
+        <summary>The first time I open it, it says "downloading 150MB" — is that normal?</summary>
+
+        <p>Yes. The first time Local Whisper runs, it downloads its speech model once. After that, it's cached and starts instantly every time.</p>
+
+      </details>
+
+
+
+      <details class="faq-item">
+
+        <summary>Can I make the AI's answers fully local too, not just transcription?</summary>
+
+        <p>Yes, but that part isn't automatic. You need to separately install a free program called Ollama on your computer, then point Heario at it. It's an optional, one-time setup — not something that happens by default.</p>
+
+      </details>
+
+
+
+      <details class="faq-item">
+
+        <summary>If I add a Deepgram or OpenAI key, what changes?</summary>
+
+        <p>Transcription switches from local Whisper to that cloud service instead — faster and more accurate, but no longer offline, and (for Deepgram) usage-based.</p>
+
+      </details>
+
+
+
+      <details class="faq-item">
+
+        <summary>So what's actually "zero data breach risk"?</summary>
+
+        <p>Only the fully-local combo (Local Whisper + Ollama) is 100% offline end-to-end. Local Whisper alone is offline for transcription only; if you're using Claude/GPT for answers, that part still leaves your machine.</p>
+
+      </details>
+
+
+
+      <details class="faq-item">
+
         <summary>How fast are the answers?</summary>
 
         <p>Deepgram's streaming STT delivers a transcript in under 300ms from when the interviewer finishes speaking. Claude then streams the answer token-by-token — you start reading within a second. Total time from question to first word on screen is typically 1–2 seconds in normal network conditions.</p>
@@ -1126,6 +1308,7 @@
         <p>Use <strong>Microphone</strong> for live video calls on Zoom, Teams, or Google Meet — it captures what's being said in the room or through your headset. Use <strong>System Audio</strong> to capture anything playing through your speakers, like a YouTube mock interview, a podcast, or a recorded call. You can switch between them in Settings → Audio Source and apply the change without restarting the app.</p>
 
       </details>
+
 
 
 
@@ -1490,7 +1673,7 @@
 
     <div class="sticky-text">
 
-      <strong>Heario</strong>
+      <strong class="sticky-logo"><span class="fl-orb" aria-hidden="true"></span><span class="fl-word">Heario</span></strong>
 
       <span>Free to try · Windows · No card required</span>
 
