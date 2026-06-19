@@ -6,15 +6,22 @@
   --font:'Sora',system-ui,sans-serif; --display:'Space Grotesk',sans-serif; --mono:'JetBrains Mono',monospace;
 }
 html,body { height:100%; background:#05070b; font-family:var(--font); color:var(--text); overflow:hidden; }
+body { position:relative; container-type:inline-size; container-name:stagebox; }
 
-/* ── 16:9 capture stage ── */
+/* ── 16:9 capture stage ──
+   Authored at a fixed 1280x720 canvas, then uniformly scaled to fit whatever
+   size the embedding iframe actually renders at (mobile included) via a
+   container-query-driven transform. This keeps every fixed-px child (avatars,
+   captions, the product overlay, etc.) in correct proportion at any size,
+   instead of overlapping/clipping like raw vw/vh sizing did on small embeds. */
 .stage {
-  position:relative; width:100vw; height:100vh; max-height:100vh;
+  position:absolute; top:0; left:0; width:1280px; height:720px;
+  transform-origin:top left; transform:scale(calc(100cqw / 1280px));
   display:flex; align-items:center; justify-content:center;
   background:radial-gradient(ellipse 90% 70% at 50% 0%, #11162400, #05070b);
 }
 .meet {
-  position:relative; width:min(100vw, 177.78vh); height:min(56.25vw, 100vh);
+  position:relative; width:100%; height:100%;
   background:linear-gradient(180deg,#0c111b,#0a0d14); display:flex; flex-direction:column;
   overflow:hidden;
 }
@@ -34,7 +41,7 @@ html,body { height:100%; background:#05070b; font-family:var(--font); color:var(
 .meet-time { font-family:var(--mono); }
 
 /* ── stage ── */
-.meet-stage { position:relative; flex:1; padding:26px; display:flex; container-type:inline-size; }
+.meet-stage { position:relative; flex:1; padding:26px; display:flex; }
 
 /* tiles */
 .tile { position:relative; border-radius:16px; overflow:hidden; background:#0e1420;
@@ -207,13 +214,4 @@ html,body { height:100%; background:#05070b; font-family:var(--font); color:var(
 
 @media (prefers-reduced-motion: reduce) {
   .rec i, .nat-dot, .waveform span, .cap-text::after, .nat-ans.streaming::after { animation:none; }
-}
-
-/* shrink the product overlay proportionally when the embed itself is small (mobile) so the
-   toolbar/ask-bar stay visible instead of being clipped by .meet's overflow:hidden */
-@container (max-width: 760px) {
-  .heario { transform:scale(.62); transform-origin:top left; }
-}
-@container (max-width: 460px) {
-  .heario { transform:scale(.4); transform-origin:top left; }
 }
