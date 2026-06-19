@@ -299,18 +299,18 @@ code { background: rgba(79,142,247,.1); color: var(--accent2); padding: 2px 7px;
 
 /* receding perspective grid — the deck floor on the horizon */
 .footer-floor {
-  position: absolute; left: -25%; right: -25%; bottom: 0; height: 300px;
+  position: absolute; left: -30%; right: -30%; bottom: 0; height: 620px;
   background:
-    linear-gradient(to right,  rgba(99,160,255,.22) 1px, transparent 1px) 0 0 / 56px 56px,
-    linear-gradient(to bottom, rgba(99,160,255,.22) 1px, transparent 1px) 0 0 / 56px 56px;
-  transform: perspective(340px) rotateX(64deg);
+    linear-gradient(to right,  rgba(99,160,255,.24) 1px, transparent 1px) 0 0 / 60px 60px,
+    linear-gradient(to bottom, rgba(99,160,255,.24) 1px, transparent 1px) 0 0 / 60px 60px;
+  transform: perspective(900px) rotateX(58deg);
   transform-origin: bottom center;
-  -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.5) 42%, transparent 82%);
-  mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.5) 42%, transparent 82%);
-  opacity: .65; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.45) 48%, transparent 86%);
+  mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.45) 48%, transparent 86%);
+  opacity: .7; pointer-events: none;
   animation: fFloor 5.5s linear infinite;
 }
-@keyframes fFloor { from { background-position: 0 0, 0 0; } to { background-position: 0 56px, 0 56px; } }
+@keyframes fFloor { from { background-position: 0 0, 0 0; } to { background-position: 0 60px, 0 60px; } }
 
 .footer-inner {
   position: relative; z-index: 2;
