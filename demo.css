@@ -34,7 +34,7 @@ html,body { height:100%; background:#05070b; font-family:var(--font); color:var(
 .meet-time { font-family:var(--mono); }
 
 /* ── stage ── */
-.meet-stage { position:relative; flex:1; padding:26px; display:flex; }
+.meet-stage { position:relative; flex:1; padding:26px; display:flex; container-type:inline-size; }
 
 /* tiles */
 .tile { position:relative; border-radius:16px; overflow:hidden; background:#0e1420;
@@ -207,4 +207,13 @@ html,body { height:100%; background:#05070b; font-family:var(--font); color:var(
 
 @media (prefers-reduced-motion: reduce) {
   .rec i, .nat-dot, .waveform span, .cap-text::after, .nat-ans.streaming::after { animation:none; }
+}
+
+/* shrink the product overlay proportionally when the embed itself is small (mobile) so the
+   toolbar/ask-bar stay visible instead of being clipped by .meet's overflow:hidden */
+@container (max-width: 760px) {
+  .heario { transform:scale(.62); transform-origin:top left; }
+}
+@container (max-width: 460px) {
+  .heario { transform:scale(.4); transform-origin:top left; }
 }
