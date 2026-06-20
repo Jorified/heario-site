@@ -298,6 +298,7 @@ if (answerEl) {
   const panels = [...stage.querySelectorAll('.sr-panel')];
   const screen = stage.querySelector('.sr-screen');
   const statusTx = stage.querySelector('.sr-status-tx');
+  const featureEl = stage.querySelector('.sr-feature');
   if (!tabs.length || tabs.length !== panels.length) return;
 
   // status text shown in the stage title-bar per feature
@@ -314,6 +315,10 @@ if (answerEl) {
     const c = (tabs[idx].style.getPropertyValue('--c') || '#4f8ef7').trim();
     if (screen) screen.style.setProperty('--c', c);
     if (statusTx) statusTx.textContent = STATUS[idx] || 'listening';
+    if (featureEl) {
+      const name = tabs[idx].querySelector('.sr-meta strong');
+      if (name) featureEl.textContent = name.textContent;
+    }
   };
 
   // advance the moment the active tab's progress bar finishes filling
