@@ -12,7 +12,7 @@
   --green:    #5fb85f;
   --orange:   #d98b3a;
   --radius:   12px;
-  --font:         'Sora', system-ui, sans-serif;
+  --font:         'Space Grotesk', 'Sora', system-ui, sans-serif;
   --font-display: 'Space Grotesk', 'Sora', system-ui, sans-serif;
   --font-mono:    'JetBrains Mono', 'Consolas', ui-monospace, monospace;
 }
@@ -552,7 +552,7 @@ body {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   TYPOGRAPHY SYSTEM — Space Grotesk (display) · Sora (body) · JetBrains Mono
+   TYPOGRAPHY SYSTEM — Space Grotesk (display + body) · JetBrains Mono (code)
    ════════════════════════════════════════════════════════════════ */
 h1, h2, h3, h4, .logo,
 .nav-cta, .btn-primary, .btn-ghost, .btn-plan, .btn-plan-primary,
