@@ -228,12 +228,100 @@ h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 700; letter-spacing: -1px; 
   .bento-lg, .bento-wide { grid-column: span 1; }
 }
 
-/* ── MODES ── */
-.modes { padding: 64px 0; background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-.modes-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
-.mode-pill { background: var(--bg3); border: 1px solid var(--border); border-radius: 30px; padding: 10px 20px; font-size: 14px; font-weight: 500; color: var(--muted); transition: all .2s; cursor: pointer; }
-.mode-pill:hover, .mode-pill.active { border-color: var(--accent); color: var(--accent2); background: rgba(79,142,247,.08); }
+/* ── MODES · NEURAL REACTOR ── */
+.modes { padding: 112px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; }
 .soon { font-size: 10px; background: rgba(217,139,58,.15); color: var(--orange); border-radius: 4px; padding: 1px 5px; margin-left: 4px; vertical-align: middle; }
+
+.reactor { --active: #4f8ef7; margin-top: 30px; display: flex; flex-direction: column; align-items: center; }
+.reactor-stage {
+  position: relative;
+  width:  clamp(320px, 84vw, 580px);
+  height: clamp(320px, 84vw, 580px);
+  --R: clamp(126px, 34vw, 212px);
+  display: grid; place-items: center;
+}
+
+/* reactor housing rings */
+.reactor-rings { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.rr { position: absolute; border-radius: 50%; border: 1px solid var(--border); }
+.rr-1 { width: 96%; height: 96%; border-style: solid; opacity: .5;
+        animation: rrSpin 60s linear infinite; }
+.rr-2 { width: 74%; height: 74%; border-color: color-mix(in srgb, var(--active) 22%, var(--border));
+        border-top-color: color-mix(in srgb, var(--active) 60%, transparent);
+        animation: rrSpin 26s linear infinite reverse; transition: border-color .6s; }
+.rr-3 { width: 52%; height: 52%; border-style: dashed; border-color: color-mix(in srgb, var(--active) 18%, var(--border));
+        animation: rrSpin 40s linear infinite; transition: border-color .6s; }
+/* the orbit track the nodes ride on */
+.rr-orbit { position: absolute; width: calc(var(--R) * 2); height: calc(var(--R) * 2);
+            border-radius: 50%; border: 1px dashed color-mix(in srgb, var(--active) 24%, var(--border));
+            box-shadow: 0 0 60px color-mix(in srgb, var(--active) 12%, transparent) inset; transition: border-color .6s; }
+@keyframes rrSpin { to { transform: rotate(360deg); } }
+
+/* scan beam — a spoke that sweeps to the active node */
+.reactor-beam { position: absolute; left: 50%; top: 50%; width: 3px; height: var(--R);
+  transform-origin: bottom center; transform: translate(-50%, -100%) rotate(var(--beam, 0deg));
+  transition: transform .6s cubic-bezier(.34,.8,.27,1); pointer-events: none; }
+.reactor-beam i { display: block; width: 100%; height: 100%; border-radius: 3px;
+  background: linear-gradient(to top, transparent, color-mix(in srgb, var(--active) 75%, transparent));
+  box-shadow: 0 0 16px color-mix(in srgb, var(--active) 55%, transparent); transition: background .6s, box-shadow .6s; }
+
+/* glowing core with the live readout */
+.reactor-core { position: relative; z-index: 3; width: clamp(168px, 30vw, 212px); height: clamp(168px, 30vw, 212px);
+  border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  text-align: center; padding: 18px;
+  background: radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--active) 20%, var(--bg2)), var(--bg) 78%);
+  border: 1px solid color-mix(in srgb, var(--active) 45%, transparent);
+  box-shadow: 0 0 60px color-mix(in srgb, var(--active) 28%, transparent), inset 0 0 40px color-mix(in srgb, var(--active) 12%, transparent);
+  transition: border-color .6s, box-shadow .6s, background .6s; }
+.rc-halo { position: absolute; inset: -2px; border-radius: 50%; pointer-events: none;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--active) 30%, transparent);
+  animation: rcPulse 3.4s ease-in-out infinite; }
+@keyframes rcPulse { 0%,100%{ box-shadow: 0 0 0 1px color-mix(in srgb, var(--active) 26%, transparent), 0 0 26px color-mix(in srgb, var(--active) 18%, transparent); } 50%{ box-shadow: 0 0 0 1px color-mix(in srgb, var(--active) 55%, transparent), 0 0 50px color-mix(in srgb, var(--active) 34%, transparent); } }
+.rc-status { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .04em; color: color-mix(in srgb, var(--active) 60%, #fff); text-transform: lowercase; }
+.rc-status i { width: 6px; height: 6px; border-radius: 50%; background: var(--active); box-shadow: 0 0 8px var(--active); animation: srBlink 1.6s infinite; }
+.rc-ic { font-size: clamp(30px, 6vw, 42px); line-height: 1; margin: 2px 0; filter: drop-shadow(0 0 14px color-mix(in srgb, var(--active) 55%, transparent)); transition: filter .6s; }
+.rc-name { font-family: var(--font-display); font-size: clamp(15px, 2.4vw, 18px); font-weight: 700; color: #fff; letter-spacing: -.2px; }
+.rc-desc { font-size: 11.5px; line-height: 1.5; color: var(--muted); max-width: 168px; }
+
+/* orbiting mode nodes */
+.reactor-orbit { position: absolute; inset: 0; }
+.mode-node { position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%) rotate(var(--a)) translateY(calc(-1 * var(--R))) rotate(calc(-1 * var(--a)));
+  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  padding: 8px 14px 8px 9px; border-radius: 40px; cursor: pointer;
+  background: linear-gradient(180deg, rgba(22,28,40,.92), rgba(15,18,28,.88));
+  border: 1px solid var(--border); color: var(--muted);
+  font-family: var(--font-display); font-size: 12.5px; font-weight: 600;
+  backdrop-filter: blur(4px);
+  transition: border-color .25s, color .25s, box-shadow .25s, transform .25s; }
+.mode-node .mn-ic { width: 24px; height: 24px; flex-shrink: 0; display: grid; place-items: center; font-size: 14px;
+  border-radius: 50%; background: color-mix(in srgb, var(--c) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); transition: background .25s, box-shadow .25s; }
+.mode-node:hover { color: #fff; border-color: color-mix(in srgb, var(--c) 55%, transparent); }
+.mode-node.active { color: #fff;
+  border-color: color-mix(in srgb, var(--c) 70%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 18%, var(--bg2)), var(--bg2) 88%);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--c) 38%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--c) 22%, transparent); }
+.mode-node.active .mn-ic { background: color-mix(in srgb, var(--c) 30%, transparent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--c) 45%, transparent); }
+
+.reactor-hint { margin-top: 34px; font-size: 12.5px; color: var(--muted); }
+.reactor-hint kbd { font-family: var(--font-mono); font-size: 11px; color: var(--text);
+  background: var(--bg2); border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; }
+
+/* ── Reactor responsive: collapse the orbit into a premium stack ── */
+@media (max-width: 720px) {
+  .reactor-stage { width: 100%; height: auto; display: block; }
+  .reactor-rings, .reactor-beam { display: none; }
+  .reactor-core { width: 100%; height: auto; aspect-ratio: auto; border-radius: 16px; margin: 0 auto 24px; max-width: 320px; padding: 22px; }
+  .rc-desc { max-width: none; }
+  .reactor-orbit { position: static; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .reactor-orbit .mode-node { position: static; transform: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rr-1, .rr-2, .rr-3, .rc-halo { animation: none !important; }
+  .reactor-beam { transition: none !important; }
+}
 
 /* ── HOW IT WORKS ── */
 .how { padding: 96px 0; }

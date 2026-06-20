@@ -402,7 +402,7 @@
 
   <link rel="manifest" href="manifest.json" />
 
-  <link rel="stylesheet" href="style.css?v=10" />
+  <link rel="stylesheet" href="style.css?v=12" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
 
@@ -1024,32 +1024,67 @@
 
 
 
-<!-- MODES -->
+<!-- MODES · NEURAL REACTOR -->
 
-<section class="modes">
+<section class="modes" id="modes">
 
   <div class="section-inner">
 
-    <h2>Seven Modes. One AI That Listens.</h2>
+    <p class="wn-eyebrow reveal" data-d="1">◇ Adaptive Intelligence</p>
+    <h2 class="reveal" data-d="2">Seven Modes. One AI That Listens.</h2>
+    <p class="section-sub reveal" data-d="3">Switch live mid-session. No restart — the core just retunes.</p>
 
-    <p class="section-sub">Switch live mid-session. No restart required.</p>
+    <div class="reactor reveal" data-d="4">
+      <div class="reactor-stage">
 
-    <div class="modes-grid">
+        <!-- decorative reactor housing -->
+        <div class="reactor-rings" aria-hidden="true">
+          <span class="rr rr-1"></span>
+          <span class="rr rr-2"></span>
+          <span class="rr rr-3"></span>
+          <span class="rr-orbit"></span>
+        </div>
 
-      <div class="mode-pill active">💻 Technical Interview</div>
+        <!-- scan beam that aims at the active mode -->
+        <div class="reactor-beam" aria-hidden="true"><i></i></div>
 
-      <div class="mode-pill">🧩 Behavioral Interview</div>
+        <!-- glowing core with live readout -->
+        <div class="reactor-core">
+          <span class="rc-halo" aria-hidden="true"></span>
+          <span class="rc-status"><i></i> listening</span>
+          <span class="rc-ic">💻</span>
+          <span class="rc-name">Technical Interview</span>
+          <span class="rc-desc">Crisp answers to coding &amp; system questions.</span>
+        </div>
 
-      <div class="mode-pill">💼 Sales Call</div>
+        <!-- orbiting mode nodes -->
+        <div class="reactor-orbit" role="tablist" aria-label="AI modes">
+          <button class="mode-node" role="tab" style="--a:0deg;      --c:#4f8ef7" data-ic="💻" data-name="Technical Interview" data-desc="Crisp answers to coding &amp; system questions.">
+            <span class="mn-ic">💻</span><span class="mn-l">Technical</span>
+          </button>
+          <button class="mode-node" role="tab" style="--a:51.43deg;  --c:#9b7ef7" data-ic="🧩" data-name="Behavioral" data-desc="STAR-method stories from your real résumé.">
+            <span class="mn-ic">🧩</span><span class="mn-l">Behavioral</span>
+          </button>
+          <button class="mode-node" role="tab" style="--a:102.86deg; --c:#34d399" data-ic="💼" data-name="Sales Call" data-desc="Handle objections and advance the deal, live.">
+            <span class="mn-ic">💼</span><span class="mn-l">Sales</span>
+          </button>
+          <button class="mode-node" role="tab" style="--a:154.29deg; --c:#5fd1ff" data-ic="📖" data-name="Lecture Notes" data-desc="Key points captured as clean, timestamped notes.">
+            <span class="mn-ic">📖</span><span class="mn-l">Lecture</span>
+          </button>
+          <button class="mode-node" role="tab" style="--a:205.71deg; --c:#f472b6" data-ic="🤝" data-name="Recruiting" data-desc="Coach the interviewer — probe, flag, follow up.">
+            <span class="mn-ic">🤝</span><span class="mn-l">Recruiting</span>
+          </button>
+          <button class="mode-node" role="tab" style="--a:257.14deg; --c:#f0883e" data-ic="🗂️" data-name="System Design" data-desc="Architecture hints and scalability prompts.">
+            <span class="mn-ic">🗂️</span><span class="mn-l">Sys Design</span>
+          </button>
+          <button class="mode-node" role="tab" style="--a:308.57deg; --c:#a3e635" data-ic="🎭" data-name="Mock Interview" data-desc="Tough coaching — sharper phrasing, real follow-ups.">
+            <span class="mn-ic">🎭</span><span class="mn-l">Mock</span>
+          </button>
+        </div>
 
-      <div class="mode-pill">📖 Lecture Notes</div>
+      </div>
 
-      <div class="mode-pill">🤝 Recruiting</div>
-
-      <div class="mode-pill">🗂️ System Design</div>
-
-      <div class="mode-pill">🎭 Mock Interview</div>
-
+      <p class="reactor-hint">Hover a mode to retune the core · or press <kbd>M</kbd> in-app to cycle live</p>
     </div>
 
   </div>
@@ -1786,7 +1821,7 @@
 
 
 
-<script src="app.js?v=7"></script>
+<script src="app.js?v=8"></script>
 
 </body>
 

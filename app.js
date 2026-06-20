@@ -10,13 +10,48 @@
   } catch (_) {}
 })();
 
-// ── Mode pill active toggle ──────────────────────────────────────────────
-document.querySelectorAll('.mode-pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    document.querySelectorAll('.mode-pill').forEach(p => p.classList.remove('active'));
-    pill.classList.add('active');
+// ── Modes: neural reactor (auto-cycle + hover/click to retune the core) ───
+(() => {
+  const reactor = document.querySelector('.reactor');
+  if (!reactor) return;
+  const stage  = reactor.querySelector('.reactor-stage');
+  const nodes  = [...reactor.querySelectorAll('.mode-node')];
+  const icEl   = reactor.querySelector('.rc-ic');
+  const nameEl = reactor.querySelector('.rc-name');
+  const descEl = reactor.querySelector('.rc-desc');
+  if (!nodes.length) return;
+
+  let idx = 0, timer = null, hovering = false;
+
+  const select = (i) => {
+    idx = (i + nodes.length) % nodes.length;
+    const n = nodes[idx];
+    nodes.forEach((x, k) => x.classList.toggle('active', k === idx));
+    const c = (n.style.getPropertyValue('--c') || '#4f8ef7').trim();
+    reactor.style.setProperty('--active', c);
+    // aim the scan beam at the node's orbital angle
+    if (stage) stage.style.setProperty('--beam', n.style.getPropertyValue('--a') || '0deg');
+    if (icEl)   icEl.textContent   = n.dataset.ic;
+    if (nameEl) nameEl.textContent = n.dataset.name;
+    if (descEl) descEl.textContent = n.dataset.desc;
+  };
+
+  const start = () => { if (!timer) timer = setInterval(() => { if (!hovering) select(idx + 1); }, 2600); };
+  const stop  = () => { clearInterval(timer); timer = null; };
+
+  nodes.forEach((n, i) => {
+    n.addEventListener('click',      () => select(i));
+    n.addEventListener('mouseenter', () => { hovering = true; select(i); });
+    n.addEventListener('mouseleave', () => { hovering = false; });
   });
-});
+
+  const io = new IntersectionObserver((es) => {
+    es.forEach(e => e.isIntersecting ? start() : stop());
+  }, { threshold: 0.2 });
+  io.observe(reactor);
+
+  select(0);
+})();
 
 // ── Pricing toggle (cosmetic) ────────────────────────────────────────────
 document.querySelectorAll('.toggle-label').forEach(label => {
@@ -49,7 +84,6 @@ const revealGroups = [
   ['.feature-card', 4],
   ['.step', 4],
   ['.plan-card', 4],
-  ['.mode-pill', 4],
   ['.lifetime-card', 2],
   ['.section-inner > h2', 1],
   ['.section-inner > .section-sub', 1],
