@@ -1158,7 +1158,7 @@ h2 {
 .sp-offline-tx { margin-top: 20px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 13px 15px; min-height: 46px; }
 .sp-otx { display: inline-block; overflow: hidden; white-space: nowrap; width: 0; border-right: 2px solid var(--c); font-family: var(--font-mono); font-size: 13px; color: var(--text); vertical-align: bottom; }
 .sr-panel.active[data-i="6"] .sp-otx { animation: srType6 2.1s steps(28) 1.4s both, srCaret .8s step-end 1.4s 6; }
-@keyframes srType6 { to { width: 28ch; } }
+@keyframes srType6 { to { width: 20ch; } }
 
 /* 7 · Three STT Options */
 .sp-engines { position: relative; display: flex; flex-direction: column; gap: 9px; }
