@@ -3,7 +3,7 @@
 :root {
   --bg:#0b0e13; --bg2:#161c28; --border:#222b3d; --text:#e8ecf3; --muted:#8a94a8;
   --accent:#4f8ef7; --accent2:#7fd1ff; --green:#5fb85f; --red:#f0524b; --violet:#a78bfa;
-  --font:'Sora',system-ui,sans-serif; --display:'Space Grotesk',sans-serif; --mono:'JetBrains Mono',monospace;
+  --font:'Space Grotesk','Sora',system-ui,sans-serif; --display:'Space Grotesk',sans-serif; --mono:'Space Grotesk','Sora',system-ui,sans-serif;
 }
 html,body { height:100%; background:#05070b; font-family:var(--font); color:var(--text); overflow:hidden; }
 body { position:relative; container-type:inline-size; container-name:stagebox; }
