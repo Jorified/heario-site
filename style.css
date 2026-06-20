@@ -945,7 +945,7 @@ h2 {
   gap: 18px;
   margin-top: 54px;
   text-align: left;
-  align-items: stretch;
+  align-items: start;
 }
 
 /* ── Left rail ── */
@@ -1005,13 +1005,15 @@ h2 {
 
 /* ── Right screen (glass overlay, mirrors the app) ── */
 .sr-screen {
-  position: relative;
+  position: sticky;
+  top: clamp(72px, calc(50vh - 220px), 150px);
+  align-self: start;
   background: linear-gradient(180deg, rgba(20,25,38,.92), rgba(13,17,26,.96));
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 30px 70px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.04);
-  min-height: 360px;
+  height: 440px;
   display: flex; flex-direction: column;
 }
 /* moving accent glow tinted to active panel */
@@ -1035,7 +1037,7 @@ h2 {
 @keyframes srBlink { 0%,100%{opacity:1} 50%{opacity:.25} }
 .sr-brand { margin-left: auto; font-family: var(--font-display); font-size: 12px; font-weight: 700; color: #fff; opacity: .55; letter-spacing: .02em; }
 
-.sr-stagewrap { position: relative; flex: 1; padding: 28px; }
+.sr-stagewrap { position: relative; flex: 1; padding: 28px; display: flex; flex-direction: column; justify-content: center; }
 
 /* ── Panels ── */
 .sr-panel { display: none; flex-direction: column; }
@@ -1274,7 +1276,7 @@ h2 {
   .sr-tab { flex: 0 0 auto; width: auto; min-width: 158px; padding: 11px 14px; }
   .sr-tab:hover { transform: none; }
   .sr-meta em { display: none; }
-  .sr-screen { min-height: 380px; }
+  .sr-screen { position: static; height: auto; min-height: 380px; top: auto; }
 }
 @media (prefers-reduced-motion: reduce) {
   .showroom-stage.running .sr-tab.active .sr-prog i { animation: srProg 9s linear forwards; }
