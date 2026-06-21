@@ -402,7 +402,7 @@
 
   <link rel="manifest" href="manifest.json" />
 
-  <link rel="stylesheet" href="style.css?v=20" />
+  <link rel="stylesheet" href="style.css?v=21" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
 
@@ -1199,7 +1199,13 @@
 
 <!-- UNDETECTABLE -->
 
-<section class="undetect">
+<section class="undetect" id="undetect">
+
+  <div class="ud-ambient" aria-hidden="true">
+    <div class="ud-grid"></div>
+    <div class="ud-orb ud-orb-a"></div>
+    <div class="ud-orb ud-orb-b"></div>
+  </div>
 
   <div class="section-inner">
 
@@ -1207,21 +1213,21 @@
 
       <div class="undetect-text">
 
-        <div class="undetect-badge"><svg class="eico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg> Invisible by design</div>
+        <div class="undetect-badge"><span class="ub-pulse" aria-hidden="true"></span><svg class="eico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg> Invisible by design</div>
 
-        <h2>They Can't See It.<br/>Only You Can.</h2>
+        <h2>They Can't See It.<br/><span class="ud-grad">Only You Can.</span></h2>
 
         <p>Heario uses a Windows API call — <code>SetWindowDisplayAffinity</code> — that tells the OS to exclude the overlay from all screen capture pipelines. Zoom, Teams, Google Meet, and OBS all see a blank space where Heario sits. This isn't a trick or a workaround; it's the same mechanism used by banks and DRM software to protect sensitive content.</p>
 
         <ul class="undetect-list">
 
-          <li><span class="ul-icon">✓</span> No browser extensions to detect</li>
+          <li><span class="ul-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span> No browser extensions to detect</li>
 
-          <li><span class="ul-icon">✓</span> No meeting bots joining your call</li>
+          <li><span class="ul-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span> No meeting bots joining your call</li>
 
-          <li><span class="ul-icon">✓</span> No screen recording of your answers</li>
+          <li><span class="ul-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span> No screen recording of your answers</li>
 
-          <li><span class="ul-icon">✓</span> No network traffic visible to the interviewer</li>
+          <li><span class="ul-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span> No network traffic visible to the interviewer</li>
 
         </ul>
 
@@ -1229,60 +1235,70 @@
 
       <div class="undetect-visual">
 
-        <div class="uv-screen">
+        <!-- THEIR REALITY · capture feed with Heario cloaked -->
+        <div class="uv-screen uv-feed">
 
-          <div class="uv-label">What the interviewer sees</div>
+          <span class="uv-bracket uv-bracket-tl"></span><span class="uv-bracket uv-bracket-br"></span>
+
+          <div class="uv-head">
+            <span class="uv-head-l"><span class="uv-rec"></span> CAPTURE FEED · interviewer</span>
+            <span class="uv-tag uv-tag-rec">REC</span>
+          </div>
 
           <div class="uv-meeting">
 
             <div class="uv-tile interviewer-tile">
-
               <div class="uv-avatar">SC</div>
-
               <span>Sarah Chen</span>
-
             </div>
 
             <div class="uv-tile you-tile">
-
               <div class="uv-avatar you">You</div>
-
               <span>You</span>
+            </div>
 
+            <div class="uv-void">
+              <span class="uv-void-scan" aria-hidden="true"></span>
+              <span class="uv-void-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></span>
+              <span class="uv-void-tx">EXCLUDED FROM CAPTURE</span>
             </div>
 
           </div>
 
         </div>
 
-        <div class="uv-your-screen">
+        <div class="uv-divider" aria-hidden="true"><span class="uv-divider-tx">same screen · two realities</span></div>
 
-          <div class="uv-label">What you see</div>
+        <!-- YOUR REALITY · overlay live -->
+        <div class="uv-screen uv-your-screen">
+
+          <span class="uv-bracket uv-bracket-tl"></span><span class="uv-bracket uv-bracket-br"></span>
+          <span class="uv-sweep" aria-hidden="true"></span>
+
+          <div class="uv-head">
+            <span class="uv-head-l"><span class="uv-live"></span> YOUR DISPLAY · live</span>
+            <span class="uv-tag uv-tag-on">VISIBLE</span>
+          </div>
 
           <div class="uv-meeting">
 
             <div class="uv-tile interviewer-tile">
-
               <div class="uv-avatar">SC</div>
-
               <span>Sarah Chen</span>
-
             </div>
 
             <div class="uv-tile you-tile">
-
               <div class="uv-avatar you">You</div>
-
               <span>You</span>
-
             </div>
 
             <div class="uv-overlay-chip">
-
-              <div class="uv-chip-dot"></div>
-
-              <span>Use token-bucket with Redis. Each client key gets INCR + TTL in a Lua script…</span>
-
+              <div class="uv-chip-head">
+                <div class="uv-chip-dot"></div>
+                <span class="uv-chip-label">Heario</span>
+                <span class="uv-chip-conf">C5</span>
+              </div>
+              <span class="uv-chip-tx">Use a token-bucket in Redis — each client key gets <code>INCR</code> + a TTL in one Lua script, so the limit check stays atomic…</span>
             </div>
 
           </div>
