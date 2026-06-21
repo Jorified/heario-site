@@ -990,6 +990,8 @@ h2 {
 .sr-ic svg { width: 20px; height: 20px; display: block; }
 /* inline icons used inside the demo panels (replace emoji) */
 .sp-i { width: 1.05em; height: 1.05em; vertical-align: -0.16em; flex-shrink: 0; }
+/* general inline icon (replaces emoji in tags, pills, badges, copy) */
+.eico { width: 1.05em; height: 1.05em; vertical-align: -0.16em; flex-shrink: 0; }
 .sr-tab.active .sr-ic {
   transform: scale(1.07);
   box-shadow: 0 0 18px color-mix(in srgb, var(--c) 35%, transparent);
