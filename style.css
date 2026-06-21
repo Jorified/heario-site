@@ -963,6 +963,10 @@ h2 {
   .undetect-badge { margin-left: auto; margin-right: auto; }
   .undetect-list { max-width: 360px; margin: 0 auto; }
 }
+@media (prefers-reduced-motion: reduce) {
+  .ud-grid, .ud-orb, .ub-pulse, .uv-rec, .uv-live, .uv-void-scan, .uv-sweep, .uv-chip-dot { animation: none !important; }
+  .uv-void-scan, .uv-sweep { display: none; }
+}
 
 /* ── FAQ ── */
 .faq { padding: 100px 24px; }
