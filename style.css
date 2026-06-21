@@ -1260,6 +1260,15 @@ h2 {
 .sr-panel.active[data-i="12"] .sp-vanish-tag { animation: srVanishTag var(--dur) ease-in-out infinite; }
 @keyframes srVanishTag { 0%,44%{ opacity:0; } 54%,86%{ opacity:1; } 94%,100%{ opacity:0; } }
 
+/* 13 · Post-Interview Debrief */
+.sp-debrief { display: flex; flex-direction: column; gap: 12px; }
+.sp-debrief-sec { display: flex; flex-direction: column; gap: 4px; opacity: 0; }
+.sp-debrief-h { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--c); }
+.sp-debrief-sec p { font-size: 12.5px; line-height: 1.5; color: var(--text); }
+.sr-panel.active[data-i="13"] .sp-debrief-sec:nth-child(1){ animation: srRise .45s ease 1s both; }
+.sr-panel.active[data-i="13"] .sp-debrief-sec:nth-child(2){ animation: srRise .45s ease 1.35s both; }
+.sr-panel.active[data-i="13"] .sp-debrief-sec:nth-child(3){ animation: srRise .45s ease 1.7s both; }
+
 /* ── Ambient footer ticker ── */
 .wn-ticker {
   position: relative; display: flex; flex-direction: column; gap: 12px;

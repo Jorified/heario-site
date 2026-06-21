@@ -402,7 +402,7 @@
 
   <link rel="manifest" href="manifest.json" />
 
-  <link rel="stylesheet" href="style.css?v=19" />
+  <link rel="stylesheet" href="style.css?v=20" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
 
@@ -698,7 +698,7 @@
   <div class="section-inner">
 
     <p class="wn-eyebrow reveal" data-d="1">✦ v0.1.1 · Just Shipped</p>
-    <h2 class="reveal" data-d="2">Thirteen reasons to update</h2>
+    <h2 class="reveal" data-d="2">Fourteen reasons to update</h2>
     <p class="section-sub reveal" data-d="3">A whole new layer of control — type, switch, pin, hide, and go fully offline. Watch each one work, live.</p>
 
     <div class="showroom-stage reveal" data-d="4">
@@ -781,6 +781,12 @@
         <button class="sr-tab" data-i="12" style="--c:#ff5f6d" role="tab">
           <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 6.2A9.8 9.8 0 0 1 12 6c5 0 9 6 9 6a16.8 16.8 0 0 1-2.3 2.9M6.2 7.8A15.7 15.7 0 0 0 3 12s4 6 9 6a9 9 0 0 0 3.5-.7"/><path d="M9.9 10.1a3 3 0 0 0 4.2 4.2"/></svg></span>
           <span class="sr-meta"><strong>Panic Hide</strong><em>Ctrl + Shift + H</em></span>
+          <span class="sr-prog"><i></i></span>
+        </button>
+
+        <button class="sr-tab" data-i="13" style="--c:#34d399" role="tab">
+          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M9 8h6M9 12h6M9 16l1.5 1.5L13 14.5"/></svg></span>
+          <span class="sr-meta"><strong>Post-Interview Debrief</strong><em>Auto-generated recap</em></span>
           <span class="sr-prog"><i></i></span>
         </button>
 
@@ -979,6 +985,25 @@
             <div class="sp-foot">A global hotkey that works <b>even when Heario isn't focused</b></div>
           </div>
 
+          <!-- 13 · Post-Interview Debrief -->
+          <div class="sr-panel" data-i="13" style="--c:#34d399">
+            <div class="sp-debrief">
+              <div class="sp-debrief-sec">
+                <span class="sp-debrief-h">Questions Asked</span>
+                <p>How would you scale this to 10M requests/day?</p>
+              </div>
+              <div class="sp-debrief-sec">
+                <span class="sp-debrief-h">How You Answered</span>
+                <p>Shard by tenant, cache hot reads, queue the writes.</p>
+              </div>
+              <div class="sp-debrief-sec">
+                <span class="sp-debrief-h">Follow-Ups to Prepare</span>
+                <p>Rehearse cache-invalidation tradeoffs.</p>
+              </div>
+            </div>
+            <div class="sp-foot">One click at session end — <b>questions, answers &amp; what to prep next</b></div>
+          </div>
+
         </div>
       </div>
 
@@ -1001,6 +1026,7 @@
           <span class="wn-item" style="--c:#ffc857"><i class="wn-dot"></i> Pin Answers</span>
           <span class="wn-item" style="--c:#b06ab3"><i class="wn-dot"></i> Discreet Mode</span>
           <span class="wn-item" style="--c:#ff5f6d"><i class="wn-dot"></i> Panic Hide</span>
+          <span class="wn-item" style="--c:#34d399"><i class="wn-dot"></i> Post-Interview Debrief</span>
         </div>
         <div class="wn-items" aria-hidden="true">
           <span class="wn-item" style="--c:#4f8ef7"><i class="wn-dot"></i> Type to Ask</span>
@@ -1016,6 +1042,7 @@
           <span class="wn-item" style="--c:#ffc857"><i class="wn-dot"></i> Pin Answers</span>
           <span class="wn-item" style="--c:#b06ab3"><i class="wn-dot"></i> Discreet Mode</span>
           <span class="wn-item" style="--c:#ff5f6d"><i class="wn-dot"></i> Panic Hide</span>
+          <span class="wn-item" style="--c:#34d399"><i class="wn-dot"></i> Post-Interview Debrief</span>
         </div>
       </div>
     </div>
@@ -1822,7 +1849,7 @@
 
 
 
-<script src="app.js?v=9"></script>
+<script src="app.js?v=10"></script>
 
 </body>
 
