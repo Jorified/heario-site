@@ -529,6 +529,8 @@ code { background: rgba(79,142,247,.1); color: var(--accent2); padding: 2px 7px;
   .lifetime-row { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
   .footer-brand { grid-column: 1 / -1; }
+  .demo-embed-wrap { padding: 40px 0; gap: 16px; }
+  .demo-embed-inner { max-width: none; border-radius: 0; border-left: none; border-right: none; }
 }
 @media (max-width: 480px) {
   .footer-inner { grid-template-columns: 1fr; }
