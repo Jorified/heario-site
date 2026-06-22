@@ -2,8 +2,10 @@
 .claude/
 
 # Workflow artifacts
-*_frame.jpg
 *_5s.mp4
+*_frame.jpg
+!interviewer_frame.jpg
+!self_frame.jpg
 
 # OS
 .DS_Store

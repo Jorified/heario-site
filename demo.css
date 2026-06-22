@@ -46,12 +46,12 @@ body { position:relative; container-type:inline-size; container-name:stagebox; }
 /* tiles */
 .tile { position:relative; border-radius:16px; overflow:hidden; background:#0e1420;
   border:1px solid var(--border); }
-.tile-video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none; z-index:1; }
-.tile-video.on { display:block; }
-/* when a clip is playing, hide the avatar placeholder behind it */
-.tile-video.on ~ .tile-fallback { display:none; }
-.tile-fallback { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+/* video+poster show immediately; only the broken-video case falls back to the avatar */
+.tile-video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; }
+.tile-video.failed { display:none; }
+.tile-fallback { position:absolute; inset:0; display:none; align-items:center; justify-content:center;
   background:radial-gradient(circle at 50% 35%, #1b2740, #0d1320 70%); }
+.tile-video.failed ~ .tile-fallback { display:flex; }
 
 .tile-main { flex:1; }
 .tile-main .tile-fallback { background:

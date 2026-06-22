@@ -35,7 +35,7 @@
 
       <!-- big active-speaker tile (drop a Higgsfield clip into interviewer.mp4 to replace) -->
       <div class="tile tile-main speaking" id="interviewerTile">
-        <video class="tile-video" id="interviewerVideo" loop muted playsinline></video>
+        <video class="tile-video" id="interviewerVideo" loop muted autoplay playsinline preload="auto" poster="interviewer_frame.jpg"></video>
         <div class="tile-fallback">
           <div class="avatar avatar-sarah">SC</div>
         </div>
@@ -47,7 +47,7 @@
       <!-- filmstrip -->
       <div class="filmstrip">
         <div class="tile tile-sm" id="selfTile">
-          <video class="tile-video" id="selfVideo" loop muted playsinline></video>
+          <video class="tile-video" id="selfVideo" loop muted autoplay playsinline preload="auto" poster="self_frame.jpg"></video>
           <div class="tile-fallback"><div class="avatar avatar-you">You</div></div>
           <div class="tile-name sm">You</div>
           <div class="tile-mic muted">🎤</div>
@@ -131,6 +131,6 @@
   <button class="replay" id="replay" title="Replay">↻ Replay demo</button>
 </div>
 
-<script src="demo.js?v=7"></script>
+<script src="demo.js?v=8"></script>
 </body>
 </html>

@@ -19,13 +19,14 @@ const meetTime  = $('#meetTime');
 const CONF_COLORS = ['#222b3d', '#f0524b', '#d98b3a', '#f5bf4f', '#8bc34a', '#5fb85f'];
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-// optional Higgsfield drop-ins: if interviewer.mp4 / self.mp4 exist, use them
+// video+poster show by default (see demo.css); only mark .failed if the
+// browser genuinely can't load the clip, which falls back to the avatar
 function tryVideo(id, src) {
   const v = document.getElementById(id);
   if (!v) return;
-  v.src = src + '?t=' + Date.now();   // cache-bust so recordings always use the latest clip
-  v.addEventListener('loadeddata', () => { v.classList.add('on'); v.play().catch(()=>{}); });
-  v.addEventListener('error', () => { v.removeAttribute('src'); });
+  v.src = src;
+  v.addEventListener('loadeddata', () => { v.play().catch(() => {}); });
+  v.addEventListener('error', () => { v.classList.add('failed'); v.removeAttribute('src'); });
 }
 // served same-origin (not GitHub Releases) — Releases forces
 // Content-Disposition: attachment, which blocks inline playback on mobile
