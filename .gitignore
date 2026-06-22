@@ -15,8 +15,11 @@ Thumbs.db
 
 .vercel
 
-# Video assets (served from GitHub Releases)
+# Video assets — served from GitHub Releases, except the demo clips below
+# which need same-origin video/mp4 headers for mobile inline playback
 *.mp4
+!interviewer.mp4
+!self.mp4
 
 node_modules/
 package.json
