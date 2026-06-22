@@ -33,13 +33,13 @@
   <p class="updated">Last updated: June 2026</p>
 
   <h2>Our Approach</h2>
-  <p>Heario is built with a local-first architecture — your audio and meeting content are processed on your device and sent only to the AI provider you configure. We minimise the data that ever reaches our servers.</p>
+  <p>Heario supports two modes. On the free/BYOK path, your audio and meeting content are processed on your device and sent only to the AI provider you configure (Anthropic, OpenAI, Deepgram) — none of it reaches our servers. On a paid managed plan, your questions are sent to our backend (<code>api.heario.ai</code>) so we can relay them to our own Anthropic key and enforce your plan's usage limit; we do not store the content of your questions or answers beyond what's needed to process that single request.</p>
 
   <h2>Data in Transit</h2>
   <ul>
     <li>All communication between Heario and external services uses TLS 1.2 or higher</li>
-    <li>API keys you enter are stored locally in an encrypted config file on your device</li>
-    <li>We never transmit your API keys to our servers</li>
+    <li>API keys you enter for the BYOK path are stored locally in a config file on your device and never transmitted to our servers</li>
+    <li>If you're on a managed plan, your licence key is sent to our backend solely to verify your plan and process your request</li>
   </ul>
 
   <h2>Overlay Protection</h2>
@@ -48,13 +48,13 @@
   <h2>Payment Security</h2>
   <p>Payments are handled entirely by <a href="https://stripe.com" target="_blank">Stripe</a>, a PCI DSS Level 1 certified payment processor. Heario never sees, stores, or logs your card details.</p>
 
-  <h2>Open Source</h2>
-  <p>The Heario application is open source. You can audit the code directly on <a href="https://github.com/Jorified/heario-app" target="_blank">GitHub</a>. We believe transparency is the strongest security guarantee we can offer.</p>
+  <h2>App Shell Transparency</h2>
+  <p>The desktop app shell (the Tauri/React wrapper you install) is published on <a href="https://github.com/Jorified/heario-app" target="_blank">GitHub</a> so you can see how the window and overlay are built. The AI pipeline and our managed-plan backend are proprietary and not publicly source-available.</p>
 
   <h2>Responsible Disclosure</h2>
-  <p>If you discover a security vulnerability in Heario, please report it privately before public disclosure. Email <a href="mailto:jackoreilly10@hotmail.com">jackoreilly10@hotmail.com</a> with the subject line <strong>"Security Disclosure"</strong>. We will acknowledge your report within 48 hours and work with you to resolve the issue promptly.</p>
+  <p>If you discover a security vulnerability in Heario, please report it privately before public disclosure. Email <a href="mailto:support@heario.ai">support@heario.ai</a> with the subject line <strong>"Security Disclosure"</strong>. We will acknowledge your report within 48 hours and work with you to resolve the issue promptly.</p>
 
-  <div class="security-badge">🛡 Found a vulnerability? Email jackoreilly10@hotmail.com — we take every report seriously.</div>
+  <div class="security-badge">🛡 Found a vulnerability? Email support@heario.ai — we take every report seriously.</div>
 </div>
 </body>
 </html>
