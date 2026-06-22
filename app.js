@@ -53,14 +53,6 @@
   select(0);
 })();
 
-// ── Pricing toggle (cosmetic) ────────────────────────────────────────────
-document.querySelectorAll('.toggle-label').forEach(label => {
-  label.addEventListener('click', () => {
-    document.querySelectorAll('.toggle-label').forEach(l => l.classList.remove('active'));
-    label.classList.add('active');
-  });
-});
-
 // ── Nav: add shadow once scrolled ────────────────────────────────────────
 const nav = document.querySelector('.nav');
 const stickyCta = document.getElementById('stickyCta');
@@ -84,7 +76,6 @@ const revealGroups = [
   ['.feature-card', 4],
   ['.step', 4],
   ['.plan-card', 4],
-  ['.lifetime-card', 2],
   ['.section-inner > h2', 1],
   ['.section-inner > .section-sub', 1],
 ];
