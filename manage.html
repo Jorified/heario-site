@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Subscription — Heario</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    .mg-wrap { max-width: 480px; margin: 0 auto; padding: 120px 24px 80px; position: relative; z-index: 1; text-align: center; }
+    .mg-wrap h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 12px; }
+    .mg-wrap .sub { color: #a0aec0; font-size: 0.95rem; line-height: 1.7; margin-bottom: 32px; }
+    .mg-input { width: 100%; padding: 14px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); color: #fff; font-size: 0.95rem; font-family: 'JetBrains Mono', monospace; text-align: center; margin-bottom: 16px; }
+    .mg-input::placeholder { color: #6b7a99; }
+    .mg-error { display: block; color: #ff8a8a; font-size: 0.85rem; margin-top: -4px; margin-bottom: 16px; }
+    .mg-note { color: #6b7a99; font-size: 0.85rem; margin-top: 24px; }
+    .mg-note a { color: #7fd1ff; }
+    .legal-back { display: inline-block; margin-bottom: 32px; color: #7fd1ff; font-size: 0.9rem; text-decoration: none; }
+    .legal-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+<div class="site-bg" aria-hidden="true">
+  <div class="g-aurora g-aurora-1"></div>
+  <div class="g-aurora g-aurora-2"></div>
+</div>
+<div class="mg-wrap">
+  <a href="/" class="legal-back">← Back to Heario</a>
+  <h1>Manage your subscription</h1>
+  <p class="sub">Enter your license key to view billing, update your card, or cancel — handled
+    securely by Stripe.</p>
+
+  <input id="key" class="mg-input" type="text" placeholder="HEAR-XXXX-XXXX-XXXX" autocomplete="off" />
+  <span id="err" class="mg-error" style="display:none;"></span>
+  <button id="go" class="btn-primary" style="width:100%;">Continue to billing portal</button>
+
+  <p class="mg-note">Lost your key, or it's not working? Email
+    <a href="mailto:support@heario.ai">support@heario.ai</a> and we'll look it up.</p>
+</div>
+<script>
+  const input = document.getElementById('key');
+  const err   = document.getElementById('err');
+  const btn   = document.getElementById('go');
+
+  async function go() {
+    const license_key = input.value.trim();
+    err.style.display = 'none';
+    if (!license_key) { err.textContent = 'Enter your license key.'; err.style.display = 'block'; return; }
+    btn.disabled = true;
+    btn.textContent = 'Loading…';
+    try {
+      const resp = await fetch('https://api.heario.ai/api/portal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ license_key }),
+      });
+      const data = await resp.json();
+      if (!resp.ok || !data.url) {
+        err.textContent = data.error || 'Could not find that license key.';
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Continue to billing portal';
+        return;
+      }
+      window.location.href = data.url;
+    } catch (e) {
+      err.textContent = 'Something went wrong — try again.';
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Continue to billing portal';
+    }
+  }
+
+  btn.addEventListener('click', go);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+</script>
+</body>
+</html>
