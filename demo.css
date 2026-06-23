@@ -112,8 +112,8 @@ body { position:relative; container-type:inline-size; container-name:stagebox; }
 .captions.speaking .cap-text::after { content:"▋"; color:var(--accent2); margin-left:1px; animation:caret 1s step-end infinite; }
 @keyframes caret { 50%{opacity:0} }
 
-/* ── HEARIO overlay ── */
-.heario {
+/* ── Heario overlay ── */
+.heario-overlay {
   position:absolute; top:26px; left:26px; width:340px;
   background:linear-gradient(180deg, rgba(14,17,23,.97), rgba(10,13,20,.97));
   border:1px solid #223; border-radius:14px; overflow:hidden;
