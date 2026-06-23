@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<defs>
+  <radialGradient id="bgGlow1" cx="30%" cy="10%" r="60%">
+    <stop offset="0%" stop-color="#4f8ef7" stop-opacity="0.18"/>
+    <stop offset="100%" stop-color="#4f8ef7" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="bgGlow2" cx="80%" cy="90%" r="50%">
+    <stop offset="0%" stop-color="#a855f7" stop-opacity="0.14"/>
+    <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#ffffff"/>
+    <stop offset="40%" stop-color="#cfe0ff"/>
+    <stop offset="80%" stop-color="#7fd1ff"/>
+    <stop offset="100%" stop-color="#ffffff"/>
+  </linearGradient>
+</defs>
+
+<rect width="1200" height="630" fill="#070a12"/>
+<rect width="1200" height="630" fill="url(#bgGlow1)"/>
+<rect width="1200" height="630" fill="url(#bgGlow2)"/>
+
+<!-- card -->
+<rect x="160" y="75" width="880" height="480" rx="22" fill="#0a0d16" fill-opacity="0.6" stroke="#7fd1ff" stroke-opacity="0.25" stroke-width="1.5"/>
+<path d="M 178 93 L 178 110 M 178 93 L 195 93" stroke="#7fd1ff" stroke-width="2" stroke-opacity="0.7" fill="none"/>
+<path d="M 1022 537 L 1022 520 M 1022 537 L 1005 537" stroke="#7fd1ff" stroke-width="2" stroke-opacity="0.7" fill="none"/>
+
+<!-- mic icon -->
+<g transform="translate(600,200)">
+  <rect x="-18" y="-32" width="36" height="48" rx="18" fill="none" stroke="#7fd1ff" stroke-width="3"/>
+  <path d="M-28 16 Q-28 44 0 44 Q28 44 28 16" fill="none" stroke="#7fd1ff" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="0" y1="44" x2="0" y2="58" stroke="#7fd1ff" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="-20" y1="58" x2="20" y2="58" stroke="#7fd1ff" stroke-width="2.5" stroke-linecap="round"/>
+</g>
+
+<!-- title -->
+<text x="600" y="318" text-anchor="middle" font-family="Arial, sans-serif" font-size="84" font-weight="800" letter-spacing="-3" fill="url(#titleGrad)">Heario</text>
+
+<!-- subtitle -->
+<text x="600" y="362" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#7fd1ff" fill-opacity="0.92">AI Copilot for Meetings &amp; Interviews</text>
+
+<!-- pills -->
+<rect x="386" y="400" width="146" height="40" rx="20" fill="#4f8ef7" fill-opacity="0.12" stroke="#4f8ef7" stroke-opacity="0.4" stroke-width="1"/>
+<text x="459" y="425" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="600" fill="#7fd1ff">&#9889; &lt;300ms</text>
+
+<rect x="552" y="400" width="156" height="40" rx="20" fill="#a855f7" fill-opacity="0.12" stroke="#a855f7" stroke-opacity="0.4" stroke-width="1"/>
+<text x="630" y="425" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="600" fill="#c084fc">&#128737; Undetectable</text>
+
+<rect x="728" y="400" width="126" height="40" rx="20" fill="#5fb85f" fill-opacity="0.12" stroke="#5fb85f" stroke-opacity="0.4" stroke-width="1"/>
+<text x="791" y="425" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="600" fill="#86efac">&#128247; Windows</text>
+
+<!-- domain -->
+<text x="600" y="600" text-anchor="middle" font-family="Courier New, monospace" font-size="17" font-weight="500" fill="#5b6478" letter-spacing="0.5">heario.ai</text>
+</svg>
