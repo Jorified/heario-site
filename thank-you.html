@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thanks for subscribing — Heario</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    .ty-wrap { max-width: 640px; margin: 0 auto; padding: 100px 24px 80px; position: relative; z-index: 1; text-align: center; }
+    .ty-check { width: 64px; height: 64px; border-radius: 50%; background: rgba(60,210,150,0.12); border: 1px solid rgba(60,210,150,0.4); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 1.8rem; color: #4ee0a8; }
+    .ty-wrap h1 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; }
+    .ty-wrap .sub { color: #a0aec0; font-size: 1rem; line-height: 1.7; margin-bottom: 40px; }
+    .ty-steps { text-align: left; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 28px 28px 8px; margin-bottom: 36px; }
+    .ty-step { display: flex; gap: 14px; padding-bottom: 20px; }
+    .ty-step-num { flex: 0 0 28px; height: 28px; border-radius: 50%; background: rgba(79,142,247,0.15); border: 1px solid rgba(79,142,247,0.4); color: #7fd1ff; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+    .ty-step-text { color: #cbd5e1; font-size: 0.92rem; line-height: 1.6; padding-top: 3px; }
+    .ty-step-text strong { color: #fff; }
+    .ty-actions { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 32px; }
+    .ty-note { color: #6b7a99; font-size: 0.85rem; }
+    .ty-note a { color: #7fd1ff; }
+    .ty-back { display: inline-block; margin-top: 8px; color: #7fd1ff; font-size: 0.9rem; text-decoration: none; }
+    .ty-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+<div class="site-bg" aria-hidden="true">
+  <div class="g-aurora g-aurora-1"></div>
+  <div class="g-aurora g-aurora-2"></div>
+</div>
+<div class="ty-wrap">
+  <div class="ty-check">✓</div>
+  <h1>You're all set</h1>
+  <p class="sub">Thanks for subscribing to Heario. A license key is on its way to your inbox —
+    it usually arrives within a minute or two.</p>
+
+  <div class="ty-steps">
+    <div class="ty-step">
+      <div class="ty-step-num">1</div>
+      <div class="ty-step-text"><strong>Check your email</strong> for a message from
+        <strong>support@heario.ai</strong> with your license key (format <code>HEAR-XXXX-XXXX-XXXX</code>).
+        Check spam/promotions if you don't see it within a few minutes.</div>
+    </div>
+    <div class="ty-step">
+      <div class="ty-step-num">2</div>
+      <div class="ty-step-text"><strong>Download and install Heario</strong> if you haven't
+        already, using the button below.</div>
+    </div>
+    <div class="ty-step">
+      <div class="ty-step-num">3</div>
+      <div class="ty-step-text">Open the app, click <strong>⚙ Settings</strong>, and paste your
+        license key into the <strong>License Key</strong> field, then <strong>Save &amp; Apply</strong>.</div>
+    </div>
+  </div>
+
+  <div class="ty-actions">
+    <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.1/Heario_0.1.1_x64-setup.exe" target="_blank" rel="noopener" class="btn-primary">Download for Windows</a>
+    <span class="ty-note">Already installed? Just open the app and add your key in Settings.</span>
+  </div>
+
+  <p class="ty-note">Didn't get the email, or have a billing question?
+    Email <a href="mailto:support@heario.ai">support@heario.ai</a> and we'll sort it out.</p>
+
+  <a href="/" class="ty-back">← Back to Heario</a>
+</div>
+</body>
+</html>
