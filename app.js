@@ -1,9 +1,13 @@
 // ── Live download count from GitHub ─────────────────────────────────────
+// Sums every release's assets, not just one tag -- a single-tag fetch goes
+// stale the moment a new version ships, since it never counts downloads of
+// later releases.
 (async () => {
   try {
-    const res = await fetch('https://api.github.com/repos/Jorified/heario-app/releases/tags/v0.1.0');
-    const data = await res.json();
-    const total = (data.assets || []).reduce((sum, a) => sum + a.download_count, 0);
+    const res = await fetch('https://api.github.com/repos/Jorified/heario-app/releases');
+    const releases = await res.json();
+    const total = (releases || []).reduce((sum, r) =>
+      sum + (r.assets || []).reduce((s, a) => s + a.download_count, 0), 0);
     const count = Math.max(total, 1);
     const dlCount = document.getElementById('dlCount');
     if (dlCount) dlCount.textContent = count.toLocaleString() + '+';
