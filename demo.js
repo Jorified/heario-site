@@ -4,8 +4,6 @@
 // ════════════════════════════════════════════════════════════════
 
 const $ = s => document.querySelector(s);
-const capText   = $('#capText');
-const captions  = $('#captions');
 const natTx     = $('#natTx');
 const natAns    = $('#natAns');
 const natStatus = $('#natStatus');
@@ -47,15 +45,9 @@ function setStatus(state) {            // 'listening' | 'transcribing' | 'answer
   natStatus.textContent = state;
 }
 
-// Speak a line: types the meeting caption AND streams live voice-to-text into the
-// Heario overlay word-by-word — interim (dim) word finalizes to solid, like real STT.
+// Speak a line: streams live voice-to-text into the Heario overlay word-by-word
+// — interim (dim) word finalizes to solid, like real STT.
 async function speakAndTranscribe(speaker, text, cps = 28) {
-  // bottom meeting captions / live subtitles (persistent bar, blinking while speaking)
-  captions.classList.add('show', 'speaking');
-  $('#capSpk').textContent = speaker;
-  capText.textContent = '';
-
-  // overlay live transcription
   setStatus('transcribing');
   natTx.classList.add('live'); natTx.classList.remove('question');
   natTx.innerHTML = '<span class="tx-spk">S0</span> <span class="tx-final"></span>' +
@@ -65,7 +57,6 @@ async function speakAndTranscribe(speaker, text, cps = 28) {
 
   let word = '';
   for (const ch of text) {
-    capText.textContent += ch;               // meeting caption (char by char)
     if (ch === ' ') {                        // word boundary → finalize into overlay
       finalEl.textContent += word + ' ';
       interimEl.textContent = '';
@@ -77,7 +68,6 @@ async function speakAndTranscribe(speaker, text, cps = 28) {
     await sleep(1000 / cps);
   }
   if (word) { finalEl.textContent += word; interimEl.textContent = ''; }
-  captions.classList.remove('speaking');   // line finalized — caret off, subtitle persists
   const cur = natTx.querySelector('.tx-cur'); if (cur) cur.remove();
 }
 
