@@ -120,7 +120,9 @@ body { position:relative; container-type:inline-size; container-name:stagebox; }
   box-shadow:0 30px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(127,209,255,.08), 0 0 50px rgba(79,142,247,.15);
   z-index:5;
 }
-.nat-top { display:flex; align-items:center; gap:8px; padding:10px 13px; border-bottom:1px solid #1b2334; }
+.nat-top1 { display:flex; align-items:center; gap:8px; padding:8px 13px 4px; }
+.nat-top2 { display:flex; align-items:center; gap:5px; padding:0 13px 9px; border-bottom:1px solid #1b2334;
+  flex-wrap:wrap; }
 .nat-dot { width:8px; height:8px; border-radius:50%; background:var(--green);
   box-shadow:0 0 8px var(--green); animation:pulse 1.6s infinite; }
 .nat-dot.answering { background:var(--accent2); box-shadow:0 0 8px var(--accent2); }
@@ -134,13 +136,20 @@ body { position:relative; container-type:inline-size; container-name:stagebox; }
   box-shadow:0 0 10px rgba(127,209,255,.7), inset 0 0 4px rgba(255,255,255,.45);
   animation:natLogoSpin 6s linear infinite; }
 @keyframes natLogoSpin { to { transform:rotate(360deg); } }
-.nat-pill { font-size:11px; font-family:var(--display); color:var(--muted);
-  border:1px solid var(--border); border-radius:20px; padding:2px 9px; }
+.nat-pill { font-size:10px; font-family:var(--display); font-weight:500; color:var(--muted);
+  border:1px solid var(--border); border-radius:20px; padding:2.5px 8px; white-space:nowrap; }
+.nat-pill-pause   { color:var(--green); border-color:var(--green); }
+.nat-pill-web     { color:var(--accent2); border-color:var(--accent2); }
+.nat-pill-answers { color:var(--accent2); border-color:var(--accent2); }
+.nat-icon { font-size:12px; padding:2px 3px; border-radius:5px; line-height:1; opacity:.85; }
+.nat-icon-settings { font-size:11px; }
 .nat-brand { font-family:var(--display); font-weight:700; font-size:11px; letter-spacing:.02em;
   background:linear-gradient(120deg,#fff,var(--accent2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
 
-.nat-tx { padding:9px 13px; font-family:var(--mono); font-size:11.5px; color:var(--accent2);
-  border-bottom:1px solid rgba(255,255,255,.04); min-height:34px; line-height:1.55; }
+.nat-panel-label { font-size:8px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted); padding:8px 13px 0; }
+.nat-tx { padding:4px 13px 9px; font-family:var(--mono); font-size:11.5px; color:var(--accent2);
+  border-bottom:1px solid rgba(255,255,255,.04); min-height:28px; line-height:1.55; }
 .nat-ph { color:#46506a; font-style:italic; font-family:var(--font); }
 /* live voice-to-text */
 .nat-tx .tx-spk { color:var(--muted); font-weight:700; }
@@ -169,16 +178,15 @@ body { position:relative; container-type:inline-size; container-name:stagebox; }
 .nat-ask-btn { font-size:10.5px; font-family:var(--display); font-weight:600; color:#4a5572;
   border:1px solid var(--border); border-radius:7px; padding:7px 12px; }
 
-.nat-actions { display:flex; align-items:center; gap:8px; padding:8px 13px; border-top:1px solid #1b2334; }
-.nat-actions-3, .nat-actions-2 { padding-top:0; border-top:none; }
-.nat-btn { font-size:10.5px; font-family:var(--display); color:var(--muted);
-  border:1px solid var(--border); border-radius:6px; padding:3px 8px; }
-.nat-btn-sq { padding:3px 6px; }
+.nat-actions { display:flex; align-items:center; gap:6px; padding:8px 13px; border-top:1px solid #1b2334;
+  flex-wrap:wrap; }
+.nat-btn { font-size:10px; font-family:var(--display); color:var(--muted);
+  border:1px solid var(--border); border-radius:6px; padding:3px 7px; white-space:nowrap; }
+.nat-btn-sq { padding:3px 5px; }
 .nat-seg { display:flex; border:1px solid var(--border); border-radius:6px; overflow:hidden; }
-.nat-seg-btn { font-size:9.5px; font-family:var(--display); color:var(--muted); padding:3px 7px; }
+.nat-seg-btn { font-size:9px; font-family:var(--display); color:var(--muted); padding:3px 6px; }
 .nat-seg-btn.active { background:var(--accent2); color:#06121c; font-weight:700; }
-.nat-hint { font-size:9.5px; color:#3a4460; font-family:var(--mono); }
-.nat-opacity-label { font-size:9.5px; color:var(--muted); font-family:var(--display); }
+.nat-opacity-label { font-size:9px; color:var(--muted); font-family:var(--display); }
 .nat-opacity-track { position:relative; width:60px; height:3px; border-radius:2px; background:#222b3d; }
 .nat-opacity-fill { position:absolute; left:0; top:0; bottom:0; width:92%; border-radius:2px; background:var(--accent2); }
 .nat-opacity-knob { position:absolute; left:92%; top:50%; transform:translate(-50%,-50%);
