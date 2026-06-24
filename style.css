@@ -39,6 +39,7 @@ a { color: inherit; text-decoration: none; }
 .hero { padding: 100px 24px 80px; text-align: center; background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(79,142,247,.12) 0%, transparent 70%); }
 .hero-inner { max-width: 900px; margin: auto; }
 .pill { display: inline-block; background: rgba(79,142,247,.1); border: 1px solid rgba(79,142,247,.3); color: var(--accent2); font-size: 13px; font-weight: 500; padding: 5px 14px; border-radius: 20px; margin-bottom: 28px; }
+.beta-tag { display: inline-block; margin: 0 2px; padding: 1px 7px; font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #c084fc; background: rgba(192,132,252,.14); border: 1px solid rgba(192,132,252,.4); border-radius: 20px; vertical-align: middle; }
 h1 { font-size: clamp(42px, 7vw, 72px); font-weight: 800; line-height: 1.08; letter-spacing: -2px; color: #fff; margin-bottom: 20px; }
 .hero-sub { font-size: 18px; color: var(--muted); max-width: 600px; margin: 0 auto 36px; line-height: 1.7; }
 .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 52px; }
