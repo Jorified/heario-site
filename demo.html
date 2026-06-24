@@ -134,19 +134,5 @@
 </div>
 
 <script src="demo.js?v=9"></script>
-<!-- TEMP: freeze the talking-head videos for a clean overlay screenshot (revert to restore playback) -->
-<script>
-  for (const id of ['interviewerVideo', 'selfVideo']) {
-    const v = document.getElementById(id);
-    if (v) {
-      v.removeAttribute('autoplay');
-      const stop = () => { try { v.pause(); v.currentTime = 0; } catch (e) {} };
-      v.play = () => { stop(); return Promise.resolve(); };
-      v.addEventListener('play', stop);
-      v.addEventListener('loadeddata', stop);
-      stop();
-    }
-  }
-</script>
 </body>
 </html>
