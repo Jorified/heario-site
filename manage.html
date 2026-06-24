@@ -58,7 +58,10 @@
         body: JSON.stringify({ license_key }),
       });
       const data = await resp.json();
-      if (!resp.ok || !data.url) {
+      let dest;
+      try { dest = new URL(data.url); } catch (e) { dest = null; }
+      const validHost = dest && dest.protocol === 'https:' && /(^|\.)stripe\.com$/.test(dest.hostname);
+      if (!resp.ok || !data.url || !validHost) {
         err.textContent = data.error || 'Could not find that license key.';
         err.style.display = 'block';
         btn.disabled = false;
