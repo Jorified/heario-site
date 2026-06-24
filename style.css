@@ -1365,6 +1365,9 @@ h2 {
 .dbx-owner { display: inline-block; min-width: 44px; margin-right: 8px; padding: 1px 8px;
   font-size: 11px; font-weight: 600; text-align: center; color: var(--accent2);
   background: rgba(79,142,247,.12); border: 1px solid rgba(79,142,247,.25); border-radius: 20px; }
+.dbx-sec-notes { padding-top: 18px; border-top: 1px dashed var(--border); }
+.dbx-sec-notes li { color: var(--text); font-style: italic; }
+.dbx-sec-notes li::before { background: #c084fc; }
 .dbx-foot {
   display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
   padding: 16px 26px; border-top: 1px solid var(--border); background: rgba(127,209,255,.03);
