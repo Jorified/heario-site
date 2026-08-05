@@ -44,11 +44,13 @@ a { color: inherit; text-decoration: none; }
 .btn-mac .mac-ic { width: 16px; height: 16px; flex-shrink: 0; }
 h1 { font-size: clamp(42px, 7vw, 72px); font-weight: 800; line-height: 1.08; letter-spacing: -2px; color: #fff; margin-bottom: 20px; }
 .hero-sub { font-size: 18px; color: var(--muted); max-width: 600px; margin: 0 auto 36px; line-height: 1.7; }
-.hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 52px; }
+.hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
 .btn-primary { background: var(--accent); color: #fff; padding: 13px 28px; border-radius: 10px; font-weight: 600; font-size: 15px; transition: opacity .2s; }
 .btn-primary:hover { opacity: .88; }
 .btn-ghost { color: var(--text); padding: 13px 24px; border-radius: 10px; font-weight: 500; font-size: 15px; border: 1px solid var(--border); transition: border-color .2s; }
 .btn-ghost:hover { border-color: var(--accent); color: var(--accent2); }
+.hero-reassure { font-size: 13.5px; color: var(--muted); margin: 0 auto 50px; letter-spacing: .01em; }
+.hero-reassure .hr-check { color: var(--green); font-weight: 700; margin-right: 3px; }
 
 .hero-stats { display: flex; gap: 0; justify-content: center; align-items: center; margin-bottom: 56px; }
 .stat { text-align: center; padding: 0 36px; }
@@ -335,6 +337,12 @@ h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 700; letter-spacing: -1px; 
 .step-n { width: 36px; height: 36px; border-radius: 50%; background: rgba(79,142,247,.12); border: 1px solid rgba(79,142,247,.3); color: var(--accent2); font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .step-body h4 { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 6px; }
 .step-body p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+/* ── FINAL CTA ── */
+.final-cta { padding: 96px 0; text-align: center; border-top: 1px solid var(--border); }
+.final-cta h2 { text-align: center; }
+.final-cta .hero-actions { justify-content: center; margin-bottom: 18px; }
+.final-cta .hero-reassure { margin: 0 auto; }
 
 /* ── PRICING ── */
 .pricing { padding: 96px 0; background: var(--bg2); border-top: 1px solid var(--border); }
@@ -641,7 +649,7 @@ body::after {
 @keyframes roam4 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-110px,-90px)} }
 
 /* lift all real content above the backdrop */
-.nav, .hero, .proof-bar, .demo-embed-wrap, .features, .modes, .how, .pricing, .footer { position: relative; z-index: 1; }
+.nav, .hero, .proof-bar, .demo-embed-wrap, .features, .modes, .how, .pricing, .final-cta, .footer { position: relative; z-index: 1; }
 
 /* let the backdrop glow bleed through the previously-opaque sections */
 .modes   { background: rgba(17,21,32,.5); }
@@ -1446,7 +1454,7 @@ h2 {
 @media (max-width: 600px) { .sticky-inner { flex-direction: column; text-align: center; } }
 
 /* ── Z-INDEX: include new sections ── */
-.announce-bar, .nav, .hero, .proof-bar, .demo-embed-wrap, .features, .modes, .how, .undetect, .faq, .testimonials, .pricing, .footer { position: relative; z-index: 1; }
+.announce-bar, .nav, .hero, .proof-bar, .demo-embed-wrap, .features, .modes, .how, .undetect, .faq, .testimonials, .pricing, .final-cta, .footer { position: relative; z-index: 1; }
 
 @media (prefers-reduced-motion: reduce) {
   .aurora, .mockup, h1, .btn-primary::after,
