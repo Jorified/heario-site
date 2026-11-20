@@ -49,7 +49,7 @@ Add them in Vercel > Settings > Environment Variables, then redeploy.
 2. Developers > Webhooks > add endpoint `https://heario.ai/api/stripe/webhook`, events:
    `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`. Copy the signing secret into `STRIPE_WEBHOOK_SECRET`.
 3. Settings > Billing > **Customer portal**: enable it (cancellation, card updates, invoices).
-4. Decide how VAT is handled (prices shown including or excluding VAT) and consider enabling Stripe Tax. This isn't wired into checkout yet, so tell me which way you want it.
+4. **VAT: prices are VAT-inclusive.** The amounts (EUR 19.99, GBP 16.99, USD 22.99) are what the customer pays, VAT included. In the Price, set **Include tax in price = Included** (tax behaviour `inclusive`) for EUR, GBP and USD. Stripe doesn't let you change this after a Price is created, so if it was left on Auto, create a new Price. Stripe Tax isn't wired into checkout: you account for VAT yourself (Irish VAT is 23%; EU consumers can fall under OSS rules, and UK/US sales have their own rules), so confirm registration and rates with your accountant before taking live payments.
 
 ## 4. WhatsApp Cloud API (one Heario sender for all customers)
 1. developers.facebook.com: create a Business app with the WhatsApp product, add and verify the **Heario business number** (it can't also be on the normal WhatsApp app).
