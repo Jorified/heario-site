@@ -24,3 +24,7 @@ Thumbs.db
 !self.mp4
 
 node_modules/
+
+# Local secrets (never commit)
+.env
+.env.*
