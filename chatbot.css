@@ -98,3 +98,238 @@ button:disabled { opacity: .55; cursor: default; }
   .leads thead { display: none; } .leads td { display: block; border: 0; padding: 3px 10px; }
   .leads tr { display: block; border-bottom: 1px solid var(--border); padding: 8px 0; }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   HOMEPAGE · STAND-OUT LAYER
+   Brings the effects library in style.css (auroras, beams, conic glow,
+   grid, rings, shimmer) onto the chatbot homepage. Scoped to body.home.
+   ════════════════════════════════════════════════════════════════ */
+
+/* let the global aurora show through instead of flat panels */
+.home .hero {
+  padding-top: 128px; padding-bottom: 96px;
+  background: radial-gradient(ellipse 120% 80% at 50% -20%, rgba(40,30,90,.55) 0%, transparent 62%);
+}
+.home .geo-ring { top: 300px; }
+.home .hero-bg {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
+}
+.home .cb-section.alt { background: rgba(17,21,32,.42); border-color: rgba(127,209,255,.08); }
+.home .final-cta { border-top: 0; padding: 40px 0 110px; }
+
+/* headline accent */
+.home h1 .grad {
+  background: linear-gradient(100deg, var(--accent2) 0%, var(--accent) 40%, var(--accent3) 70%, #f0abfc 100%);
+  background-size: 220% auto;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  animation: shimmerText 6s linear infinite;
+  filter: drop-shadow(0 0 28px rgba(79,142,247,.35));
+}
+
+/* copy sits over a brighter backdrop now, so lift its contrast */
+.home .hero-sub { color: #c3cbdc; text-shadow: 0 1px 18px rgba(8,10,16,.9); }
+.home .hero-reassure { color: #aab3c6; }
+.home .section-sub { color: #a3adc1; }
+
+/* small label above each section heading */
+.eyebrow {
+  display: table; margin: 0 auto 14px; padding: 4px 12px;
+  font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent2); border: 1px solid rgba(127,209,255,.22); border-radius: 999px;
+  background: rgba(79,142,247,.08); box-shadow: 0 0 22px rgba(79,142,247,.15);
+}
+
+/* ── hero demo: floating glass cards joined by a live "enquiry" beam ── */
+.home .demo-pair {
+  position: relative; max-width: 860px; margin-top: 64px;
+  grid-template-columns: 1.25fr 72px 1fr; gap: 0;
+}
+.home .demo-pair::before {
+  content: ""; position: absolute; inset: 6% 4% -12%; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse at 40% 50%, rgba(79,142,247,.38), rgba(167,139,250,.18) 45%, transparent 70%),
+              radial-gradient(ellipse at 85% 50%, rgba(37,211,102,.22), transparent 60%);
+  filter: blur(42px);
+}
+.home .demo-card {
+  background: linear-gradient(180deg, rgba(22,28,40,.9), rgba(13,17,26,.94));
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(127,209,255,.16);
+  box-shadow: 0 40px 90px rgba(0,0,0,.55), 0 0 44px -10px rgba(79,142,247,.45);
+  animation: floatCard 7s ease-in-out infinite;
+}
+.home .wa-card {
+  border-color: rgba(37,211,102,.28);
+  box-shadow: 0 40px 90px rgba(0,0,0,.55), 0 0 48px -10px rgba(37,211,102,.5);
+  animation-delay: -3.5s;
+}
+.home .demo-bar { background: rgba(22,28,40,.85); }
+.home .wa-card .demo-bar { background: rgba(15,42,34,.9); }
+.home .bub.out { background: linear-gradient(120deg, var(--accent), #6aa3ff); box-shadow: 0 6px 18px rgba(79,142,247,.3); }
+.live-pip {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; vertical-align: 1px;
+  background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 1.6s infinite;
+}
+
+/* the conversation plays out, then the alert lands */
+.home .demo-body .bub { opacity: 0; transform: translateY(8px); animation: bubIn .5s cubic-bezier(.2,.7,.2,1) forwards; }
+.home .demo-body .bub:nth-child(1) { animation-delay: .3s; }
+.home .demo-body .bub:nth-child(2) { animation-delay: 1.1s; }
+.home .demo-body .bub:nth-child(3) { animation-delay: 1.9s; }
+.home .demo-body .bub:nth-child(4) { animation-delay: 2.7s; }
+.home .demo-body .bub:nth-child(5) { animation-delay: 3.5s; }
+.home .wa-msg { opacity: 0; transform: scale(.94); animation: waPop .6s cubic-bezier(.2,.9,.3,1.3) 4.2s forwards; box-shadow: 0 10px 30px rgba(37,211,102,.18); }
+.js-anim .home .demo-pair:not(.play) .bub,
+.js-anim .home .demo-pair:not(.play) .wa-msg { animation-play-state: paused; }
+@keyframes bubIn { to { opacity: 1; transform: none; } }
+@keyframes waPop { to { opacity: 1; transform: none; } }
+
+.flow { position: relative; align-self: center; height: 2px; margin: 0 8px; border-radius: 2px;
+  background: linear-gradient(90deg, rgba(79,142,247,.25), rgba(37,211,102,.6)); }
+.flow::after { content: ""; position: absolute; right: -2px; top: 50%; width: 8px; height: 8px; margin-top: -4px;
+  border-top: 2px solid rgba(37,211,102,.8); border-right: 2px solid rgba(37,211,102,.8); transform: rotate(45deg); }
+.flow span { position: absolute; top: 50%; left: 0; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%;
+  background: #bdf3d6; box-shadow: 0 0 10px #7fd1ff, 0 0 22px rgba(37,211,102,.8); animation: flowX 2.2s ease-in-out infinite; }
+@keyframes flowX { 0% { left: 0; opacity: 0; } 15%, 85% { opacity: 1; } 100% { left: calc(100% - 10px); opacity: 0; } }
+@keyframes flowY { 0% { top: 0; opacity: 0; } 15%, 85% { opacity: 1; } 100% { top: calc(100% - 10px); opacity: 0; } }
+
+/* ── stats strip ── */
+.stat-strip {
+  display: inline-flex; margin: 64px auto 0; padding: 20px 8px;
+  border: 1px solid rgba(127,209,255,.14); border-radius: 18px;
+  background: linear-gradient(180deg, rgba(22,28,40,.6), rgba(13,17,26,.5)); backdrop-filter: blur(10px);
+  box-shadow: 0 20px 50px rgba(0,0,0,.35);
+}
+.stat-strip .stat-l { display: block; }
+
+/* ── steps: glass cards, glowing numbers, gradient border on hover ── */
+.home .cb-step, .home .faq-list details {
+  position: relative;
+  background: linear-gradient(180deg, rgba(22,28,40,.82), rgba(15,19,28,.72));
+  backdrop-filter: blur(6px);
+  transition: transform .3s, box-shadow .3s, border-color .3s;
+}
+.home .cb-step::before {
+  content: ""; position: absolute; inset: 0; border-radius: var(--radius); padding: 1px; pointer-events: none;
+  background: linear-gradient(135deg, rgba(79,142,247,.7), transparent 45%, transparent 55%, rgba(167,139,250,.6));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity .3s;
+}
+.home .cb-step:hover { transform: translateY(-5px); box-shadow: 0 26px 60px rgba(0,0,0,.45); }
+.home .cb-step:hover::before { opacity: 1; }
+.home .cb-step .n {
+  width: 44px; height: 44px; font-size: 17px; color: #fff;
+  background: linear-gradient(140deg, var(--accent), var(--accent3));
+  box-shadow: 0 0 0 6px rgba(79,142,247,.08), 0 10px 28px rgba(79,142,247,.45);
+}
+.home .faq-list details[open] { border-color: rgba(127,209,255,.3); box-shadow: 0 0 30px -10px rgba(79,142,247,.4); }
+
+/* ── features bento ── */
+.home .bento { margin-top: 44px; }
+.f-ic {
+  display: inline-flex; align-items: center; justify-content: center; align-self: flex-start;
+  width: 46px; height: 46px; border-radius: 13px; margin-bottom: 16px; color: var(--accent2);
+  background: linear-gradient(140deg, rgba(79,142,247,.2), rgba(167,139,250,.14));
+  border: 1px solid rgba(127,209,255,.18); box-shadow: inset 0 0 18px rgba(79,142,247,.12), 0 8px 22px rgba(79,142,247,.15);
+}
+.f-ic svg { width: 22px; height: 22px; }
+.home .bento-card p { font-size: 14.5px; }
+.home .bento-lg h3 { font-size: 26px; }
+.home .bento-lg p { font-size: 15.5px; max-width: 46ch; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.chips span { font-size: 12px; color: var(--text); padding: 3px 10px; border-radius: 999px;
+  border: 1px solid var(--border); background: rgba(255,255,255,.03); }
+
+.notif-stack { display: grid; gap: 10px; margin-top: auto; padding-top: 26px; }
+.notif {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center;
+  padding: 12px 14px; border-radius: 14px;
+  background: rgba(20,53,43,.55); border: 1px solid rgba(37,211,102,.25);
+  box-shadow: 0 12px 30px rgba(0,0,0,.3), 0 0 26px -12px rgba(37,211,102,.6);
+}
+.notif:nth-child(2) { opacity: .8; } .notif:nth-child(3) { opacity: .6; }
+.n-ic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: #fff;
+  background: linear-gradient(140deg, #25d366, #128c7e); box-shadow: 0 0 16px rgba(37,211,102,.5); }
+.n-ic svg { width: 18px; height: 18px; }
+.n-tx { min-width: 0; display: grid; gap: 2px; text-align: left; }
+.n-tx b { font-size: 13px; color: #fff; font-weight: 600; }
+.n-tx span { font-size: 12.5px; color: #a9d9c2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.notif time { font-size: 11px; color: #7bb89c; align-self: start; }
+.bento-lg.reveal .notif { opacity: 0; transform: translateY(14px); }
+.bento-lg.in .notif { animation: notifIn .6s cubic-bezier(.2,.8,.2,1) forwards; }
+.bento-lg.in .notif:nth-child(1) { animation-delay: .25s; --o: 1; }
+.bento-lg.in .notif:nth-child(2) { animation-delay: .55s; --o: .8; }
+.bento-lg.in .notif:nth-child(3) { animation-delay: .85s; --o: .6; }
+@keyframes notifIn { to { opacity: var(--o, 1); transform: none; } }
+
+/* ── pricing: light travelling round the card's edge ── */
+.home .price-card {
+  position: relative; overflow: hidden; isolation: isolate; border: 0;
+  background: transparent; box-shadow: 0 30px 90px rgba(79,142,247,.22);
+}
+.home .price-card::before {
+  content: ""; position: absolute; inset: -60%; z-index: -2;
+  background: conic-gradient(from 0deg, rgba(79,142,247,.25) 0deg, rgba(79,142,247,.25) 200deg, var(--accent2) 260deg, var(--accent3) 300deg, rgba(79,142,247,.25) 360deg);
+  animation: spin 6s linear infinite;
+}
+.home .price-card::after {
+  content: ""; position: absolute; inset: 1.5px; border-radius: 15px; z-index: -1;
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(79,142,247,.16), transparent 70%), linear-gradient(180deg, #141a27, #0e121b);
+}
+.home .price-card .amt.has-price {
+  background: linear-gradient(120deg, #fff, var(--accent2));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.home .price-card .amt small { -webkit-text-fill-color: var(--muted); }
+
+/* ── final CTA panel ── */
+.cta-panel {
+  position: relative; overflow: hidden; isolation: isolate; text-align: center;
+  padding: 80px 28px 72px; border-radius: 28px;
+  border: 1px solid rgba(127,209,255,.18);
+  background:
+    radial-gradient(ellipse 70% 80% at 15% 0%, rgba(79,142,247,.3), transparent 60%),
+    radial-gradient(ellipse 70% 80% at 85% 100%, rgba(167,139,250,.28), transparent 60%),
+    linear-gradient(180deg, rgba(22,28,40,.7), rgba(13,17,26,.8));
+  box-shadow: 0 40px 100px rgba(0,0,0,.5), 0 0 60px -20px rgba(79,142,247,.5);
+}
+.cta-panel h2 { font-size: clamp(30px, 4.6vw, 48px); letter-spacing: -1.2px; margin-bottom: 14px; }
+.cta-panel .section-sub { margin-bottom: 32px; }
+.cta-grid {
+  position: absolute; inset: 0; z-index: -1;
+  background-image: linear-gradient(rgba(127,209,255,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(127,209,255,.12) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, #000, transparent 75%);
+          mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, #000, transparent 75%);
+  animation: gridSlide 16s linear infinite;
+}
+
+/* ── responsive ── */
+@media (max-width: 760px) {
+  /* fewer, softer animated layers so older phones stay smooth */
+  .home .beam, .home .scanline, .home .conic-glow, .home .geo-ring,
+  .home .aurora-3, .home .aurora-4, .home .g-aurora-3, .home .g-aurora-4 { display: none; }
+  .home .aurora { filter: blur(60px); animation: none; opacity: .6; }
+  .home .g-aurora { filter: blur(70px); }
+  .home .hero-grid { animation: none; opacity: .45; }
+  .home .demo-card, .home .cb-step, .home .faq-list details, .stat-strip, .bento-card { backdrop-filter: none; }
+  .home .demo-card { animation: none; }
+  .home .hero { padding-top: 96px; padding-bottom: 72px; }
+  .home .demo-pair { grid-template-columns: 1fr; gap: 0; }
+  .flow { justify-self: center; width: 2px; height: 46px; margin: 6px 0;
+    background: linear-gradient(180deg, rgba(79,142,247,.25), rgba(37,211,102,.6)); }
+  .flow::after { right: auto; left: 50%; top: auto; bottom: -2px; margin: 0 0 0 -4px; transform: rotate(135deg); }
+  .flow span { left: 50%; top: 0; margin: 0 0 0 -5px; animation-name: flowY; }
+  .stat-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 0; width: 100%; }
+  .stat-strip .stat-div { display: none; }
+  .stat-strip .stat { padding: 0 8px; }
+  .cta-panel { padding: 60px 20px 56px; border-radius: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home .demo-card, .home h1 .grad, .flow span, .live-pip, .cta-grid,
+  .home .price-card::before { animation: none !important; }
+  .home .demo-body .bub, .home .wa-msg, .home .bento-lg.reveal .notif { animation: none !important; opacity: 1; transform: none; }
+  .home .bento-lg.reveal .notif:nth-child(2) { opacity: .8; } .home .bento-lg.reveal .notif:nth-child(3) { opacity: .6; }
+}

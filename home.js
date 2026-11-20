@@ -38,3 +38,42 @@
     draw();
   });
 })();
+
+// Homepage polish: glassier nav once scrolled, and sections that rise into view.
+(function () {
+  var nav = document.querySelector('.nav');
+  function onScroll() { if (nav) nav.classList.toggle('scrolled', window.scrollY > 8); }
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  if (!('IntersectionObserver' in window)) return;
+
+  // Play the chat demo when it comes into view, not while it's off-screen.
+  var demo = document.querySelector('.demo-pair');
+  if (demo) {
+    document.documentElement.classList.add('js-anim');
+    var dio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { demo.classList.add('play'); dio.disconnect(); }
+      });
+    }, { threshold: 0.3 });
+    dio.observe(demo);
+  }
+
+  var groups = ['.eyebrow', '.cb-h2', '.section-sub', '.cb-step', '.bento-card', '.price-card', '.faq-list details', '.cta-panel'];
+  var els = [];
+  groups.forEach(function (sel) {
+    var list = document.querySelectorAll('.cb-section ' + sel + ', .final-cta ' + sel);
+    Array.prototype.forEach.call(list, function (el, i) {
+      el.classList.add('reveal');
+      if (list.length > 1) el.setAttribute('data-d', String((i % 4) + 1));
+      els.push(el);
+    });
+  });
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { rootMargin: '0px 0px -8% 0px' });
+  els.forEach(function (el) { io.observe(el); });
+})();
