@@ -14,7 +14,9 @@
       if (note) {
         var s = info.setup && info.setup[cur];
         note.hidden = !s;
-        note.textContent = s ? 'Optional one-off setup assistance: ' + s.display + ' (add it at checkout)' : '';
+        note.textContent = s ? 'Add one-off setup for ' + s.display + ' at checkout.' : '';
+        var box = note.closest ? note.closest('.setup-box') : null;
+        if (box) box.hidden = !s;
       }
       amt.textContent = '';
       amt.className = 'amt has-price';
@@ -52,15 +54,27 @@
   var demo = document.querySelector('.demo-pair');
   if (demo) {
     document.documentElement.classList.add('js-anim');
+    var inView = false, loop = 0;
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var dio = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
-        if (e.isIntersecting) { demo.classList.add('play'); dio.disconnect(); }
+        inView = e.isIntersecting;
+        if (inView) demo.classList.add('play');
+        // Replay the story every 13s while it's on screen.
+        if (inView && !loop && !still) {
+          loop = setInterval(function () {
+            if (!inView || document.hidden) return;
+            demo.classList.add('rst');
+            void demo.offsetWidth;
+            demo.classList.remove('rst');
+          }, 13000);
+        }
       });
     }, { threshold: 0.3 });
     dio.observe(demo);
   }
 
-  var groups = ['.eyebrow', '.cb-h2', '.section-sub', '.cb-step', '.bento-card', '.price-card', '.faq-list details', '.cta-panel'];
+  var groups = ['.eyebrow', '.cb-h2', '.section-sub', '.pain-card', '.pain-sum', '.install-note', '.cb-step', '.bento-card', '.price-card', '.faq-list details', '.cta-panel'];
   var els = [];
   groups.forEach(function (sel) {
     var list = document.querySelectorAll('.cb-section ' + sel + ', .final-cta ' + sel);
@@ -76,4 +90,60 @@
     });
   }, { rootMargin: '0px 0px -8% 0px' });
   els.forEach(function (el) { io.observe(el); });
+})();
+
+// Desktop flourishes: cursor spotlight on cards and a gentle 3D tilt on the hero demo.
+(function () {
+  var fine = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!fine || still) return;
+
+  var cards = document.querySelectorAll('.bento-card, .pain-card, .cb-step, .price-card, .install-note');
+  Array.prototype.forEach.call(cards, function (card) {
+    var spot = document.createElement('span');
+    spot.className = 'spot';
+    card.insertBefore(spot, card.firstChild);
+    card.classList.add('has-spot');
+    card.addEventListener('pointermove', function (e) {
+      var r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+
+  var hero = document.querySelector('.hero');
+  var demo = document.querySelector('.demo-pair');
+  if (!hero || !demo) return;
+  var raf = 0, rx = 0, ry = 0;
+  hero.addEventListener('pointermove', function (e) {
+    var r = demo.getBoundingClientRect();
+    ry = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 2))) * 5;
+    rx = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (window.innerHeight / 2))) * -4;
+    if (!raf) raf = requestAnimationFrame(function () {
+      raf = 0;
+      demo.style.setProperty('--rx', rx.toFixed(2) + 'deg');
+      demo.style.setProperty('--ry', ry.toFixed(2) + 'deg');
+    });
+  });
+  hero.addEventListener('pointerleave', function () {
+    demo.style.setProperty('--rx', '0deg');
+    demo.style.setProperty('--ry', '0deg');
+  });
+})();
+
+// Phones: a sticky "Start free trial" bar once the hero is out of view.
+(function () {
+  var bar = document.getElementById('mCta');
+  var hero = document.querySelector('.hero');
+  var end = document.querySelector('.final-cta');
+  if (!bar || !hero || !('IntersectionObserver' in window)) return;
+  var pastHero = false, atEnd = false;
+  function update() {
+    var on = pastHero && !atEnd;
+    bar.classList.toggle('show', on);
+    bar.setAttribute('aria-hidden', on ? 'false' : 'true');
+    bar.tabIndex = on ? 0 : -1;
+  }
+  new IntersectionObserver(function (es) { pastHero = !es[0].isIntersecting; update(); }, { rootMargin: '-80px 0px 0px 0px' }).observe(hero);
+  if (end) new IntersectionObserver(function (es) { atEnd = es[0].isIntersecting; update(); }).observe(end);
 })();
