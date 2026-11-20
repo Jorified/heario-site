@@ -14,12 +14,14 @@
     .legal-wrap h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 8px; }
     .legal-wrap .updated { color: #6b7a99; font-size: 0.9rem; margin-bottom: 48px; }
     .legal-wrap h2 { font-size: 1.1rem; font-weight: 600; color: #7fd1ff; margin: 36px 0 10px; }
-    .legal-wrap p, .legal-wrap li { color: #a0aec0; line-height: 1.8; font-size: 0.95rem; }
-    .legal-wrap ul { padding-left: 20px; margin: 8px 0; }
+    .legal-wrap p, .legal-wrap li, .legal-wrap td, .legal-wrap th { color: #a0aec0; line-height: 1.8; font-size: 0.95rem; }
+    .legal-wrap ul, .legal-wrap ol { padding-left: 20px; margin: 8px 0; }
     .legal-wrap a { color: #7fd1ff; }
+    .legal-wrap table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    .legal-wrap th, .legal-wrap td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #1e2535; vertical-align: top; }
+    .legal-wrap th { color: #e4e8f0; font-weight: 600; }
     .legal-back { display: inline-block; margin-bottom: 32px; color: #7fd1ff; font-size: 0.9rem; text-decoration: none; }
     .legal-back:hover { text-decoration: underline; }
-    .security-badge { display: inline-block; background: rgba(79,142,247,0.1); border: 1px solid rgba(79,142,247,0.3); border-radius: 8px; padding: 16px 24px; margin: 24px 0; font-size: 0.9rem; color: #7fd1ff; }
   </style>
 </head>
 <body>
@@ -30,31 +32,30 @@
 <div class="legal-wrap">
   <a href="/" class="legal-back">← Back to Heario</a>
   <h1>Security</h1>
-  <p class="updated">Last updated: June 2026</p>
+  <p class="updated">Last updated: 20 November 2026</p>
 
-  <h2>Our Approach</h2>
-  <p>Heario supports two modes. On the free/BYOK path, your audio and meeting content are processed on your device and sent only to the AI provider you configure (Anthropic, OpenAI, Deepgram) — none of it reaches our servers. On a paid managed plan, your questions are sent to our backend (<code>api.heario.ai</code>) so we can relay them to our own Anthropic key and enforce your plan's usage limit; we do not store the content of your questions or answers beyond what's needed to process that single request.</p>
+  <h2>Our approach</h2>
+  <p>Heario handles business enquiries, so we keep the data we hold small and protect it carefully. We don't store full chat transcripts on our servers. We keep the enquiries your assistant sends you for 90 days, and account settings until you delete your account.</p>
 
-  <h2>Data in Transit</h2>
+  <h2>What we do</h2>
   <ul>
-    <li>All communication between Heario and external services uses TLS 1.2 or higher</li>
-    <li>API keys you enter for the BYOK path are stored locally in a config file on your device and never transmitted to our servers</li>
-    <li>If you're on a managed plan, your licence key is sent to our backend solely to verify your plan and process your request</li>
+    <li><strong>Encryption in transit:</strong> all traffic uses HTTPS (TLS), with HSTS enabled.</li>
+    <li><strong>Passwordless login:</strong> one-time login links that expire after 15 minutes and work only once. The tokens are stored hashed. There are no passwords to leak.</li>
+    <li><strong>Sessions:</strong> signed, HttpOnly, Secure cookies. State-changing requests are checked to come from our own site.</li>
+    <li><strong>Restricted to your websites:</strong> browsers will only run your chatbot on the website addresses you list. Because the chatbot key is visible in your page source, this does not stop a determined person using a script, so we add the limits below.</li>
+    <li><strong>Abuse limits:</strong> per-visitor rate limits, an hourly cap on messages and on enquiries for each chatbot, message length limits, and a monthly message cap limit spam and runaway costs.</li>
+    <li><strong>Safe rendering:</strong> chat replies are shown as plain text, never as HTML, and the assistant is instructed to ignore attempts by visitors to change its rules.</li>
+    <li><strong>Secrets:</strong> API keys are held in server-side environment variables and never sent to browsers.</li>
+    <li><strong>Payments:</strong> handled by Stripe, a PCI DSS Level 1 provider. Heario never sees or stores card details.</li>
+    <li><strong>Erasure:</strong> you can delete your account and all data from the dashboard at any time.</li>
   </ul>
 
-  <h2>Overlay Protection</h2>
-  <p>Heario's answer overlay uses the Windows <code>SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE)</code> API — the same mechanism used by banks and DRM software. This excludes the window from all screen-capture pipelines at the OS level, before any application (Zoom, Teams, OBS) can access the frame buffer.</p>
+  <h2>Sub-processors</h2>
+  <p>We use Anthropic (AI replies), Meta/WhatsApp (alerts), Vercel (hosting), Neon (database), Brevo (email) and Stripe (payments). See our <a href="/privacy.html">Privacy Policy</a> and <a href="/dpa.html">Data Processing Agreement</a>.</p>
 
-  <h2>Payment Security</h2>
-  <p>Payments are handled entirely by <a href="https://stripe.com" target="_blank">Stripe</a>, a PCI DSS Level 1 certified payment processor. Heario never sees, stores, or logs your card details.</p>
+  <h2>Responsible disclosure</h2>
+  <p>If you find a security vulnerability, please report it privately before disclosing it publicly. Email <a href="mailto:support@heario.ai">support@heario.ai</a> with the subject "Security Disclosure". We will acknowledge your report within 48 hours and work with you to fix the issue.</p>
 
-  <h2>App Shell Transparency</h2>
-  <p>The desktop app shell (the Tauri/React wrapper you install) is published on <a href="https://github.com/Jorified/heario-app" target="_blank">GitHub</a> so you can see how the window and overlay are built. The AI pipeline and our managed-plan backend are proprietary and not publicly source-available.</p>
-
-  <h2>Responsible Disclosure</h2>
-  <p>If you discover a security vulnerability in Heario, please report it privately before public disclosure. Email <a href="mailto:support@heario.ai">support@heario.ai</a> with the subject line <strong>"Security Disclosure"</strong>. We will acknowledge your report within 48 hours and work with you to resolve the issue promptly.</p>
-
-  <div class="security-badge">🛡 Found a vulnerability? Email support@heario.ai — we take every report seriously.</div>
 </div>
 </body>
 </html>

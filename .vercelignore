@@ -1,3 +1,22 @@
 # Files that live in the repo but must NOT be published to the public site.
 flippa-listing.md
 HANDOVER.md
+CHATBOT_SETUP.md
+schema.sql
+test/
+scripts/
+
+# Previous product (Windows desktop app). Kept in git history, no longer published.
+app.js
+demo.html
+demo.css
+demo.js
+deploy.ps1
+license.html
+thank-you.html
+blog/
+interviewer.mp4
+interviewer_frame.jpg
+self.mp4
+self_frame.jpg
+og-source.svg

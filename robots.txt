@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /dashboard.html
+Disallow: /login.html
+Disallow: /api/
 
-Sitemap: https://heario-site.vercel.app/sitemap.xml
+Sitemap: https://heario.ai/sitemap.xml

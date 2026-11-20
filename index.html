@@ -1,1986 +1,225 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8" />
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Heario — AI Interview Copilot: Real-Time Answers in Meetings</title>
-
-  <meta name="description" content="Heario is an undetectable AI copilot that gives you real-time answers during interviews and meetings — under 300ms, invisible to Zoom, Teams, and Google Meet. Free on Windows." />
-
+  <title>Heario: AI website chat that sends every enquiry to your WhatsApp</title>
+  <meta name="description" content="Heario adds an AI assistant to your website that answers visitors' questions 24/7 and instantly sends you a WhatsApp message whenever someone makes an enquiry. 14-day free trial." />
   <link rel="canonical" href="https://heario.ai/" />
 
-
-
-  <!-- Open Graph -->
-
   <meta property="og:site_name" content="Heario" />
-
-  <meta property="og:title" content="Heario — Undetectable AI Copilot for Interviews &amp; Meetings" />
-
-  <meta property="og:description" content="Real-time AI answers in your interviews and meetings. Completely undetectable by Zoom, Teams &amp; Google Meet. Under 300ms. Free on Windows." />
-
+  <meta property="og:title" content="Heario: AI website chat with instant WhatsApp enquiry alerts" />
+  <meta property="og:description" content="Answer website visitors 24/7 and get every enquiry on WhatsApp the moment it happens." />
   <meta property="og:image" content="https://heario.ai/og.png" />
-
-  <meta property="og:image:width" content="1200" />
-
-  <meta property="og:image:height" content="630" />
-
   <meta property="og:url" content="https://heario.ai/" />
-
   <meta property="og:type" content="website" />
-
-
-
-  <!-- Twitter Card -->
-
   <meta name="twitter:card" content="summary_large_image" />
 
-  <meta name="twitter:title" content="Heario — Undetectable AI Copilot for Interviews &amp; Meetings" />
-
-  <meta name="twitter:description" content="Real-time AI answers in your interviews and meetings. Under 300ms. Invisible to Zoom, Teams &amp; Google Meet." />
-
-  <meta name="twitter:image" content="https://heario.ai/og.png" />
-
-
-
-  <!-- JSON-LD: SoftwareApplication -->
-
   <script type="application/ld+json">
-
   {
-
     "@context": "https://schema.org",
-
     "@type": "SoftwareApplication",
-
     "name": "Heario",
-
-    "description": "Real-time AI copilot for interviews and meetings. Provides undetectable, sub-300ms AI answers during live Zoom, Teams, and Google Meet calls on Windows.",
-
+    "description": "AI chat assistant for business websites that answers visitor questions and sends the business owner an instant WhatsApp notification for every enquiry.",
     "applicationCategory": "BusinessApplication",
-
-    "operatingSystem": "Windows",
-
-    "offers": [
-
-      {
-
-        "@type": "Offer",
-
-        "price": "0",
-
-        "priceCurrency": "USD",
-
-        "name": "Free Trial"
-
-      },
-
-      {
-
-        "@type": "Offer",
-
-        "price": "8",
-
-        "priceCurrency": "USD",
-
-        "name": "Standard",
-
-        "billingIncrement": "P1M"
-
-      },
-
-      {
-
-        "@type": "Offer",
-
-        "price": "15",
-
-        "priceCurrency": "USD",
-
-        "name": "Pro",
-
-        "billingIncrement": "P1M"
-
-      }
-
-    ],
-
-    "aggregateRating": {
-
-      "@type": "AggregateRating",
-
-      "ratingValue": "5",
-
-      "ratingCount": "3"
-
-    },
-
-    "url": "https://heario.ai/",
-
-    "downloadUrl": "https://github.com/Jorified/heario-app/releases/download/v0.1.7/Heario_0.1.7_x64-setup.exe",
-
-    "softwareVersion": "0.1.7",
-
-    "screenshot": "https://heario.ai/og.png"
-
+    "operatingSystem": "Web"
   }
-
   </script>
-
-
-
-  <!-- JSON-LD: FAQPage -->
-
-  <script type="application/ld+json">
-
-  {
-
-    "@context": "https://schema.org",
-
-    "@type": "FAQPage",
-
-    "mainEntity": [
-
-      {
-
-        "@type": "Question",
-
-        "name": "Will Zoom / Teams / Google Meet detect Heario?",
-
-        "acceptedAnswer": {
-
-          "@type": "Answer",
-
-          "text": "No. Heario's overlay uses SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE) — a Windows OS-level flag that excludes the window from all screen-capture pipelines before the frame ever reaches Zoom's encoder. The interviewer's screen share sees nothing."
-
-        }
-
-      },
-
-      {
-
-        "@type": "Question",
-
-        "name": "Does Heario join the call as a bot?",
-
-        "acceptedAnswer": {
-
-          "@type": "Answer",
-
-          "text": "Never. Heario runs entirely on your local machine. There is no bot, no browser extension injected into the call, and no third-party service that touches your meeting. It listens to your speaker output using a standard Windows audio loopback."
-
-        }
-
-      },
-
-      {
-
-        "@type": "Question",
-
-        "name": "Do I need to sign up for anything to use Heario?",
-
-        "acceptedAnswer": {
-
-          "@type": "Answer",
-
-          "text": "No. It works immediately with no account and no API key, using your computer's own Whisper speech-to-text."
-
-        }
-
-      },
-
-      {
-
-        "@type": "Question",
-
-        "name": "Does Heario cost anything by default?",
-
-        "acceptedAnswer": {
-
-          "@type": "Answer",
-
-          "text": "No. The built-in fallback (Local Whisper) is free and runs on your machine."
-
-        }
-
-      },
-
-      {
-
-        "@type": "Question",
-
-        "name": "Is my audio sent to the cloud?",
-
-        "acceptedAnswer": {
-
-          "@type": "Answer",
-
-          "text": "Not by default. With no keys configured, transcription happens locally. Answers (the AI's replies) still go to Claude or GPT's cloud by default — only the transcription is local out of the box."
-
-        }
-
-      },
-
-      {
-
-        "@type": "Question",
-
-        "name": "The first time I open it, it says \"downloading 150MB\" — is that normal?",
-
-        "acceptedAnswer": {
-
-          "@type": "Answer",
-
-          "text": "Yes. The first time Local Whisper runs, it downloads its speech model once. After that, it's cached and starts instantly every time."
-
-        }
-
-      },
-
-      {
-
-        "@type": "Question",
-
-        "name": "Can I make the AI's answers fully local too, not just transcription?",
-
-        "acceptedAnswer": {
-
-          "@type": "Answer",
-
-          "text": "Yes, but that part isn't automatic. You need to separately install a free program called Ollama on your computer, then point Heario at it. It's an optional, one-time setup — not something that happens by default."
-
-        }
-
-      },
-
-      {
-
-        "@type": "Question",
-
-        "name": "If I add a Deepgram or OpenAI key, what changes?",
-
-        "acceptedAnswer": {
-
-          "@type": "Answer",
-
-          "text": "Transcription switches from local Whisper to that cloud service instead — faster and more accurate, but no longer offline, and (for Deepgram) usage-based."
-
-        }
-
-      },
-
-      {
-
-        "@type": "Question",
-
-        "name": "So what's actually \"zero data breach risk\"?",
-
-        "acceptedAnswer": {
-
-          "@type": "Answer",
-
-          "text": "Only the fully-local combo (Local Whisper + Ollama) is 100% offline end-to-end. Local Whisper alone is offline for transcription only; if you're using Claude/GPT for answers, that part still leaves your machine."
-
-        }
-
-      },
-
-      {
-
-        "@type": "Question",
-
-        "name": "How fast are Heario's AI answers?",
-
-        "acceptedAnswer": {
-
-          "@type": "Answer",
-
-          "text": "Deepgram's streaming STT delivers a transcript in under 300ms from when the interviewer finishes speaking. Claude then streams the answer token-by-token — you start reading within a second. Total time from question to first word on screen is typically 1–2 seconds."
-
-        }
-
-      },
-
-      {
-
-        "@type": "Question",
-
-        "name": "Can I use my own OpenAI or Claude API key with Heario?",
-
-        "acceptedAnswer": {
-
-          "@type": "Answer",
-
-          "text": "Yes. Bring your own API keys for OpenAI (GPT-4o) or Anthropic (Claude) in the .env file and you pay only the model's API rate — no markup. Or use the managed plan and we handle keys, rate limits, and billing."
-
-        }
-
-      },
-
-      {
-
-        "@type": "Question",
-
-        "name": "Does Heario work on Mac?",
-
-        "acceptedAnswer": {
-
-          "@type": "Answer",
-
-          "text": "Currently Windows-only. The undetectable overlay relies on SetWindowDisplayAffinity, a Windows-exclusive API. Mac support is on the roadmap."
-
-        }
-
-      },
-
-      {
-
-        "@type": "Question",
-
-        "name": "What does the Web Search button do?",
-
-        "acceptedAnswer": {
-
-          "@type": "Answer",
-
-          "text": "When enabled, Heario searches the web before generating each answer so Claude has access to current information. It works out of the box with no setup using DuckDuckGo. Adding a free Tavily API key in Settings upgrades to higher-quality AI-optimised results automatically."
-
-        }
-
-      },
-
-      {
-
-        "@type": "Question",
-
-        "name": "What are the 7 modes and when should I use them?",
-
-        "acceptedAnswer": {
-
-          "@type": "Answer",
-
-          "text": "Each mode tells the AI how to respond for a different situation: Technical Interview for coding and system questions, Behavioral for STAR-method answers, Sales for objection handling, Lecture for note-taking, Recruiting to coach the interviewer side, System Design for architecture hints, and Mock Interview for tough coaching before a real interview. Switch instantly with the mode button or by pressing M."
-
-        }
-
-      },
-
-      {
-
-        "@type": "Question",
-
-        "name": "Microphone or System Audio — which should I use?",
-
-        "acceptedAnswer": {
-
-          "@type": "Answer",
-
-          "text": "Use Microphone for live video calls on Zoom, Teams, or Google Meet. Use System Audio to capture anything playing through your speakers, like a YouTube mock interview or a recorded call. Switch between them in Settings without restarting the app."
-
-        }
-
-      }
-
-    ]
-
-  }
-
-  </script>
-
-
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
-
   <link rel="apple-touch-icon" href="icon-192.png" />
-
   <link rel="manifest" href="manifest.json" />
-
   <link rel="stylesheet" href="style.css?v=30" />
-
+  <link rel="stylesheet" href="chatbot.css?v=1" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 </head>
-
 <body>
 
-
-
-<!-- ANNOUNCEMENT BAR -->
-
-<div class="announce-bar" id="announceBar">
-
-  <span><svg class="eico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg> Heario v0.1.7 <span class="beta-tag">Beta</span> just launched — </span>
-
-  <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.7/Heario_0.1.7_x64-setup.exe" target="_blank" rel="noopener">Download free for Windows →</a>
-
-  <button class="announce-close" onclick="this.parentElement.style.display=&#39;none&#39;" aria-label="Dismiss">✕</button>
-
-</div>
-
-
-
-<!-- GLOBAL ANIMATED BACKDROP (covers the whole page) -->
-
 <div class="site-bg" aria-hidden="true">
-
-  <canvas class="particle-canvas-global"></canvas>
-
   <div class="g-aurora g-aurora-1"></div>
-
   <div class="g-aurora g-aurora-2"></div>
-
   <div class="g-aurora g-aurora-3"></div>
-
-  <div class="g-aurora g-aurora-4"></div>
-
 </div>
 
-
-
-
+<header class="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">Heario</a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-meta">
+      <a href="/login.html" class="lang">Log in</a>
+      <a href="/login.html" class="nav-cta">Start free trial</a>
+    </div>
+  </div>
+</header>
 
 <!-- HERO -->
-
 <section class="hero">
-
-  <div class="hero-bg" aria-hidden="true">
-
-    <div class="beam beam-1"></div>
-
-    <div class="beam beam-2"></div>
-
-    <div class="beam beam-3"></div>
-
-    <div class="conic-glow"></div>
-
-    <div class="geo-ring geo-ring-1"></div>
-
-    <div class="geo-ring geo-ring-2"></div>
-
-    <div class="geo-ring geo-ring-3"></div>
-
-    <div class="aurora aurora-1"></div>
-
-    <div class="aurora aurora-2"></div>
-
-    <div class="aurora aurora-3"></div>
-
-    <div class="aurora aurora-4"></div>
-
-    <div class="hero-grid"></div>
-
-    <div class="scanline"></div>
-
-  </div>
-
   <div class="hero-inner">
-
-    <div class="pill"><svg class="eico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg> Heario v0.1.7 <span class="beta-tag">Beta</span> — Free for Windows</div>
-
-    <img src="og.svg" alt="Heario mic icon" class="hero-mic" />
-
-    <h1>AI Copilot for<br/>Interviews &amp; Meetings</h1>
-
-    <p class="hero-sub">Real-time answers and perfect notes in any call &mdash; completely undetectable, even on screen share.</p>
-
+    <span class="pill">AI chat + instant WhatsApp alerts for your website</span>
+    <h1>Never miss a website enquiry again.</h1>
+    <p class="hero-sub">Heario answers your visitors' questions around the clock, then sends every enquiry straight to your WhatsApp the moment it happens.</p>
     <div class="hero-actions">
-
-      <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.7/Heario_0.1.7_x64-setup.exe" target="_blank" rel="noopener" class="btn-primary">Download Free for Windows</a>
-
-      <a href="mailto:support@heario.ai?subject=Mac%20Waitlist&body=Please%20add%20me%20to%20the%20Heario%20Mac%20waitlist." class="btn-ghost btn-mac"><svg class="mac-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 1.43c.06.74-.23 1.46-.7 1.99-.5.55-1.3.98-2.07.92-.08-.72.27-1.48.72-1.97.5-.56 1.37-.97 2.05-.94zM18.9 8.4c-.04.03-1.83 1.07-1.81 3.2.02 2.55 2.23 3.4 2.26 3.41-.02.06-.35 1.21-1.16 2.4-.7 1.03-1.43 2.05-2.58 2.07-1.13.02-1.5-.67-2.78-.67-1.29 0-1.7.65-2.77.69-1.11.04-1.96-1.11-2.67-2.14-1.45-2.1-2.56-5.93-1.07-8.52.74-1.29 2.06-2.1 3.49-2.12 1.09-.02 2.12.73 2.78.73.67 0 1.92-.9 3.23-.77.55.02 2.1.22 3.09 1.68-.08.05-1.85 1.08-1.83 3.21z"/></svg>Join Mac Waitlist</a>
-
-      <a href="#features" class="btn-ghost">See how it works →</a>
-
+      <a href="/login.html" class="btn-primary">Start your free 14-day trial</a>
+      <a href="#how" class="btn-ghost">See how it works</a>
     </div>
+    <p class="hero-reassure"><span class="hr-check">&#10003;</span> No credit card &nbsp;&middot;&nbsp; <span class="hr-check">&#10003;</span> Set up in about 10 minutes &nbsp;&middot;&nbsp; <span class="hr-check">&#10003;</span> Works on any website</p>
 
-    <p class="hero-reassure"><span class="hr-check">&#10003;</span> Free to use &nbsp;&middot;&nbsp; No credit card &nbsp;&middot;&nbsp; No sign-up to start</p>
-
-    <div class="hero-stats">
-
-      <div class="stat"><span class="stat-n">300ms</span><span class="stat-l">Response time</span></div>
-
-      <div class="stat-div"></div>
-
-      <div class="stat"><span class="stat-n">95%</span><span class="stat-l">Transcription accuracy</span></div>
-
-      <div class="stat-div"></div>
-
-      <div class="stat"><span class="stat-n">100%</span><span class="stat-l">Undetectable</span></div>
-
+    <div class="demo-pair" aria-label="Example: a visitor chats on the website and the owner receives a WhatsApp message">
+      <div class="demo-card">
+        <div class="demo-bar"><span>murphyplumbing.ie</span><span>AI assistant</span></div>
+        <div class="demo-body">
+          <div class="bub in">Hi! I'm the AI assistant for Murphy Plumbing. Ask me anything, or leave an enquiry.</div>
+          <div class="bub out">My boiler has stopped working. Can someone come out tomorrow?</div>
+          <div class="bub in">Sorry to hear that. We do emergency call-outs. Can I take your name and a number so Sean can confirm a time?</div>
+          <div class="bub out">Ann, 087 111 2222</div>
+          <div class="bub in">Thanks Ann! Sean will be in touch within 2 hours.</div>
+        </div>
+      </div>
+      <div class="demo-card wa-card">
+        <div class="demo-bar"><span>WhatsApp</span><span>now</span></div>
+        <div class="demo-body">
+          <div class="wa-arrow">&darr; Instant alert to the owner &darr;</div>
+          <div class="wa-msg">
+            <b>New website enquiry for Murphy Plumbing.</b><br />
+            Name: Ann<br />
+            Contact: 087 111 2222<br />
+            Message: Boiler stopped working, needs a call-out tomorrow.
+            <div class="wa-time">16:42</div>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="download-tracker" style="display:none">
-
-      <span class="dl-count" id="dlCount">1+</span>
-
-      <span class="dl-label">Downloads — <em>Live Tracker · Watch it go up as you become a Heario</em></span>
-
-    </div>
-
-
-
   </div>
-
 </section>
 
-
-
-<!-- DEMO VIDEO -->
-
-<div class="demo-embed-wrap">
-
-  <p class="demo-label">See it in action</p>
-
-  <div class="demo-embed-inner">
-
-    <iframe src="demo.html" class="demo-embed" scrolling="no" allow="autoplay" allowfullscreen loading="lazy"></iframe>
-
+<!-- HOW -->
+<section class="cb-section" id="how">
+  <div class="section-inner">
+    <h2 class="cb-h2">Up and running in three steps</h2>
+    <p class="section-sub">No developers, no code beyond one pasted line.</p>
+    <div class="cb-steps">
+      <div class="cb-step"><span class="n">1</span><h3>Tell it about your business</h3><p>Paste in your services, prices, opening hours and common questions. The assistant only answers from what you give it.</p></div>
+      <div class="cb-step"><span class="n">2</span><h3>Add your WhatsApp number</h3><p>Enter the number that should get the alerts, confirm you're happy to receive them, and send yourself a test.</p></div>
+      <div class="cb-step"><span class="n">3</span><h3>Paste one line on your site</h3><p>Copy your embed snippet into your website. A chat bubble appears and you're live.</p></div>
+    </div>
   </div>
-
-</div>
-
-
+</section>
 
 <!-- FEATURES -->
-
-<section class="features" id="features">
-
+<section class="cb-section alt" id="features">
   <div class="section-inner">
-
-    <h2>Four Ways We Make Your Meetings Better</h2>
-
-    <p class="section-sub">One AI that listens, thinks, and helps — invisibly.</p>
-
-
-
-    <div class="bento">
-
-
-
-      <!-- A · Real-time Q&A (large, live demo) -->
-
-      <article class="bento-card bento-lg reveal" data-d="1">
-
-        <div class="bento-head">
-
-          <span class="bento-tag"><svg class="eico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 12 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 12 14z"/></svg> Core</span>
-
-          <h3>Real-time Question Answering</h3>
-
-          <p>The right answer, right when you need it — Heario listens, understands, and streams exactly what to say in under 300ms.</p>
-
-        </div>
-
-        <div class="demo-overlay">
-
-          <div class="demo-bar">
-
-            <span class="d-dot"></span><span class="d-dot"></span><span class="d-dot"></span>
-
-            <span class="demo-status"><i class="live-dot"></i> listening · S0</span>
-
-          </div>
-
-          <div class="demo-body">
-
-            <div class="demo-q">Q: How would you scale this to a million users?</div>
-
-            <div class="demo-a" data-type="Shard by tenant, cache hot reads in Redis, and put writes behind a queue. Add read-replicas and a CDN edge for static assets — horizontal all the way."></div>
-
-          </div>
-
-        </div>
-
-      </article>
-
-
-
-      <!-- B · Universal LLM (cycling chips) -->
-
-      <article class="bento-card reveal" data-d="2">
-
-        <div class="bento-tag"><svg class="eico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></svg> Any model</div>
-
-        <h3>Universal LLM Interface</h3>
-
-        <p>Bring your own keys or use our managed plan.</p>
-
-        <div class="llm-orbit">
-
-          <div class="llm-core">AI</div>
-
-          <span class="llm-chip" data-i="0">GPT</span>
-
-          <span class="llm-chip" data-i="1">Claude</span>
-
-          <span class="llm-chip" data-i="2">Gemini</span>
-
-        </div>
-
-      </article>
-
-
-
-      <!-- C · Profile Intelligence (tags light up) -->
-
-      <article class="bento-card reveal" data-d="3">
-
-        <div class="bento-tag"><svg class="eico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg> Grounded</div>
-
-        <h3>Profile Intelligence</h3>
-
-        <p>Never generic — always you.</p>
-
-        <div class="profile-tags">
-
-          <span class="ptag">Résumé</span>
-
-          <span class="ptag">Job Description</span>
-
-          <span class="ptag">Custom Context</span>
-
-          <span class="ptag">Past Answers</span>
-
-        </div>
-
-      </article>
-
-
-
-      <!-- D · Structured Notes (wide, ticking checklist) -->
-
-      <article class="bento-card bento-wide reveal" data-d="4">
-
-        <div class="bento-head">
-
-          <span class="bento-tag"><svg class="eico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"/></svg> Auto-captured</span>
-
-          <h3>Structured Meeting Notes</h3>
-
-          <p>Searchable, timestamped notes — action items, decisions and key moments, exported automatically at session end.</p>
-
-        </div>
-
-        <ul class="notes-list">
-
-          <li><span class="note-t">00:14</span><span class="note-check">✓</span> Decision: adopt token-bucket rate limiting</li>
-
-          <li><span class="note-t">02:47</span><span class="note-check">✓</span> Action: benchmark Redis vs. in-memory</li>
-
-          <li><span class="note-t">05:03</span><span class="note-check">✓</span> Key moment: candidate proposed sharding</li>
-
-          <li><span class="note-t">08:21</span><span class="note-check">✓</span> Follow-up: send system-design diagram</li>
-
-        </ul>
-
-      </article>
-
-
-
+    <h2 class="cb-h2">Built for busy business owners</h2>
+    <p class="section-sub">Everything you need to turn visitors into conversations.</p>
+    <div class="cb-feats">
+      <div class="cb-feat"><h3>Answers 24/7</h3><p>Opening hours, prices, areas covered, how booking works. Visitors get an instant reply instead of leaving.</p></div>
+      <div class="cb-feat"><h3>Instant WhatsApp alerts</h3><p>The moment someone leaves their details, you get their name, contact and message on your phone.</p></div>
+      <div class="cb-feat"><h3>Email backup</h3><p>If a WhatsApp alert can't be delivered, the enquiry is emailed to you automatically. Nothing gets lost.</p></div>
+      <div class="cb-feat"><h3>Sticks to your facts</h3><p>It's told not to invent prices or promises. If it doesn't know, it says so and offers to pass the question on.</p></div>
+      <div class="cb-feat"><h3>Works on any website</h3><p>WordPress, Wix, Squarespace, Shopify or hand-built. One script tag, nothing to install.</p></div>
+      <div class="cb-feat"><h3>Privacy built in</h3><p>The chat tells visitors they're talking to an AI. A data processing agreement is included for GDPR, and you can delete your data any time.</p></div>
     </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- WHAT'S NEW · SHOWROOM -->
-
-<section class="showroom" id="whats-new">
-  <div class="section-inner">
-
-    <p class="wn-eyebrow reveal" data-d="1">✦ v0.1.7 <span class="beta-tag">Beta</span> · Just Shipped</p>
-    <h2 class="reveal" data-d="2">Fifteen reasons to update</h2>
-    <p class="section-sub reveal" data-d="3">A whole new layer of control — type, switch, pin, hide, and go fully offline. Watch each one work, live.</p>
-
-    <div class="showroom-stage reveal" data-d="4">
-
-      <!-- LEFT · feature rail -->
-      <div class="sr-rail" role="tablist" aria-label="New features">
-
-        <button class="sr-tab active" data-i="0" style="--c:#4f8ef7" role="tab">
-          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M6.5 14h11"/></svg></span>
-          <span class="sr-meta"><strong>Type to Ask</strong><em>Manual question input</em></span>
-          <span class="sr-prog"><i></i></span>
-        </button>
-
-        <button class="sr-tab" data-i="1" style="--c:#9b7ef7" role="tab">
-          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="2"/><rect x="10.5" y="10.5" width="3" height="3"/><path d="M10 4v2M14 4v2M10 18v2M14 18v2M4 10h2M4 14h2M18 10h2M18 14h2"/></svg></span>
-          <span class="sr-meta"><strong>GPT-4o + Claude</strong><em>Bring either brain</em></span>
-          <span class="sr-prog"><i></i></span>
-        </button>
-
-        <button class="sr-tab" data-i="2" style="--c:#5fb85f" role="tab">
-          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M5 12h10M5 17h6"/></svg></span>
-          <span class="sr-meta"><strong>Answer Length</strong><em>Brief → Detailed</em></span>
-          <span class="sr-prog"><i></i></span>
-        </button>
-
-        <button class="sr-tab" data-i="3" style="--c:#f5bf4f" role="tab">
-          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6.5v11M15 6.5v11"/></svg></span>
-          <span class="sr-meta"><strong>Auto-Pause</strong><em>Knows when you talk</em></span>
-          <span class="sr-prog"><i></i></span>
-        </button>
-
-        <button class="sr-tab" data-i="4" style="--c:#5fd1ff" role="tab">
-          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v9M8.5 9.5 12 13l3.5-3.5"/><path d="M5 16v2.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V16"/></svg></span>
-          <span class="sr-meta"><strong>Session Export</strong><em>PDF &amp; .txt</em></span>
-          <span class="sr-prog"><i></i></span>
-        </button>
-
-        <button class="sr-tab" data-i="5" style="--c:#e06fc8" role="tab">
-          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></span>
-          <span class="sr-meta"><strong>Company Briefing</strong><em>Auto-researched</em></span>
-          <span class="sr-prog"><i></i></span>
-        </button>
-
-        <button class="sr-tab" data-i="6" style="--c:#3bc9d1" role="tab">
-          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4 4 0 0 1-.5-7.97A5.5 5.5 0 0 1 17 9.5a3.5 3.5 0 0 1 1.5 6.6"/><path d="M4 4l16 16"/></svg></span>
-          <span class="sr-meta"><strong>Works Offline</strong><em>Zero signup</em></span>
-          <span class="sr-prog"><i></i></span>
-        </button>
-
-        <button class="sr-tab" data-i="7" style="--c:#f0883e" role="tab">
-          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/></svg></span>
-          <span class="sr-meta"><strong>Three STT Options</strong><em>Auto-selected</em></span>
-          <span class="sr-prog"><i></i></span>
-        </button>
-
-        <button class="sr-tab" data-i="8" style="--c:#a3e635" role="tab">
-          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg></span>
-          <span class="sr-meta"><strong>Approach-First</strong><em>Reasoning before the answer</em></span>
-          <span class="sr-prog"><i></i></span>
-        </button>
-
-        <button class="sr-tab" data-i="9" style="--c:#2dd4bf" role="tab">
-          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v15"/><path d="M14 9h4a1 1 0 0 1 1 1v10"/><path d="M3 20h18"/><path d="M8 8h2M8 12h2M8 16h2"/></svg></span>
-          <span class="sr-meta"><strong>Company Presets</strong><em>One-click full setup</em></span>
-          <span class="sr-prog"><i></i></span>
-        </button>
-
-        <button class="sr-tab" data-i="10" style="--c:#ffc857" role="tab">
-          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg></span>
-          <span class="sr-meta"><strong>Pin Answers</strong><em>Save the best replies</em></span>
-          <span class="sr-prog"><i></i></span>
-        </button>
-
-        <button class="sr-tab" data-i="11" style="--c:#b06ab3" role="tab">
-          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5v3a1 1 0 0 1-1 1H5M15 5v3a1 1 0 0 0 1 1h3M9 19v-3a1 1 0 0 0-1-1H5M15 19v-3a1 1 0 0 1 1-1h3"/></svg></span>
-          <span class="sr-meta"><strong>Discreet Mode</strong><em>Shrinks to a tiny pill</em></span>
-          <span class="sr-prog"><i></i></span>
-        </button>
-
-        <button class="sr-tab" data-i="12" style="--c:#ff5f6d" role="tab">
-          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 6.2A9.8 9.8 0 0 1 12 6c5 0 9 6 9 6a16.8 16.8 0 0 1-2.3 2.9M6.2 7.8A15.7 15.7 0 0 0 3 12s4 6 9 6a9 9 0 0 0 3.5-.7"/><path d="M9.9 10.1a3 3 0 0 0 4.2 4.2"/></svg></span>
-          <span class="sr-meta"><strong>Panic Hide</strong><em>Ctrl + Shift + H</em></span>
-          <span class="sr-prog"><i></i></span>
-        </button>
-
-        <button class="sr-tab" data-i="13" style="--c:#34d399" role="tab">
-          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M9 8h6M9 12h6M9 16l1.5 1.5L13 14.5"/></svg></span>
-          <span class="sr-meta"><strong>Post-Interview Debrief</strong><em>Auto-generated recap</em></span>
-          <span class="sr-prog"><i></i></span>
-        </button>
-
-        <button class="sr-tab" data-i="14" style="--c:#c084fc" role="tab">
-          <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .622.622l4.353-1.32a2 2 0 0 0 .83-.497Z"/><path d="m15 5 4 4"/></svg></span>
-          <span class="sr-meta"><strong>Take Notes</strong><em>Folded into your debrief</em></span>
-          <span class="sr-prog"><i></i></span>
-        </button>
-
-      </div>
-
-      <!-- RIGHT · live stage -->
-      <div class="sr-screen">
-        <div class="sr-bar">
-          <span class="sr-dots"><i></i><i></i><i></i></span>
-          <span class="sr-status"><i class="sr-live"></i> <span class="sr-status-tx">listening</span></span>
-          <span class="sr-feature">Type to Ask</span>
-          <span class="sr-brand">Heario</span>
-        </div>
-
-        <div class="sr-stagewrap">
-
-          <!-- 0 · Type to Ask -->
-          <div class="sr-panel active" data-i="0" style="--c:#4f8ef7">
-            <div class="sp-askbar">
-              <span class="sp-ask-ic"><svg class="sp-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M6.5 14h11"/></svg></span>
-              <span class="sp-ask-text">How does a bloom filter work?</span>
-              <span class="sp-send">↵</span>
-            </div>
-            <div class="sp-answer">
-              <span class="sp-conf">C5</span>
-              <p>A bloom filter is a space-efficient probabilistic set. It answers "definitely not present" or "possibly present" using a bit array and <em>k</em> hash functions — no false negatives, tunable false positives.</p>
-            </div>
-            <div class="sp-foot">Typed by you · answered in 280&nbsp;ms</div>
-          </div>
-
-          <!-- 1 · GPT-4o + Claude -->
-          <div class="sr-panel" data-i="1" style="--c:#9b7ef7">
-            <div class="sp-switch" data-p="claude">
-              <span class="sp-opt sp-opt-a">Claude</span>
-              <span class="sp-opt sp-opt-b">GPT-4o</span>
-              <i class="sp-switch-ind"></i>
-            </div>
-            <div class="sp-prov">
-              <div class="sp-badges">
-                <span class="sp-badge sp-badge-a">claude-opus-4.8</span>
-                <span class="sp-badge sp-badge-b">gpt-4o</span>
-              </div>
-              <p>One interface, your choice of brain. Drop in either key — switch mid-session, no restart.</p>
-            </div>
-            <div class="sp-foot">Provider · live swap</div>
-          </div>
-
-          <!-- 2 · Answer Length -->
-          <div class="sr-panel" data-i="2" style="--c:#5fb85f">
-            <div class="sp-seg">
-              <span class="sp-seg-o">Brief</span><span class="sp-seg-o">Normal</span><span class="sp-seg-o">Detailed</span>
-              <i class="sp-seg-ind"></i>
-            </div>
-            <div class="sp-len">
-              <p class="sp-len-l l1">Use a queue to decouple writes.</p>
-              <p class="sp-len-l l2">Use a queue to decouple writes from reads, so spikes drain smoothly instead of overwhelming the DB.</p>
-              <p class="sp-len-l l3">Use a queue to decouple writes from reads, so traffic spikes drain smoothly. Add idempotency keys, a dead-letter queue for poison messages, and back-pressure so producers slow when consumers lag.</p>
-            </div>
-            <div class="sp-foot">One key cycles the depth</div>
-          </div>
-
-          <!-- 3 · Auto-Pause -->
-          <div class="sr-panel" data-i="3" style="--c:#f5bf4f">
-            <div class="sp-wave">
-              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-            </div>
-            <div class="sp-pause-state">
-              <span class="sp-st sp-st-them"><i></i> Interviewer speaking — answering</span>
-              <span class="sp-st sp-st-you"><i></i> You're speaking — holding the answer</span>
-            </div>
-            <div class="sp-foot">Diarization-aware · never interrupts</div>
-          </div>
-
-          <!-- 4 · Session Export -->
-          <div class="sr-panel" data-i="4" style="--c:#5fd1ff">
-            <div class="sp-doc">
-              <span class="sp-doc-line"><b>00:14</b> Decision: token-bucket rate limiting</span>
-              <span class="sp-doc-line"><b>02:47</b> Action: benchmark Redis vs in-memory</span>
-              <span class="sp-doc-line"><b>05:03</b> Key moment: candidate proposed sharding</span>
-            </div>
-            <div class="sp-chips">
-              <span class="sp-chip"><svg class="sp-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v4h4"/></svg> session.pdf</span>
-              <span class="sp-chip"><svg class="sp-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v4h4"/></svg> session.txt</span>
-            </div>
-            <div class="sp-foot">Exported automatically at session end</div>
-          </div>
-
-          <!-- 5 · Company Briefing -->
-          <div class="sr-panel" data-i="5" style="--c:#e06fc8">
-            <div class="sp-field"><span class="sp-field-ic"><svg class="sp-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></span><span class="sp-field-tx">Stripe</span><span class="sp-field-spin"></span></div>
-            <ul class="sp-brief">
-              <li><b>Industry</b> — payments infrastructure for the internet</li>
-              <li><b>Stage</b> — late-stage private, ~$95B valuation</li>
-              <li><b>Recent</b> — expanded into billing, tax &amp; issuing</li>
-              <li><b>Values</b> — rigor, low ego, "developers first"</li>
-            </ul>
-            <div class="sp-foot">Injected into your AI context</div>
-          </div>
-
-          <!-- 6 · Works Offline -->
-          <div class="sr-panel" data-i="6" style="--c:#3bc9d1">
-            <div class="sp-net">
-              <span class="sp-cloud"><svg class="sp-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4 4 0 0 1-.5-7.97A5.5 5.5 0 0 1 17 9.5a3.5 3.5 0 0 1 .5 6.95"/></svg> Cloud STT + LLM <i class="sp-x">✕</i></span>
-              <span class="sp-arrow">→</span>
-              <span class="sp-local"><svg class="sp-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="6" rx="1.5"/><rect x="4" y="13" width="16" height="6" rx="1.5"/><path d="M7.5 8h.01M7.5 16h.01"/></svg> Local Whisper + Ollama <i class="sp-on"></i></span>
-            </div>
-            <div class="sp-offline-tx"><span class="sp-otx">and that's how I'd scale it.</span></div>
-            <div class="sp-foot">Optional fully-local mode (via Ollama) · zero data breaches · no internet required</div>
-          </div>
-
-          <!-- 7 · Three STT Options -->
-          <div class="sr-panel" data-i="7" style="--c:#f0883e">
-            <div class="sp-engines">
-              <div class="sp-engine" data-k="dg"><span class="sp-eng-n">Deepgram</span><span class="sp-eng-t">streaming · diarized · $200 free credit</span><span class="sp-eng-pick">selected</span></div>
-              <div class="sp-engine" data-k="oai"><span class="sp-eng-n">OpenAI Whisper</span><span class="sp-eng-t">cloud · your key</span><span class="sp-eng-pick">selected</span></div>
-              <div class="sp-engine" data-k="loc"><span class="sp-eng-n">Local Whisper</span><span class="sp-eng-t">offline · free</span><span class="sp-eng-pick">selected</span></div>
-              <i class="sp-scan"></i>
-            </div>
-            <div class="sp-foot"><b>Auto</b> picks the best key you have — or override it</div>
-          </div>
-
-          <!-- 8 · Approach-First -->
-          <div class="sr-panel" data-i="8" style="--c:#a3e635">
-            <div class="sp-answer">
-              <span class="sp-conf">C5</span>
-              <p class="sp-approach">Approach: queue the writes so spikes don't hit the DB directly.</p>
-              <p>Use a queue to decouple writes from reads, so traffic spikes drain smoothly instead of overwhelming the database.</p>
-            </div>
-            <div class="sp-foot">Toggle on/off · says <em>why</em> before <em>what</em></div>
-          </div>
-
-          <!-- 9 · Company Presets -->
-          <div class="sr-panel" data-i="9" style="--c:#2dd4bf">
-            <div class="sp-copick">
-              <span class="sp-co-ic"><svg class="sp-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v15"/><path d="M14 9h4a1 1 0 0 1 1 1v10"/><path d="M3 20h18"/><path d="M8 8h2M8 12h2M8 16h2"/></svg></span>
-              <span class="sp-co-stack">
-                <span class="sp-co-name sp-co-1">Stripe</span>
-                <span class="sp-co-name sp-co-2">Anthropic</span>
-                <span class="sp-co-name sp-co-3">Datadog</span>
-              </span>
-              <span class="sp-co-caret">▾</span>
-            </div>
-            <div class="sp-co-load">
-              <span class="sp-co-tag"><svg class="sp-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v4h4"/></svg> Job description</span>
-              <span class="sp-co-tag"><svg class="sp-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg> Company brief</span>
-              <span class="sp-co-tag"><svg class="sp-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg> Default mode</span>
-              <span class="sp-co-tag"><svg class="sp-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H10l-4 3v-3H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/></svg> Mode prompts</span>
-            </div>
-            <div class="sp-foot">Save a whole setup per company — <b>switch in one click</b></div>
-          </div>
-
-          <!-- 10 · Pin Answers -->
-          <div class="sr-panel" data-i="10" style="--c:#ffc857">
-            <div class="sp-pinrow">
-              <div class="sp-answer sp-pin-ans">
-                <span class="sp-conf">C5</span>
-                <p>Shard by tenant, cache hot reads in Redis, and put writes behind a queue.</p>
-              </div>
-              <span class="sp-pin-btn"><svg class="sp-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg> Pin</span>
-            </div>
-            <div class="sp-pinned">
-              <span class="sp-pinned-head"><svg class="sp-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg> Pinned <span class="sp-pin-badge">1</span></span>
-              <span class="sp-pinned-item"><svg class="sp-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8l-4 4 4 4M15 8l4 4-4 4"/></svg> Shard by tenant, cache hot reads in Redis…</span>
-            </div>
-            <div class="sp-foot">Keep your best answers one tap away — <b>copy or revisit any time</b></div>
-          </div>
-
-          <!-- 11 · Discreet Mode -->
-          <div class="sr-panel" data-i="11" style="--c:#b06ab3">
-            <div class="sp-shrink">
-              <div class="sp-shrink-full">
-                <div class="sp-sk-bar"><i></i><i></i><i></i><span class="sp-sk-tag">Heario</span></div>
-                <div class="sp-sk-lines"><i></i><i></i><i></i></div>
-              </div>
-              <div class="sp-shrink-pill"><i class="sp-pill-dot"></i> Heario</div>
-            </div>
-            <div class="sp-foot">Collapse the overlay to a <b>tiny status pill</b> — then expand right back</div>
-          </div>
-
-          <!-- 12 · Panic Hide -->
-          <div class="sr-panel" data-i="12" style="--c:#ff5f6d">
-            <div class="sp-keys">
-              <span class="sp-key sp-key-1">Ctrl</span>
-              <span class="sp-plus">+</span>
-              <span class="sp-key sp-key-2">Shift</span>
-              <span class="sp-plus">+</span>
-              <span class="sp-key sp-key-3">H</span>
-            </div>
-            <div class="sp-vanish">
-              <div class="sp-vanish-card">
-                <span class="sp-conf">C5</span>
-                <p>Use a token bucket in Redis — INCR with a TTL per client key…</p>
-              </div>
-              <span class="sp-vanish-tag">✓ Gone — instantly</span>
-            </div>
-            <div class="sp-foot">A global hotkey that works <b>even when Heario isn't focused</b></div>
-          </div>
-
-          <!-- 13 · Post-Interview Debrief -->
-          <div class="sr-panel" data-i="13" style="--c:#34d399">
-            <div class="sp-debrief">
-              <div class="sp-debrief-sec">
-                <span class="sp-debrief-h">Questions Asked</span>
-                <p>How would you scale this to 10M requests/day?</p>
-              </div>
-              <div class="sp-debrief-sec">
-                <span class="sp-debrief-h">How You Answered</span>
-                <p>Shard by tenant, cache hot reads, queue the writes.</p>
-              </div>
-              <div class="sp-debrief-sec">
-                <span class="sp-debrief-h">Follow-Ups to Prepare</span>
-                <p>Rehearse cache-invalidation tradeoffs.</p>
-              </div>
-            </div>
-            <div class="sp-foot">One click at session end — <b>questions, answers &amp; what to prep next</b></div>
-          </div>
-
-          <!-- 14 · Take Notes -->
-          <div class="sr-panel" data-i="14" style="--c:#c084fc">
-            <div class="sp-debrief">
-              <div class="sp-debrief-sec">
-                <span class="sp-debrief-h">Your Notes</span>
-                <p>forgot to mention the caching layer on the scaling question</p>
-                <p>ask about on-call rotation before accepting</p>
-              </div>
-              <div class="sp-debrief-sec">
-                <span class="sp-debrief-h">Follow-Ups to Prepare</span>
-                <p>Rehearse cache-invalidation tradeoffs.</p>
-              </div>
-            </div>
-            <div class="sp-foot">Type anything, anytime — it's folded into your next debrief automatically</div>
-          </div>
-
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ambient footer ticker -->
-    <div class="wn-ticker reveal" data-d="4" aria-hidden="true">
-      <div class="wn-track wn-track--fwd">
-        <div class="wn-items">
-          <span class="wn-item" style="--c:#4f8ef7"><i class="wn-dot"></i> Type to Ask</span>
-          <span class="wn-item" style="--c:#9b7ef7"><i class="wn-dot"></i> GPT-4o + Claude</span>
-          <span class="wn-item" style="--c:#5fb85f"><i class="wn-dot"></i> Answer Length</span>
-          <span class="wn-item" style="--c:#f5bf4f"><i class="wn-dot"></i> Auto-Pause</span>
-          <span class="wn-item" style="--c:#5fd1ff"><i class="wn-dot"></i> Session Export</span>
-          <span class="wn-item" style="--c:#e06fc8"><i class="wn-dot"></i> Company Briefing</span>
-          <span class="wn-item" style="--c:#3bc9d1"><i class="wn-dot"></i> Works Offline</span>
-          <span class="wn-item" style="--c:#f0883e"><i class="wn-dot"></i> Three STT Options</span>
-          <span class="wn-item" style="--c:#a3e635"><i class="wn-dot"></i> Approach-First</span>
-          <span class="wn-item" style="--c:#2dd4bf"><i class="wn-dot"></i> Company Presets</span>
-          <span class="wn-item" style="--c:#ffc857"><i class="wn-dot"></i> Pin Answers</span>
-          <span class="wn-item" style="--c:#b06ab3"><i class="wn-dot"></i> Discreet Mode</span>
-          <span class="wn-item" style="--c:#ff5f6d"><i class="wn-dot"></i> Panic Hide</span>
-          <span class="wn-item" style="--c:#34d399"><i class="wn-dot"></i> Post-Interview Debrief</span>
-        </div>
-        <div class="wn-items" aria-hidden="true">
-          <span class="wn-item" style="--c:#4f8ef7"><i class="wn-dot"></i> Type to Ask</span>
-          <span class="wn-item" style="--c:#9b7ef7"><i class="wn-dot"></i> GPT-4o + Claude</span>
-          <span class="wn-item" style="--c:#5fb85f"><i class="wn-dot"></i> Answer Length</span>
-          <span class="wn-item" style="--c:#f5bf4f"><i class="wn-dot"></i> Auto-Pause</span>
-          <span class="wn-item" style="--c:#5fd1ff"><i class="wn-dot"></i> Session Export</span>
-          <span class="wn-item" style="--c:#e06fc8"><i class="wn-dot"></i> Company Briefing</span>
-          <span class="wn-item" style="--c:#3bc9d1"><i class="wn-dot"></i> Works Offline</span>
-          <span class="wn-item" style="--c:#f0883e"><i class="wn-dot"></i> Three STT Options</span>
-          <span class="wn-item" style="--c:#a3e635"><i class="wn-dot"></i> Approach-First</span>
-          <span class="wn-item" style="--c:#2dd4bf"><i class="wn-dot"></i> Company Presets</span>
-          <span class="wn-item" style="--c:#ffc857"><i class="wn-dot"></i> Pin Answers</span>
-          <span class="wn-item" style="--c:#b06ab3"><i class="wn-dot"></i> Discreet Mode</span>
-          <span class="wn-item" style="--c:#ff5f6d"><i class="wn-dot"></i> Panic Hide</span>
-          <span class="wn-item" style="--c:#34d399"><i class="wn-dot"></i> Post-Interview Debrief</span>
-        </div>
-      </div>
-    </div>
-
   </div>
 </section>
-
-
-
-<!-- MEETING DEBRIEF EXAMPLE -->
-
-<section class="debrief-ex" id="debrief-example">
-  <div class="section-inner">
-
-    <p class="wn-eyebrow reveal" data-d="1">▤ After Every Meeting</p>
-    <h2 class="reveal" data-d="2">A debrief, written for you</h2>
-    <p class="section-sub reveal" data-d="3">One click when the call ends. Heario turns the whole conversation into a clean, shareable recap — here's a real one.</p>
-
-    <div class="dbx-doc reveal" data-d="4">
-
-      <div class="dbx-head">
-        <div class="dbx-title">
-          <span class="dbx-name">Q3 Roadmap Sync</span>
-          <span class="dbx-sub">Product · Weekly</span>
-        </div>
-        <div class="dbx-meta">
-          <span>Tue · 24 min</span>
-          <span class="dbx-people">4 participants</span>
-        </div>
-      </div>
-
-      <div class="dbx-body">
-
-        <div class="dbx-sec">
-          <span class="dbx-h" style="--c:#5fb85f"><i></i> Decisions Made</span>
-          <ul>
-            <li>Ship the billing redesign behind a flag in <b>v0.3</b>, GA in v0.4.</li>
-            <li>Move the mobile push work out of Q3 — capacity goes to onboarding.</li>
-          </ul>
-        </div>
-
-        <div class="dbx-sec">
-          <span class="dbx-h" style="--c:#4f8ef7"><i></i> Action Items</span>
-          <ul class="dbx-actions">
-            <li><span class="dbx-owner">Maya</span> Draft the flag rollout plan &amp; share by Thursday.</li>
-            <li><span class="dbx-owner">Dan</span> Pull churn numbers for the onboarding case.</li>
-            <li><span class="dbx-owner">You</span> Sync with design on the v0.3 billing mocks.</li>
-          </ul>
-        </div>
-
-        <div class="dbx-sec">
-          <span class="dbx-h" style="--c:#7fd1ff"><i></i> Key Discussion Points</span>
-          <ul>
-            <li>Onboarding drop-off is concentrated on step 2 — likely the biggest Q3 lever.</li>
-            <li>Billing redesign is lower risk than feared; flag keeps the blast radius small.</li>
-          </ul>
-        </div>
-
-        <div class="dbx-sec">
-          <span class="dbx-h" style="--c:#d98b3a"><i></i> Open Questions</span>
-          <ul>
-            <li>Do we need legal sign-off before the billing GA?</li>
-            <li>Who owns the mobile push work once it slips to Q4?</li>
-          </ul>
-        </div>
-
-        <div class="dbx-sec dbx-sec-notes">
-          <span class="dbx-h" style="--c:#c084fc"><i></i> My Notes</span>
-          <ul>
-            <li>Loop in Priya before locking the billing GA date.</li>
-            <li>Push back if onboarding scope creeps past step 2.</li>
-          </ul>
-        </div>
-
-      </div>
-
-      <div class="dbx-foot">
-        <span class="dbx-badge">Generated by Heario</span>
-        <span class="dbx-exp">Export as PDF or .txt · share in one click</span>
-      </div>
-
-    </div>
-
-  </div>
-</section>
-
-
-
-<!-- MODES · NEURAL REACTOR -->
-
-<section class="modes" id="modes">
-
-  <div class="section-inner">
-
-    <p class="wn-eyebrow reveal" data-d="1">◇ Adaptive Intelligence</p>
-    <h2 class="reveal" data-d="2">Seven Modes. One AI That Listens.</h2>
-    <p class="section-sub reveal" data-d="3">Switch live mid-session. No restart — the core just retunes.</p>
-
-    <div class="reactor reveal" data-d="4">
-      <div class="reactor-stage">
-
-        <!-- decorative reactor housing -->
-        <div class="reactor-rings" aria-hidden="true">
-          <span class="rr rr-1"></span>
-          <span class="rr rr-2"></span>
-          <span class="rr rr-3"></span>
-          <span class="rr-orbit"></span>
-        </div>
-
-        <!-- scan beam that aims at the active mode -->
-        <div class="reactor-beam" aria-hidden="true"><i></i></div>
-
-        <!-- glowing core with live readout -->
-        <div class="reactor-core">
-          <span class="rc-halo" aria-hidden="true"></span>
-          <span class="rc-status"><i></i> listening</span>
-          <span class="rc-ic">💻</span>
-          <span class="rc-name">Technical Interview</span>
-          <span class="rc-desc">Crisp answers to coding &amp; system questions.</span>
-        </div>
-
-        <!-- orbiting mode nodes -->
-        <div class="reactor-orbit" role="tablist" aria-label="AI modes">
-          <button class="mode-node" role="tab" style="--a:0deg;      --c:#4f8ef7" data-ic="💻" data-name="Technical Interview" data-desc="Crisp answers to coding &amp; system questions.">
-            <span class="mn-ic">💻</span><span class="mn-l">Technical</span>
-          </button>
-          <button class="mode-node" role="tab" style="--a:51.43deg;  --c:#9b7ef7" data-ic="🧩" data-name="Behavioral" data-desc="STAR-method stories from your real résumé.">
-            <span class="mn-ic">🧩</span><span class="mn-l">Behavioral</span>
-          </button>
-          <button class="mode-node" role="tab" style="--a:102.86deg; --c:#34d399" data-ic="💼" data-name="Sales Call" data-desc="Handle objections and advance the deal, live.">
-            <span class="mn-ic">💼</span><span class="mn-l">Sales</span>
-          </button>
-          <button class="mode-node" role="tab" style="--a:154.29deg; --c:#5fd1ff" data-ic="📖" data-name="Lecture Notes" data-desc="Key points captured as clean, timestamped notes.">
-            <span class="mn-ic">📖</span><span class="mn-l">Lecture</span>
-          </button>
-          <button class="mode-node" role="tab" style="--a:205.71deg; --c:#f472b6" data-ic="🤝" data-name="Recruiting" data-desc="Coach the interviewer — probe, flag, follow up.">
-            <span class="mn-ic">🤝</span><span class="mn-l">Recruiting</span>
-          </button>
-          <button class="mode-node" role="tab" style="--a:257.14deg; --c:#f0883e" data-ic="🗂️" data-name="System Design" data-desc="Architecture hints and scalability prompts.">
-            <span class="mn-ic">🗂️</span><span class="mn-l">Sys Design</span>
-          </button>
-          <button class="mode-node" role="tab" style="--a:308.57deg; --c:#a3e635" data-ic="🎭" data-name="Mock Interview" data-desc="Tough coaching — sharper phrasing, real follow-ups.">
-            <span class="mn-ic">🎭</span><span class="mn-l">Mock</span>
-          </button>
-        </div>
-
-      </div>
-
-      <p class="reactor-hint">Hover a mode to retune the core · or press <kbd>M</kbd> in-app to cycle live</p>
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- HOW IT WORKS -->
-
-<section class="how">
-
-  <div class="section-inner">
-
-    <h2>Completely Undetectable</h2>
-
-    <p class="section-sub">No meeting bots. No screen recording. Nothing visible to the other side.</p>
-
-    <div class="how-steps">
-
-      <div class="step">
-
-        <div class="step-n">1</div>
-
-        <div class="step-body">
-
-          <h4>Loopback capture</h4>
-
-          <p>Listens to what your speakers play — the interviewer's voice — via OS-level audio. No mic required.</p>
-
-        </div>
-
-      </div>
-
-      <div class="step">
-
-        <div class="step-n">2</div>
-
-        <div class="step-body">
-
-          <h4>Instant transcription</h4>
-
-          <p>Streaming speech-to-text with diarization. Knows who's talking. Ignores crosstalk.</p>
-
-        </div>
-
-      </div>
-
-      <div class="step">
-
-        <div class="step-n">3</div>
-
-        <div class="step-body">
-
-          <h4>AI answers</h4>
-
-          <p>Claude or GPT generates a tailored answer using your background. Streams in under a second.</p>
-
-        </div>
-
-      </div>
-
-      <div class="step">
-
-        <div class="step-n">4</div>
-
-        <div class="step-body">
-
-          <h4>Hidden overlay</h4>
-
-          <p>An always-on-top window invisible to screen capture. Only you see it. Drag anywhere.</p>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- UNDETECTABLE -->
-
-<section class="undetect" id="undetect">
-
-  <div class="ud-ambient" aria-hidden="true">
-    <div class="ud-grid"></div>
-    <div class="ud-orb ud-orb-a"></div>
-    <div class="ud-orb ud-orb-b"></div>
-  </div>
-
-  <div class="section-inner">
-
-    <div class="undetect-inner">
-
-      <div class="undetect-text">
-
-        <div class="undetect-badge"><span class="ub-pulse" aria-hidden="true"></span><svg class="eico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg> Invisible by design</div>
-
-        <h2>They Can't See It.<br/><span class="ud-grad">Only You Can.</span></h2>
-
-        <p>Heario uses a Windows API call — <code>SetWindowDisplayAffinity</code> — that tells the OS to exclude the overlay from all screen capture pipelines. Zoom, Teams, Google Meet, and OBS all see a blank space where Heario sits. This isn't a trick or a workaround; it's the same mechanism used by banks and DRM software to protect sensitive content.</p>
-
-        <ul class="undetect-list">
-
-          <li><span class="ul-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span> No browser extensions to detect</li>
-
-          <li><span class="ul-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span> No meeting bots joining your call</li>
-
-          <li><span class="ul-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span> No screen recording of your answers</li>
-
-          <li><span class="ul-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span> No network traffic visible to the interviewer</li>
-
-        </ul>
-
-      </div>
-
-      <div class="undetect-visual">
-
-        <!-- THEIR REALITY · capture feed with Heario cloaked -->
-        <div class="uv-screen uv-feed">
-
-          <span class="uv-bracket uv-bracket-tl"></span><span class="uv-bracket uv-bracket-br"></span>
-
-          <div class="uv-head">
-            <span class="uv-head-l"><span class="uv-rec"></span> CAPTURE FEED · interviewer</span>
-            <span class="uv-tag uv-tag-rec">REC</span>
-          </div>
-
-          <div class="uv-meeting">
-
-            <div class="uv-tile interviewer-tile">
-              <div class="uv-avatar">SC</div>
-              <span>Sarah Chen</span>
-            </div>
-
-            <div class="uv-tile you-tile">
-              <div class="uv-avatar you">You</div>
-              <span>You</span>
-            </div>
-
-            <div class="uv-void">
-              <span class="uv-void-scan" aria-hidden="true"></span>
-              <span class="uv-void-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></span>
-              <span class="uv-void-tx">EXCLUDED FROM CAPTURE</span>
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="uv-divider" aria-hidden="true"><span class="uv-divider-tx">same screen · two realities</span></div>
-
-        <!-- YOUR REALITY · overlay live -->
-        <div class="uv-screen uv-your-screen">
-
-          <span class="uv-bracket uv-bracket-tl"></span><span class="uv-bracket uv-bracket-br"></span>
-          <span class="uv-sweep" aria-hidden="true"></span>
-
-          <div class="uv-head">
-            <span class="uv-head-l"><span class="uv-live"></span> YOUR DISPLAY · live</span>
-            <span class="uv-tag uv-tag-on">VISIBLE</span>
-          </div>
-
-          <div class="uv-meeting">
-
-            <div class="uv-tile interviewer-tile">
-              <div class="uv-avatar">SC</div>
-              <span>Sarah Chen</span>
-            </div>
-
-            <div class="uv-tile you-tile">
-              <div class="uv-avatar you">You</div>
-              <span>You</span>
-            </div>
-
-            <div class="uv-overlay-chip">
-              <div class="uv-chip-head">
-                <div class="uv-chip-dot"></div>
-                <span class="uv-chip-label">Heario</span>
-                <span class="uv-chip-conf">C5</span>
-              </div>
-              <span class="uv-chip-tx">Use a token-bucket in Redis — each client key gets <code>INCR</code> + a TTL in one Lua script, so the limit check stays atomic…</span>
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- FAQ -->
-
-<section class="faq">
-
-  <div class="section-inner">
-
-    <h2>Common Questions</h2>
-
-    <p class="section-sub">Everything you need to know before your next interview.</p>
-
-    <div class="faq-grid">
-
-
-
-      <details class="faq-item" open>
-
-        <summary>Will Zoom / Teams / Google Meet detect it?</summary>
-
-        <p>No. Heario's overlay uses <code>SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE)</code> — a Windows OS-level flag that excludes the window from all screen-capture pipelines before the frame ever reaches Zoom's encoder. The interviewer's screen share sees nothing. This is the same API used by banking apps to protect sensitive data on screen.</p>
-
-      </details>
-
-
-
-      <details class="faq-item">
-
-        <summary>Does it join the call as a bot?</summary>
-
-        <p>Never. Heario runs entirely on your local machine. There is no bot, no browser extension injected into the call, and no third-party service that touches your meeting. It listens to your speaker output using a standard Windows audio loopback — the same way recording software works — and the interviewer sees nothing unusual.</p>
-
-      </details>
-
-
-
-      <details class="faq-item">
-
-        <summary>Do I need to sign up for anything to use Heario?</summary>
-
-        <p>No. It works immediately with no account and no API key, using your computer's own Whisper speech-to-text.</p>
-
-      </details>
-
-
-
-      <details class="faq-item">
-
-        <summary>Does it cost anything by default?</summary>
-
-        <p>No. The built-in fallback (Local Whisper) is free and runs on your machine.</p>
-
-      </details>
-
-
-
-      <details class="faq-item">
-
-        <summary>Is my audio sent to the cloud?</summary>
-
-        <p>Not by default. With no keys configured, transcription happens locally. Answers (the AI's replies) still go to Claude or GPT's cloud by default — only the transcription is local out of the box.</p>
-
-      </details>
-
-
-
-      <details class="faq-item">
-
-        <summary>The first time I open it, it says "downloading 150MB" — is that normal?</summary>
-
-        <p>Yes. The first time Local Whisper runs, it downloads its speech model once. After that, it's cached and starts instantly every time.</p>
-
-      </details>
-
-
-
-      <details class="faq-item">
-
-        <summary>Can I make the AI's answers fully local too, not just transcription?</summary>
-
-        <p>Yes, but that part isn't automatic. You need to separately install a free program called Ollama on your computer, then point Heario at it. It's an optional, one-time setup — not something that happens by default.</p>
-
-      </details>
-
-
-
-      <details class="faq-item">
-
-        <summary>If I add a Deepgram or OpenAI key, what changes?</summary>
-
-        <p>Transcription switches from local Whisper to that cloud service instead — faster and more accurate, but no longer offline, and (for Deepgram) usage-based.</p>
-
-      </details>
-
-
-
-      <details class="faq-item">
-
-        <summary>So what's actually "zero data breach risk"?</summary>
-
-        <p>Only the fully-local combo (Local Whisper + Ollama) is 100% offline end-to-end. Local Whisper alone is offline for transcription only; if you're using Claude/GPT for answers, that part still leaves your machine.</p>
-
-      </details>
-
-
-
-      <details class="faq-item">
-
-        <summary>How fast are the answers?</summary>
-
-        <p>Deepgram's streaming STT delivers a transcript in under 300ms from when the interviewer finishes speaking. Claude then streams the answer token-by-token — you start reading within a second. Total time from question to first word on screen is typically 1–2 seconds in normal network conditions.</p>
-
-      </details>
-
-
-
-      <details class="faq-item">
-
-        <summary>What if I'm asked a follow-up question?</summary>
-
-        <p>Heario keeps a rolling conversation memory of the last 4 turns. So if the interviewer says "and how would you scale that?", the AI already knows what "that" refers to and gives a contextually grounded follow-up, not a generic answer.</p>
-
-      </details>
-
-
-
-      <details class="faq-item">
-
-        <summary>Can I use my own OpenAI or Claude key?</summary>
-
-        <p>Yes. Bring your own API keys for OpenAI (GPT-4o) or Anthropic (Claude) in the <code>.env</code> file and you pay only the model's API rate — no markup. Or use our managed plan and we handle keys, rate limits, and billing.</p>
-
-      </details>
-
-
-
-      <details class="faq-item">
-
-        <summary>Does it work on Mac?</summary>
-
-        <p>Currently Windows-only. The undetectable overlay relies on <code>SetWindowDisplayAffinity</code>, a Windows-exclusive API. Mac support is on the roadmap — <a href="mailto:support@heario.ai?subject=Mac%20Waitlist&body=Please%20add%20me%20to%20the%20Heario%20Mac%20waitlist." style="color:#7fd1ff">join the Mac waitlist</a> to get notified.</p>
-
-      </details>
-
-
-
-      <details class="faq-item">
-
-        <summary><span>What does the <svg class="eico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg> Web Search button do?</span></summary>
-
-        <p>When enabled, Heario searches the web before generating each answer, so Claude has access to current information — recent framework docs, company news, live pricing, anything that might be out of date in a model's training data. It works out of the box with no setup using DuckDuckGo. If you add a free Tavily API key in Settings, it automatically upgrades to higher-quality AI-optimised results. Toggle it on or off mid-session with the button or by pressing <code>W</code>.</p>
-
-      </details>
-
-
-
-      <details class="faq-item">
-
-        <summary>What are the 7 modes and when should I use them?</summary>
-
-        <p>Each mode tells Heario's AI exactly how to respond for a different situation. <strong>Technical Interview</strong> gives crisp answers to coding and system questions. <strong>Behavioral</strong> structures answers using the STAR method from your background. <strong>Sales</strong> handles objections and advances the deal in real time. <strong>Lecture</strong> captures key points as concise notes. <strong>Recruiting</strong> coaches the interviewer side — flagging weak candidate answers and suggesting follow-up questions. <strong>System Design</strong> provides architecture hints and scalability prompts. <strong>Mock Interview</strong> acts as a tough coach, pointing out weak answers and suggesting stronger phrasing. Switch between them instantly with the mode button or by pressing <code>M</code>.</p>
-
-      </details>
-
-
-
-      <details class="faq-item">
-
-        <summary>Microphone or System Audio — which should I use?</summary>
-
-        <p>Use <strong>Microphone</strong> for live video calls on Zoom, Teams, or Google Meet — it captures what's being said in the room or through your headset. Use <strong>System Audio</strong> to capture anything playing through your speakers, like a YouTube mock interview, a podcast, or a recorded call. You can switch between them in Settings → Audio Source and apply the change without restarting the app.</p>
-
-      </details>
-
-
-
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- TESTIMONIALS -->
-
-<section class="testimonials">
-
-  <div class="section-inner">
-
-    <h2>What Users Are Saying</h2>
-
-    <p class="section-sub">From engineers who used it in real interviews.</p>
-
-    <div class="testi-grid">
-
-      <div class="testi-card">
-
-        <div class="testi-stars">★★★★★</div>
-
-        <p class="testi-text">"I used Heario for a system design round at a FAANG company. The answers were sharp, grounded, and streamed fast enough that I could read ahead while the interviewer was still talking. Got the offer."</p>
-
-        <div class="testi-author">
-
-          <div class="testi-avatar">MK</div>
-
-          <div><strong>Marcus K.</strong><span>Senior SWE, hired at Meta</span></div>
-
-        </div>
-
-      </div>
-
-      <div class="testi-card">
-
-        <div class="testi-stars">★★★★★</div>
-
-        <p class="testi-text">"Genuinely invisible. I tested it by screen-sharing to a colleague — they saw nothing. The overlay just disappears. The behavioral mode is perfect for those 'tell me about a time when...' curveballs."</p>
-
-        <div class="testi-author">
-
-          <div class="testi-avatar">SR</div>
-
-          <div><strong>Sophie R.</strong><span>Product Manager, London</span></div>
-
-        </div>
-
-      </div>
-
-      <div class="testi-card">
-
-        <div class="testi-stars">★★★★★</div>
-
-        <p class="testi-text">"The latency is what sold me. Other tools I tried had a 3–4 second lag which made them unusable in a real conversation. Heario is there before I've even finished processing the question myself."</p>
-
-        <div class="testi-author">
-
-          <div class="testi-avatar">JL</div>
-
-          <div><strong>James L.</strong><span>Backend Engineer, Berlin</span></div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
 
 <!-- PRICING -->
-
-<section class="pricing" id="pricing">
-
+<section class="cb-section" id="pricing">
   <div class="section-inner">
-
-    <h2>Simple Pricing</h2>
-
-    <p class="section-sub">Start free. No card required.</p>
-
-
-
-
-    <div class="pricing-grid">
-
-      <!-- Free -->
-
-      <div class="plan-card">
-
-        <div class="plan-name">Free Trial</div>
-
-        <div class="plan-price">$0<span>/mo</span></div>
-
-        <div class="plan-desc">No card required</div>
-
-        <ul class="plan-features">
-
-          <li>✓ 10 AI requests</li>
-
-          <li>✓ 20 min speech-to-text</li>
-
-          <li>✓ 2 web searches</li>
-
-          <li>✓ All 7 modes</li>
-
-          <li>✓ 1 Quick Debrief</li>
-
-        </ul>
-
-        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.7/Heario_0.1.7_x64-setup.exe" target="_blank" rel="noopener" class="btn-plan">Download Free</a>
-
-      </div>
-
-      <!-- Standard -->
-
-      <div class="plan-card">
-
-        <div class="plan-name">Standard</div>
-
-        <div class="plan-price">$8<span>/mo</span></div>
-
-        <div class="plan-desc">For regular users</div>
-
-        <ul class="plan-features">
-
-          <li>✓ 400 AI requests</li>
-
-          <li>✓ 400 min speech-to-text</li>
-
-          <li>✓ 40 web searches</li>
-
-          <li>✓ All 7 modes</li>
-
-          <li>✓ Unlimited meeting debriefs</li>
-
-        </ul>
-
-        <a href="https://buy.stripe.com/bJecN64lxfk94iM2FA3wQ01" target="_blank" rel="noopener" class="btn-plan">Get Standard</a>
-
-        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.7/Heario_0.1.7_x64-setup.exe" target="_blank" rel="noopener" class="plan-download">Download the app →</a>
-
-      </div>
-
-      <!-- Pro -->
-
-      <div class="plan-card featured">
-
-        <div class="plan-badge">Most Popular</div>
-
-        <div class="plan-name">Pro</div>
-
-        <div class="plan-price">$14<span>/mo</span></div>
-
-        <div class="plan-desc">For power users</div>
-
-        <ul class="plan-features">
-
-          <li>✓ 800 AI requests</li>
-
-          <li>✓ 1,000 min speech-to-text</li>
-
-          <li>✓ 200 web searches</li>
-
-          <li>✓ All 7 modes</li>
-
-          <li>✓ Unlimited meeting debriefs</li>
-
-          <li>✓ Profile intelligence</li>
-
-        </ul>
-
-        <a href="https://buy.stripe.com/14A8wQbNZ6ND3eIcga3wQ02" target="_blank" rel="noopener" class="btn-plan-primary">Get Pro</a>
-
-        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.7/Heario_0.1.7_x64-setup.exe" target="_blank" rel="noopener" class="plan-download">Download the app →</a>
-
-      </div>
-
-      <!-- Max -->
-
-      <div class="plan-card">
-
-        <div class="plan-name">Max</div>
-
-        <div class="plan-price">$24<span>/mo</span></div>
-
-        <div class="plan-desc">For heavy users</div>
-
-        <ul class="plan-features">
-
-          <li>✓ 1,600 AI requests</li>
-
-          <li>✓ 2,000 min speech-to-text</li>
-
-          <li>✓ 400 web searches</li>
-
-          <li>✓ All 7 modes</li>
-
-          <li>✓ Unlimited meeting debriefs</li>
-
-          <li>✓ Priority support</li>
-
-        </ul>
-
-        <a href="https://buy.stripe.com/cNi3cw8BN8VLdTmdke3wQ03" target="_blank" rel="noopener" class="btn-plan">Get Max</a>
-
-        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.7/Heario_0.1.7_x64-setup.exe" target="_blank" rel="noopener" class="plan-download">Download the app →</a>
-
-      </div>
-
-      <!-- Ultra -->
-
-      <div class="plan-card">
-
-        <div class="plan-name">Ultra</div>
-
-        <div class="plan-price">$34<span>/mo</span></div>
-
-        <div class="plan-desc">For teams</div>
-
-        <ul class="plan-features">
-
-          <li>✓ 2,400 AI requests</li>
-
-          <li>✓ Unlimited speech-to-text</li>
-
-          <li>✓ 1,000 web searches</li>
-
-          <li>✓ All 7 modes</li>
-
-          <li>✓ Unlimited meeting debriefs</li>
-
-          <li>✓ Priority support</li>
-
-        </ul>
-
-        <a href="https://buy.stripe.com/eVqfZi2dpc7X3eI3JE3wQ04" target="_blank" rel="noopener" class="btn-plan">Get Ultra</a>
-
-        <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.7/Heario_0.1.7_x64-setup.exe" target="_blank" rel="noopener" class="plan-download">Download the app →</a>
-
-      </div>
-
+    <h2 class="cb-h2">Simple pricing</h2>
+    <p class="section-sub">One plan. Try it free first.</p>
+    <div class="price-card">
+      <div class="amt">&euro;29<small> / month</small></div>
+      <p class="hero-reassure" style="margin:8px 0 0">14-day free trial, no card needed</p>
+      <ul>
+        <li>AI chat assistant on your website</li>
+        <li>Instant WhatsApp alerts for every enquiry</li>
+        <li>Email backup alerts</li>
+        <li>Enquiries dashboard</li>
+        <li>Up to 3,000 chat messages a month</li>
+        <li>Cancel any time</li>
+      </ul>
+      <a href="/login.html" class="btn-primary" style="display:block">Start free trial</a>
     </div>
-
-
-
   </div>
-
 </section>
 
-
+<!-- FAQ -->
+<section class="cb-section alt" id="faq">
+  <div class="section-inner">
+    <h2 class="cb-h2">Questions</h2>
+    <div class="faq-list">
+      <details><summary>What AI does it use?</summary><p>Replies are generated by Claude, an AI model from Anthropic. Visitors are told they're chatting with an AI assistant.</p></details>
+      <details><summary>Will it make things up?</summary><p>It's instructed to answer only from the information you provide and never to invent prices or promises. If it doesn't know, it says so and offers to pass the question to you. Keep your business information accurate and up to date for the best results.</p></details>
+      <details><summary>Do I need WhatsApp Business?</summary><p>No. Alerts arrive in your normal WhatsApp from Heario's number. You confirm you're happy to receive them when you set up, and you can switch them off at any time.</p></details>
+      <details><summary>What happens after the free trial?</summary><p>You choose whether to subscribe. If you don't, the chat bubble stops answering and visitors are told to contact you directly. Nothing is charged automatically because we don't take a card for the trial.</p></details>
+      <details><summary>Which websites does it work on?</summary><p>Any site where you can add a line of code before the closing body tag, including WordPress, Wix, Squarespace, Shopify and custom sites. Browsers will only run it on the websites you list in your dashboard, and usage limits protect you from misuse.</p></details>
+      <details><summary>What about my visitors' data and GDPR?</summary><p>You're the data controller for your visitors' enquiries and Heario is your processor. Our <a href="/dpa.html" style="color:var(--accent2)">data processing agreement</a> and <a href="/privacy.html" style="color:var(--accent2)">privacy policy</a> explain exactly what's processed, by whom, and for how long. You should also mention the chat in your own privacy notice.</p></details>
+      <details><summary>Can I cancel?</summary><p>Yes, any time from your dashboard. You keep access until the end of the period you've paid for.</p></details>
+    </div>
+  </div>
+</section>
 
 <!-- FINAL CTA -->
-
 <section class="final-cta">
-
   <div class="section-inner">
-
-    <h2>Show up to your next call already prepared.</h2>
-
-    <p class="section-sub">Free to start, no credit card, ready in under a minute.</p>
-
+    <h2>Your next enquiry is already on its way.</h2>
+    <p class="section-sub">Be ready to catch it. Free for 14 days, no card needed.</p>
     <div class="hero-actions">
-
-      <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.7/Heario_0.1.7_x64-setup.exe" target="_blank" rel="noopener" class="btn-primary">Download Free for Windows</a>
-
+      <a href="/login.html" class="btn-primary">Start your free trial</a>
     </div>
-
-    <p class="hero-reassure"><span class="hr-check">&#10003;</span> Free to use &nbsp;&middot;&nbsp; No credit card &nbsp;&middot;&nbsp; No sign-up to start</p>
-
   </div>
-
 </section>
 
-
-
-<!-- FOOTER -->
-
 <footer class="footer" id="footer">
-
   <div class="footer-glow" aria-hidden="true"></div>
   <div class="footer-floor" aria-hidden="true"></div>
-
   <div class="footer-inner">
-
     <div class="footer-brand">
       <div class="footer-logo">
         <span class="fl-orb" aria-hidden="true"></span>
         <span class="fl-word">Heario</span>
       </div>
-      <p class="footer-tag">Real-time AI for interviews &amp; meetings.<br/>Invisible by design · your data stays yours.</p>
-      <div class="footer-status"><span class="fs-dot" aria-hidden="true"></span> All systems operational</div>
+      <p class="footer-tag">AI website chat that sends every enquiry to your WhatsApp.</p>
       <div class="footer-social">
-        <a class="fsoc" href="https://github.com/Jorified/heario-app" target="_blank" rel="noopener" aria-label="GitHub">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.6 18 4.9 18 4.9c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
-        </a>
-        <a class="fsoc" href="https://buy.stripe.com/00waEY6tFb3Tg1u1Bw3wQ00" target="_blank" rel="noopener" aria-label="Sponsor Heario">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>
-        </a>
-        <a class="fsoc" href="https://github.com/Jorified/heario-app/issues" target="_blank" rel="noopener" aria-label="Report a bug">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg>
-        </a>
         <a class="fsoc" href="mailto:support@heario.ai" aria-label="Email Heario">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
         </a>
       </div>
     </div>
-
     <div class="footer-col">
       <div class="footer-head">Product</div>
-      <a href="https://github.com/Jorified/heario-app">GitHub</a>
-      <a href="https://github.com/Jorified/heario-app/releases">Changelog</a>
-      <a href="mailto:support@heario.ai?subject=Feature%20Request">Contribute</a>
-      <a href="/license.html">License</a>
-      <a href="mailto:support@heario.ai?subject=Mac%20Waitlist&body=Please%20add%20me%20to%20the%20Heario%20Mac%20waitlist.">Join the Mac Waitlist</a>
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="/login.html">Log in</a>
     </div>
-
     <div class="footer-col">
       <div class="footer-head">Legal</div>
       <a href="/privacy.html">Privacy Policy</a>
       <a href="/terms.html">Terms &amp; Conditions</a>
+      <a href="/dpa.html">Data Processing Agreement</a>
       <a href="/refund.html">Refund Policy</a>
       <a href="/security.html">Security</a>
     </div>
-
     <div class="footer-col">
       <div class="footer-head">Support</div>
       <a href="mailto:support@heario.ai?subject=Heario%20Support">Contact</a>
-      <a href="/manage.html">Manage Subscription</a>
-      <a href="mailto:support@heario.ai?subject=Bug%20Report">Report a Bug</a>
-      <a href="mailto:support@heario.ai?subject=Feature%20Request">Feature Request</a>
-      <a href="https://buy.stripe.com/00waEY6tFb3Tg1u1Bw3wQ00" target="_blank" rel="noopener">Donate</a>
-      <a href="/blog/">Blog</a>
+      <a href="/manage.html">Legacy desktop app billing</a>
     </div>
-
   </div>
-
   <div class="footer-mega" aria-hidden="true">HEARIO</div>
-
   <div class="footer-bottom">
-    <span>© 2026 Heario. All rights reserved.</span>
-    <button class="footer-top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">Back to top <span aria-hidden="true">↑</span></button>
+    <span>&copy; 2026 Heario. All rights reserved.</span>
+    <button class="footer-top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">Back to top <span aria-hidden="true">&uarr;</span></button>
   </div>
-
 </footer>
 
-
-
-<!-- STICKY DOWNLOAD CTA -->
-
-<div class="sticky-cta" id="stickyCta">
-
-  <div class="sticky-inner">
-
-    <div class="sticky-text">
-
-      <strong class="sticky-logo"><span class="fl-orb" aria-hidden="true"></span><span class="fl-word">Heario</span></strong>
-
-      <span>Free to try · Windows · No card required</span>
-
-    </div>
-
-    <a href="https://github.com/Jorified/heario-app/releases/download/v0.1.7/Heario_0.1.7_x64-setup.exe" target="_blank" rel="noopener" class="btn-primary sticky-btn">Download for Windows</a>
-
-  </div>
-
-</div>
-
-
-
-<script src="app.js?v=10"></script>
-
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-

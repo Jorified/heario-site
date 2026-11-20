@@ -14,9 +14,12 @@
     .legal-wrap h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 8px; }
     .legal-wrap .updated { color: #6b7a99; font-size: 0.9rem; margin-bottom: 48px; }
     .legal-wrap h2 { font-size: 1.1rem; font-weight: 600; color: #7fd1ff; margin: 36px 0 10px; }
-    .legal-wrap p, .legal-wrap li { color: #a0aec0; line-height: 1.8; font-size: 0.95rem; }
-    .legal-wrap ul { padding-left: 20px; margin: 8px 0; }
+    .legal-wrap p, .legal-wrap li, .legal-wrap td, .legal-wrap th { color: #a0aec0; line-height: 1.8; font-size: 0.95rem; }
+    .legal-wrap ul, .legal-wrap ol { padding-left: 20px; margin: 8px 0; }
     .legal-wrap a { color: #7fd1ff; }
+    .legal-wrap table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    .legal-wrap th, .legal-wrap td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #1e2535; vertical-align: top; }
+    .legal-wrap th { color: #e4e8f0; font-weight: 600; }
     .legal-back { display: inline-block; margin-bottom: 32px; color: #7fd1ff; font-size: 0.9rem; text-decoration: none; }
     .legal-back:hover { text-decoration: underline; }
   </style>
@@ -29,53 +32,72 @@
 <div class="legal-wrap">
   <a href="/" class="legal-back">← Back to Heario</a>
   <h1>Privacy Policy</h1>
-  <p class="updated">Last updated: June 2026</p>
+  <p class="updated">Last updated: 20 November 2026</p>
 
-  <h2>1. Overview</h2>
-  <p>Heario ("we", "us", "our") is a desktop application for Windows. We take your privacy seriously. This policy explains what data we collect, how we use it, and your rights.</p>
-
-  <h2>2. Data We Collect</h2>
-  <p>Heario is designed to operate with minimal data collection. We may collect:</p>
+  <h2>1. Who we are</h2>
+  <p>Heario ("we", "us") is operated by [YOUR LEGAL NAME], trading as Heario, a sole trader, [BUSINESS ADDRESS], Ireland. Contact: <a href="mailto:support@heario.ai">support@heario.ai</a>.</p>
+  <p>Heario provides an AI chat assistant that businesses ("Customers") add to their websites. It answers visitors' questions and notifies the Customer of enquiries by WhatsApp and email.</p>
+  <p>We act in two roles:</p>
   <ul>
-    <li><strong>Audio transcripts</strong> — processed locally or via your chosen AI provider (e.g. OpenAI, Anthropic). We do not store transcripts on our servers.</li>
-    <li><strong>Usage analytics</strong> — anonymous crash reports and feature usage counts to improve the product. No personally identifiable information is included.</li>
-    <li><strong>Account data</strong> — if you purchase a managed plan, we store your email address and subscription status via our payment processor (Stripe).</li>
+    <li><strong>Controller</strong> for the personal data of people who visit heario.ai and of Customers' account and billing details (sections 3 and 4).</li>
+    <li><strong>Processor</strong> for chat conversations and enquiries collected through a Customer's website. The Customer is the controller of that data, and our <a href="/dpa.html">Data Processing Agreement</a> applies (section 5).</li>
   </ul>
 
-  <h2>3. How We Use Your Data</h2>
+  <h2>2. If you chat with a Heario assistant on another business's website</h2>
+  <p>The business decides why your data is collected and is responsible for it, so please read that business's own privacy notice. The chat window tells you that you are talking to an AI assistant. If you give your name and contact details, they are passed to that business. Heario processes your messages only on that business's behalf.</p>
+  <p>What we process: the messages you type, and any details you volunteer (such as your name, phone number or email). Your conversation is held in your browser's session storage so it survives page changes, and is cleared when you close the tab. We do not store the full conversation on our servers. We store only the enquiry (name, contact details and a short summary) that the assistant sends to the business, and we keep your IP address briefly for abuse prevention (see section 4). Please don't share sensitive information such as card numbers, passwords or health details in the chat.</p>
+
+  <h2>3. What we collect as a controller</h2>
+  <table>
+    <tr><th>Data</th><th>Purpose</th><th>Legal basis (GDPR Art. 6)</th></tr>
+    <tr><td>Account details: email address; chatbot settings you enter (business name, business information, WhatsApp number, website addresses)</td><td>Create and run your account and chatbot</td><td>Contract</td></tr>
+    <tr><td>Login records: one-time login tokens (stored hashed) and session cookie</td><td>Secure passwordless login</td><td>Contract; legitimate interests (security)</td></tr>
+    <tr><td>Billing: handled by Stripe. We receive your Stripe customer ID, plan and subscription status, not your card number</td><td>Take payment and keep tax records</td><td>Contract; legal obligation</td></tr>
+    <tr><td>Your consent to WhatsApp alerts, with the time you gave it</td><td>Show we may message your number</td><td>Consent; legal obligation</td></tr>
+    <tr><td>IP address and request counts</td><td>Rate limiting and abuse prevention</td><td>Legitimate interests (security)</td></tr>
+    <tr><td>Support emails</td><td>Respond to you</td><td>Legitimate interests</td></tr>
+  </table>
+  <p>We do not sell personal data and we do not use it for advertising.</p>
+
+  <h2>4. How long we keep it</h2>
   <ul>
-    <li>To provide and improve the Heario application</li>
-    <li>To process payments and manage your subscription</li>
-    <li>To send transactional emails (receipts, licence keys)</li>
-    <li>To diagnose crashes and bugs</li>
+    <li><strong>Account and chatbot settings:</strong> until you delete your account from the dashboard. Deletion removes your account, chatbot and enquiries from our systems immediately.</li>
+    <li><strong>Enquiries:</strong> deleted automatically after 90 days, or sooner if you delete your account.</li>
+    <li><strong>Chat usage counters:</strong> up to 13 months.</li>
+    <li><strong>Login tokens:</strong> deleted shortly after they expire.</li>
+    <li><strong>IP addresses used for rate limiting:</strong> up to 2 days.</li>
+    <li><strong>Billing and tax records (held by Stripe and us):</strong> up to 6 years, as Irish tax law requires.</li>
   </ul>
-  <p>We do not sell, rent, or share your personal data with third parties for marketing purposes.</p>
 
-  <h2>4. Audio &amp; Meeting Data</h2>
-  <p>Heario captures audio via your device's speaker output (loopback) and transcribes it locally or via your chosen speech-to-text provider. If you bring your own AI provider key, your transcribed questions are sent only to that provider (OpenAI or Anthropic) — Heario's servers never see them. If you're on a managed plan, your transcribed questions are sent to our backend so we can relay them to our own Anthropic key and enforce your plan's usage limit; we do not retain the content of your questions or answers beyond what's needed to process that single request.</p>
+  <h2>5. Chat data we process for Customers (as processor)</h2>
+  <p>We use visitors' messages only to generate replies, notify the Customer of enquiries, and operate and secure the service. We do not use chat content to train AI models. Details are in the <a href="/dpa.html">Data Processing Agreement</a>.</p>
 
-  <h2>5. Third-Party Services</h2>
+  <h2>6. Who we share data with (sub-processors)</h2>
   <ul>
-    <li><strong>Deepgram</strong> — speech-to-text transcription</li>
-    <li><strong>OpenAI / Anthropic</strong> — AI answer generation (using keys you provide or our managed keys)</li>
-    <li><strong>Stripe</strong> — payment processing</li>
+    <li><strong>Anthropic</strong>: the AI model that generates replies (United States)</li>
+    <li><strong>Meta Platforms Ireland (WhatsApp Business Platform)</strong>: delivers WhatsApp alerts</li>
+    <li><strong>Vercel</strong>: website and application hosting</li>
+    <li><strong>Neon</strong>: database hosting</li>
+    <li><strong>Brevo</strong>: sends login and enquiry emails</li>
+    <li><strong>Stripe</strong>: payments</li>
   </ul>
-  <p>Each third party has its own privacy policy and data handling practices.</p>
+  <p>Each has its own privacy practices. We share only what each needs to provide its service.</p>
 
-  <h2>6. Data Retention</h2>
-  <p>We retain account and billing data for as long as your subscription is active, and for up to 3 years after cancellation for legal and tax purposes. Anonymous analytics data is retained for up to 12 months.</p>
+  <h2>7. Transfers outside the EEA</h2>
+  <p>Some of these providers process data in the United States. Where they do, we rely on the EU-US Data Privacy Framework for certified providers, or on EU Standard Contractual Clauses.</p>
 
-  <h2>7. Your Rights</h2>
-  <p>You may request access to, correction of, or deletion of your personal data at any time by emailing <a href="mailto:support@heario.ai">support@heario.ai</a>. We will respond within 30 days.</p>
+  <h2>8. Your rights</h2>
+  <p>You can ask us to access, correct, delete, restrict or export your personal data, and object to processing. Where we act as the controller, email <a href="mailto:support@heario.ai">support@heario.ai</a>. If your data is in a chat on a Customer's website, we will pass your request to that Customer, who is responsible for it. You can complain to the Data Protection Commission (<a href="https://www.dataprotection.ie" target="_blank" rel="noopener">dataprotection.ie</a>).</p>
 
-  <h2>8. Security</h2>
-  <p>We use industry-standard encryption (TLS 1.2+) for all data in transit. Payment data is handled entirely by Stripe and never touches our servers.</p>
+  <h2>9. Cookies and local storage</h2>
+  <p>We use one strictly necessary cookie to keep you logged in to the dashboard. The chat widget uses your browser's session storage to keep the current conversation while you browse; it is not a tracking cookie. We do not use advertising cookies.</p>
 
-  <h2>9. Changes</h2>
-  <p>We may update this policy from time to time. We will notify you of significant changes via email or in-app notification. Continued use of Heario after changes constitutes acceptance.</p>
+  <h2>10. Security</h2>
+  <p>See our <a href="/security.html">Security</a> page.</p>
 
-  <h2>10. Contact</h2>
-  <p>Questions? Email <a href="mailto:support@heario.ai">support@heario.ai</a></p>
+  <h2>11. Changes</h2>
+  <p>We will post changes here and email Customers about material changes.</p>
+
 </div>
 </body>
 </html>

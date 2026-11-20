@@ -1,0 +1,291 @@
+// Runs the real API handlers against an in-memory Postgres (PGlite). External services are stubbed.
+import assert from "node:assert/strict";
+import crypto from "node:crypto";
+import fs from "node:fs";
+import { before, beforeEach, test } from "node:test";
+import { PGlite } from "@electric-sql/pglite";
+
+process.env.APP_URL = "https://heario.ai";
+process.env.SESSION_SECRET = "x".repeat(40);
+process.env.BREVO_API_KEY = "brevo";
+process.env.EMAIL_FROM = "hello@heario.ai";
+process.env.ANTHROPIC_API_KEY = "ant";
+process.env.WHATSAPP_TOKEN = "wa";
+process.env.WHATSAPP_PHONE_NUMBER_ID = "123";
+process.env.STRIPE_SECRET_KEY = "sk_test";
+process.env.STRIPE_PRICE_ID = "price_1";
+process.env.STRIPE_WEBHOOK_SECRET = "whsec_test";
+
+const db = new PGlite();
+globalThis.__heario_query = async (text, params) => (await db.query(text, params)).rows;
+
+let calls; // every outbound fetch the handlers make
+let claudeScript; // queue of fake Anthropic responses
+globalThis.fetch = async (url, init = {}) => {
+  const body = init.body ? (init.headers?.["content-type"]?.includes("json") || init.headers?.["Content-Type"]?.includes("json") ? JSON.parse(init.body) : init.body) : null;
+  calls.push({ url: String(url), body });
+  const ok = (data) => new Response(JSON.stringify(data), { status: 200 });
+  if (String(url).includes("brevo")) return ok({});
+  if (String(url).includes("graph.facebook")) return ok({ messages: [{ id: "wamid" }] });
+  if (String(url).includes("anthropic")) return ok(claudeScript.shift());
+  if (String(url).includes("stripe.com")) return ok({ url: "https://checkout.stripe.com/c/test" });
+  throw new Error("unexpected fetch " + url);
+};
+
+const h = {
+  request: await import("../api/auth/request.js"),
+  verify: await import("../api/auth/verify.js"),
+  me: await import("../api/me.js"),
+  bot: await import("../api/bot.js"),
+  testWa: await import("../api/bot/test-whatsapp.js"),
+  leads: await import("../api/leads.js"),
+  chat: await import("../api/chat.js"),
+  widget: await import("../api/widget-config.js"),
+  checkout: await import("../api/billing/checkout.js"),
+  webhook: await import("../api/stripe/webhook.js"),
+  account: await import("../api/account.js"),
+  cron: await import("../api/cron/cleanup.js"),
+};
+const { normalizeNumber } = await import("../lib/whatsapp.js");
+const { verifyStripeSignature } = await import("../lib/stripe.js");
+const { originAllowed, parseOrigins } = await import("../lib/bot.js");
+
+const SITE = "https://heario.ai";
+const req = (path, { method = "POST", body, cookie, origin = SITE } = {}) =>
+  new Request(SITE + path, {
+    method,
+    headers: { "content-type": "application/json", ...(origin && { origin }), ...(cookie && { cookie }) },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+
+async function login(email = "owner@example.com") {
+  calls = [];
+  await h.request.POST(req("/api/auth/request", { body: { email } }));
+  const mail = calls.find((c) => c.url.includes("brevo"));
+  const token = mail.body.textContent.match(/token=([a-f0-9]{64})/)[1];
+  const res = await h.verify.POST(req("/api/auth/verify", { body: { token } }));
+  assert.equal(res.status, 200);
+  return { cookie: res.headers.get("set-cookie").split(";")[0], token };
+}
+
+const settings = (over = {}) => ({
+  business_name: "Murphy Plumbing", owner_name: "Sean", knowledge: "We fix boilers. Call-out is 80 euro.",
+  response_time: "within 2 hours", greeting: "", color: "#4f8ef7", allowed_origins: "murphyplumbing.ie",
+  owner_whatsapp: "+353 85 123 4567", whatsapp_consent: true, enabled: true, ...over,
+});
+
+before(async () => { await db.exec(fs.readFileSync(new URL("../schema.sql", import.meta.url), "utf8")); });
+beforeEach(async () => {
+  calls = []; claudeScript = [];
+  await db.exec("TRUNCATE accounts, login_tokens, rate_limits CASCADE");
+});
+
+test("login link works once, creates account + chatbot, and starts a trial", async () => {
+  const { cookie, token } = await login();
+  const me = await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json();
+  assert.equal(me.email, "owner@example.com");
+  assert.equal(me.plan.status, "trial");
+  assert.equal(me.plan.trialDaysLeft, 14);
+  assert.match(me.bot.embed_key, /^hb_[a-f0-9]{24}$/);
+  const again = await h.verify.POST(req("/api/auth/verify", { body: { token } }));
+  assert.equal(again.status, 400, "token must be single-use");
+});
+
+test("rejects cross-site POSTs and unauthenticated access", async () => {
+  const bad = await h.request.POST(req("/api/auth/request", { body: { email: "a@b.co" }, origin: "https://evil.com" }));
+  assert.equal(bad.status, 403);
+  const anon = await h.me.GET(req("/api/me", { method: "GET", origin: null }));
+  assert.equal(anon.status, 401);
+  const forged = await h.me.GET(req("/api/me", { method: "GET", cookie: "hs=abc.def", origin: null }));
+  assert.equal(forged.status, 401);
+});
+
+test("settings validation and consent handling", async () => {
+  const { cookie } = await login();
+  const put = (b) => h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: b }));
+  assert.equal((await put(settings({ owner_whatsapp: "085 123 4567" }))).status, 400, "needs country code");
+  assert.equal((await put(settings({ whatsapp_consent: false }))).status, 400, "needs consent");
+  assert.equal((await put(settings({ color: "red" }))).status, 400);
+  const ok = await (await put(settings())).json();
+  assert.equal(ok.bot.owner_whatsapp, "+353851234567");
+  assert.equal(ok.bot.whatsapp_consent, true);
+  assert.deepEqual(ok.bot.allowed_origins, ["https://murphyplumbing.ie"]);
+  const cleared = await (await put(settings({ owner_whatsapp: "", whatsapp_consent: false }))).json();
+  assert.equal(cleared.bot.whatsapp_consent, false);
+});
+
+test("chat: blocked from other sites, answers on the customer's site, and a real enquiry saves a lead + WhatsApps the owner", async () => {
+  const { cookie } = await login();
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings() }));
+  const key = (await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json()).bot.embed_key;
+  const chat = (origin, messages = [{ role: "user", content: "hi" }]) =>
+    h.chat.POST(req("/api/chat", { body: { key, messages }, origin }));
+
+  assert.equal((await chat("https://evil.com")).status, 403);
+  assert.equal((await chat(null)).status, 403);
+
+  claudeScript = [{ stop_reason: "end_turn", content: [{ type: "text", text: "Call-out is 80 euro." }] }];
+  const r1 = await chat("https://www.murphyplumbing.ie");
+  assert.equal(r1.status, 200);
+  assert.equal((await r1.json()).reply, "Call-out is 80 euro.");
+  assert.match(calls.find((c) => c.url.includes("anthropic")).body.system, /Murphy Plumbing/);
+
+  calls = [];
+  claudeScript = [
+    { stop_reason: "tool_use", content: [{ type: "tool_use", id: "t1", name: "notify_owner", input: { name: "Ann", contact: "0871112222", enquiry: "Boiler\nnot working" } }] },
+    { stop_reason: "end_turn", content: [{ type: "text", text: "Sean will be in touch within 2 hours." }] },
+  ];
+  const r2 = await (await chat("https://murphyplumbing.ie", [{ role: "user", content: "my boiler is broken, I'm Ann 0871112222" }])).json();
+  assert.equal(r2.notified, true);
+  const wa = calls.find((c) => c.url.includes("graph.facebook"));
+  assert.equal(wa.body.to, "353851234567");
+  assert.deepEqual(wa.body.template.components[0].parameters.map((p) => p.text), ["Murphy Plumbing", "Ann", "0871112222", "Boiler not working"]);
+  const leads = await (await h.leads.GET(req("/api/leads", { method: "GET", cookie, origin: null }))).json();
+  assert.equal(leads.leads.length, 1);
+  assert.equal(leads.leads[0].whatsapp_status, "sent");
+  assert.ok(!calls.some((c) => c.url.includes("brevo")), "no email fallback when WhatsApp succeeded");
+});
+
+test("chat: WhatsApp failure falls back to email and still records the lead", async () => {
+  const { cookie } = await login();
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings() }));
+  const key = (await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json()).bot.embed_key;
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init) => url.includes("graph.facebook") ? new Response("boom", { status: 500 }) : realFetch(url, init);
+  claudeScript = [
+    { stop_reason: "tool_use", content: [{ type: "tool_use", id: "t1", name: "notify_owner", input: { name: "Bo", contact: "bo@x.ie", enquiry: "Quote please" } }] },
+    { stop_reason: "end_turn", content: [{ type: "text", text: "Done" }] },
+  ];
+  await h.chat.POST(req("/api/chat", { body: { key, messages: [{ role: "user", content: "x" }] }, origin: "https://murphyplumbing.ie" }));
+  globalThis.fetch = realFetch;
+  assert.ok(calls.some((c) => c.url.includes("brevo")), "email fallback sent");
+  const lead = (await db.query("SELECT whatsapp_status FROM leads")).rows[0];
+  assert.equal(lead.whatsapp_status, "failed_emailed");
+});
+
+test("chat: expired trial and disabled bots return the unavailable message without calling Claude", async () => {
+  const { cookie } = await login();
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings() }));
+  const key = (await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json()).bot.embed_key;
+  await db.query("UPDATE accounts SET trial_ends_at = now() - interval '1 day'");
+  calls = [];
+  const r = await (await h.chat.POST(req("/api/chat", { body: { key, messages: [{ role: "user", content: "hi" }] }, origin: "https://murphyplumbing.ie" }))).json();
+  assert.match(r.reply, /isn't available/);
+  assert.ok(!calls.some((c) => c.url.includes("anthropic")));
+  await db.query("UPDATE accounts SET subscription_status = 'active'");
+  claudeScript = [{ stop_reason: "end_turn", content: [{ type: "text", text: "ok" }] }];
+  assert.equal((await (await h.chat.POST(req("/api/chat", { body: { key, messages: [{ role: "user", content: "hi" }] }, origin: "https://murphyplumbing.ie" }))).json()).reply, "ok");
+});
+
+test("chat: per-visitor rate limit", async () => {
+  const { cookie } = await login();
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings() }));
+  const key = (await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json()).bot.embed_key;
+  let last;
+  for (let i = 0; i < 22; i++) {
+    claudeScript = [{ stop_reason: "end_turn", content: [{ type: "text", text: "ok" }] }];
+    last = await h.chat.POST(req("/api/chat", { body: { key, messages: [{ role: "user", content: "hi" }] }, origin: "https://murphyplumbing.ie" }));
+  }
+  assert.equal(last.status, 429);
+});
+
+test("chat: per-chatbot hourly caps hold even when requests come from many different visitors", async () => {
+  process.env.BOT_HOURLY_MESSAGES = "2";
+  process.env.BOT_HOURLY_ENQUIRIES = "1";
+  try {
+    const { cookie } = await login();
+    await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings() }));
+    const key = (await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json()).bot.embed_key;
+    const from = (ip, text = "hi") =>
+      h.chat.POST(new Request(SITE + "/api/chat", {
+        method: "POST",
+        headers: { "content-type": "application/json", origin: "https://murphyplumbing.ie", "x-forwarded-for": ip },
+        body: JSON.stringify({ key, messages: [{ role: "user", content: text }] }),
+      }));
+    const enquiry = { stop_reason: "tool_use", content: [{ type: "tool_use", id: "t", name: "notify_owner", input: { name: "A", contact: "a@b.ie", enquiry: "quote" } }] };
+    const done = { stop_reason: "end_turn", content: [{ type: "text", text: "ok" }] };
+
+    claudeScript = [enquiry, done];
+    assert.equal((await (await from("1.1.1.1")).json()).notified, true);
+    calls = [];
+    claudeScript = [enquiry, { stop_reason: "end_turn", content: [{ type: "text", text: "Please contact them directly." }] }];
+    const second = await (await from("2.2.2.2")).json();
+    assert.equal(second.notified, false, "second enquiry in the hour is refused");
+    assert.equal((await db.query("SELECT count(*)::int n FROM leads")).rows[0].n, 1);
+    assert.ok(!calls.some((c) => c.url.includes("graph.facebook")), "no extra WhatsApp sent");
+
+    claudeScript = [done, done, done];
+    const busy = await (await from("3.3.3.3")).json();
+    assert.match(busy.reply, /very busy/);
+    assert.equal(claudeScript.length, 3, "Claude was not called once the cap was hit");
+  } finally {
+    delete process.env.BOT_HOURLY_MESSAGES;
+    delete process.env.BOT_HOURLY_ENQUIRIES;
+  }
+});
+
+test("widget config is origin-checked", async () => {
+  const { cookie } = await login();
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings() }));
+  const key = (await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json()).bot.embed_key;
+  const get = (origin) => h.widget.GET(new Request(`${SITE}/api/widget-config?key=${key}`, { headers: origin ? { origin } : {} }));
+  assert.equal((await get("https://evil.com")).status, 403);
+  const cfg = await (await get("https://murphyplumbing.ie")).json();
+  assert.equal(cfg.title, "Chat with Murphy Plumbing");
+  assert.match(cfg.greeting, /AI assistant/);
+});
+
+test("Stripe: checkout URL, signed webhook activates the plan, bad signature is rejected", async () => {
+  const { cookie } = await login();
+  const co = await (await h.checkout.POST(req("/api/billing/checkout", { cookie }))).json();
+  assert.match(co.url, /^https:\/\/checkout\.stripe\.com/);
+
+  const id = (await db.query("SELECT id FROM accounts")).rows[0].id;
+  const event = JSON.stringify({ type: "checkout.session.completed", data: { object: { mode: "subscription", client_reference_id: id, customer: "cus_1", subscription: "sub_1" } } });
+  const sign = (raw, t = Math.floor(Date.now() / 1000)) => `t=${t},v1=${crypto.createHmac("sha256", "whsec_test").update(`${t}.${raw}`).digest("hex")}`;
+  const wh = (raw, sig) => h.webhook.POST(new Request(SITE + "/api/stripe/webhook", { method: "POST", headers: { "stripe-signature": sig }, body: raw }));
+
+  assert.equal((await wh(event, "t=1,v1=bad")).status, 400);
+  assert.equal((await wh(event, sign(event, 1000))).status, 400, "old timestamp rejected");
+  assert.equal((await wh(event, sign(event))).status, 200);
+  const me = await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json();
+  assert.equal(me.plan.status, "subscribed");
+  assert.equal(me.plan.hasBilling, true);
+
+  const cancel = JSON.stringify({ type: "customer.subscription.deleted", data: { object: { customer: "cus_1" } } });
+  await wh(cancel, sign(cancel));
+  assert.equal((await db.query("SELECT subscription_status s FROM accounts")).rows[0].s, "canceled");
+  const unknown = JSON.stringify({ type: "customer.subscription.updated", data: { object: { customer: "cus_old_app", status: "active", id: "sub_x" } } });
+  assert.equal((await wh(unknown, sign(unknown))).status, 200, "unknown customers are ignored");
+});
+
+test("account deletion erases everything", async () => {
+  const { cookie } = await login();
+  assert.equal((await h.account.DELETE(req("/api/account", { method: "DELETE", cookie, body: { confirm: "nope" } }))).status, 400);
+  assert.equal((await h.account.DELETE(req("/api/account", { method: "DELETE", cookie, body: { confirm: "DELETE" } }))).status, 200);
+  for (const t of ["accounts", "bots"]) assert.equal((await db.query(`SELECT count(*)::int n FROM ${t}`)).rows[0].n, 0);
+});
+
+test("cron cleanup needs the secret and removes old leads", async () => {
+  process.env.CRON_SECRET = "s3cret";
+  assert.equal((await h.cron.GET(new Request(SITE + "/api/cron/cleanup"))).status, 401);
+  const { cookie } = await login();
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings() }));
+  const botId = (await db.query("SELECT id FROM bots")).rows[0].id;
+  await db.query("INSERT INTO leads (bot_id,name,contact,enquiry,created_at) VALUES ($1,'a','b','c', now() - interval '100 days'), ($1,'d','e','f', now())", [botId]);
+  const res = await (await h.cron.GET(new Request(SITE + "/api/cron/cleanup", { headers: { authorization: "Bearer s3cret" } }))).json();
+  assert.equal(res.leads, 1);
+});
+
+test("helpers: phone numbers, origins, Stripe signature", () => {
+  assert.equal(normalizeNumber("+353 85 123 4567"), "353851234567");
+  assert.equal(normalizeNumber("00353851234567"), "353851234567");
+  assert.equal(normalizeNumber("085 123 4567"), null);
+  assert.equal(normalizeNumber("12"), null);
+  assert.equal(normalizeNumber(""), "");
+  assert.deepEqual(parseOrigins("Example.com, https://www.foo.ie/page nonsense"), ["https://example.com", "https://www.foo.ie"]);
+  assert.equal(originAllowed("https://foo.ie", "https://www.foo.ie"), true);
+  assert.equal(originAllowed("https://foo.ie", "http://foo.ie"), false);
+  assert.equal(originAllowed("", "https://foo.ie"), false);
+  assert.equal(verifyStripeSignature("{}", null, "s"), false);
+});

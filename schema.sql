@@ -1,0 +1,62 @@
+-- Heario chatbot product schema (Postgres / Neon).
+-- Run once in the Neon SQL Editor (Neon console > your project > SQL Editor).
+-- Safe to re-run: every statement is IF NOT EXISTS.
+
+CREATE TABLE IF NOT EXISTS accounts (
+  id                      uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  email                   text NOT NULL UNIQUE,
+  created_at              timestamptz NOT NULL DEFAULT now(),
+  trial_ends_at           timestamptz NOT NULL,
+  stripe_customer_id      text UNIQUE,
+  stripe_subscription_id  text,
+  subscription_status     text NOT NULL DEFAULT 'none'
+);
+
+CREATE TABLE IF NOT EXISTS bots (
+  id                  uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  account_id          uuid NOT NULL UNIQUE REFERENCES accounts(id) ON DELETE CASCADE,
+  embed_key           text NOT NULL UNIQUE,
+  enabled             boolean NOT NULL DEFAULT true,
+  business_name       text NOT NULL DEFAULT '',
+  owner_name          text NOT NULL DEFAULT '',
+  knowledge           text NOT NULL DEFAULT '',
+  response_time       text NOT NULL DEFAULT '',
+  greeting            text NOT NULL DEFAULT '',
+  color               text NOT NULL DEFAULT '#4f8ef7',
+  allowed_origins     text NOT NULL DEFAULT '',
+  owner_whatsapp      text NOT NULL DEFAULT '',
+  whatsapp_consent_at timestamptz,
+  updated_at          timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS leads (
+  id              bigserial PRIMARY KEY,
+  bot_id          uuid NOT NULL REFERENCES bots(id) ON DELETE CASCADE,
+  name            text NOT NULL,
+  contact         text NOT NULL,
+  enquiry         text NOT NULL,
+  whatsapp_status text NOT NULL DEFAULT 'skipped',
+  created_at      timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS leads_bot_created ON leads (bot_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS usage (
+  bot_id   uuid NOT NULL REFERENCES bots(id) ON DELETE CASCADE,
+  month    text NOT NULL,
+  messages integer NOT NULL DEFAULT 0,
+  PRIMARY KEY (bot_id, month)
+);
+
+CREATE TABLE IF NOT EXISTS login_tokens (
+  token_hash text PRIMARY KEY,
+  email      text NOT NULL,
+  expires_at timestamptz NOT NULL,
+  used_at    timestamptz
+);
+CREATE INDEX IF NOT EXISTS login_tokens_email ON login_tokens (email, expires_at);
+
+CREATE TABLE IF NOT EXISTS rate_limits (
+  k            text PRIMARY KEY,
+  window_start timestamptz NOT NULL,
+  n            integer NOT NULL
+);

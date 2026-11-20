@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log in or start your free trial — Heario</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="style.css?v=30" />
+  <link rel="stylesheet" href="chatbot.css?v=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+<div class="site-bg" aria-hidden="true">
+  <div class="g-aurora g-aurora-1"></div>
+  <div class="g-aurora g-aurora-2"></div>
+</div>
+<main class="cb-wrap">
+  <a href="/" class="legal-back" style="display:inline-block;margin-bottom:32px;color:#7fd1ff;font-size:.9rem">&larr; Back to Heario</a>
+  <h1 id="title">Log in or start your free trial</h1>
+  <p class="sub" id="sub">Enter your email and we'll send you a one-time login link. New here? That same link creates your account and starts your 14-day free trial. No password and no card needed.</p>
+
+  <form id="form" novalidate>
+    <input id="email" class="cb-input" type="email" autocomplete="email" placeholder="you@yourbusiness.com" required style="margin-bottom:14px" />
+    <button id="go" class="btn-primary" type="submit" style="width:100%">Email me a login link</button>
+    <p id="msg" class="cb-msg" role="status" aria-live="polite"></p>
+  </form>
+
+  <p class="sub" style="font-size:13px;margin-top:28px">By continuing you agree to our <a href="/terms.html" style="color:#7fd1ff">Terms</a> and <a href="/privacy.html" style="color:#7fd1ff">Privacy Policy</a>.</p>
+</main>
+<script src="login.js"></script>
+</body>
+</html>

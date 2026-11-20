@@ -1,7 +1,7 @@
 {
   "name": "Heario",
   "short_name": "Heario",
-  "description": "AI Copilot for Meetings & Interviews",
+  "description": "AI website chat with instant WhatsApp enquiry alerts",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0b0e13",

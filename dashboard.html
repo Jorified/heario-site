@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Heario</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="style.css?v=30" />
+  <link rel="stylesheet" href="chatbot.css?v=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+<div class="site-bg" aria-hidden="true">
+  <div class="g-aurora g-aurora-1"></div>
+  <div class="g-aurora g-aurora-2"></div>
+</div>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">Heario</a>
+    <div class="nav-meta">
+      <span class="lang" id="who"></span>
+      <button class="btn-ghost" id="logout" type="button" style="padding:6px 14px;font-size:14px">Log out</button>
+    </div>
+  </div>
+</header>
+
+<main class="dash">
+  <div class="dash-top"><h1>Your chatbot</h1></div>
+
+  <div id="banner"></div>
+
+  <form id="form" novalidate>
+    <section class="panel">
+      <h2>1. Your business</h2>
+      <p class="hint">The assistant answers only from this information. The more accurate detail you add, the better it performs. Include services, prices, areas covered, opening hours, how quotes or bookings work, and anything you don't do.</p>
+      <div class="row2">
+        <div class="field"><label for="business_name">Business name</label><input id="business_name" class="cb-input" maxlength="100" /></div>
+        <div class="field"><label for="owner_name">Your first name</label><input id="owner_name" class="cb-input" maxlength="60" /><small>Used when the chat says who will be in touch.</small></div>
+      </div>
+      <div class="field"><label for="knowledge">Business information</label><textarea id="knowledge" class="cb-textarea" maxlength="8000" placeholder="What we do:&#10;Prices:&#10;Areas we cover:&#10;Opening hours:&#10;How booking works:&#10;Common questions:&#10;What we don't do:"></textarea></div>
+      <div class="field"><label for="response_time">How quickly do you reply to enquiries?</label><input id="response_time" class="cb-input" maxlength="100" placeholder="e.g. within 2 hours, or by the next working day" /></div>
+    </section>
+
+    <section class="panel">
+      <h2>2. WhatsApp alerts</h2>
+      <p class="hint">Each enquiry is sent to this number in WhatsApp, from Heario's number. If delivery fails, we email it to your login address instead.</p>
+      <div class="field"><label for="owner_whatsapp">Your WhatsApp number</label><input id="owner_whatsapp" class="cb-input" type="tel" placeholder="+353 85 123 4567" /><small>Include the country code.</small></div>
+      <label class="check"><input type="checkbox" id="whatsapp_consent" /><span>I agree to receive enquiry alerts on this WhatsApp number from Heario. I can turn them off at any time by removing the number here.</span></label>
+      <div class="actions"><button class="btn-ghost" id="testwa" type="button">Send a test alert</button><span id="testmsg" class="cb-msg" style="margin:0"></span></div>
+    </section>
+
+    <section class="panel">
+      <h2>3. Your website</h2>
+      <p class="hint">Browsers will only run the chatbot on the websites you list here. Usage limits also protect you from misuse.</p>
+      <div class="field"><label for="allowed_origins">Website addresses</label><input id="allowed_origins" class="cb-input" placeholder="yourbusiness.ie" /><small>Separate several with commas. Both with and without www are covered.</small></div>
+      <div class="row2">
+        <div class="field"><label for="color">Chat colour</label><input id="color" class="cb-input" type="color" style="height:46px;padding:4px" /></div>
+        <div class="field"><label for="greeting">Opening message (optional)</label><input id="greeting" class="cb-input" maxlength="200" placeholder="Leave blank for the default" /></div>
+      </div>
+      <label class="check"><input type="checkbox" id="enabled" /><span>Chatbot is switched on</span></label>
+    </section>
+
+    <div class="actions" style="margin-bottom:28px">
+      <button class="btn-primary" id="save" type="submit">Save changes</button>
+      <span id="savemsg" class="cb-msg" style="margin:0" role="status" aria-live="polite"></span>
+    </div>
+  </form>
+
+  <section class="panel">
+    <h2>4. Add it to your website</h2>
+    <p class="hint">Paste this just before the closing <code>&lt;/body&gt;</code> tag of your site (in WordPress, Wix, Squarespace or Shopify use the "custom code" or "header/footer scripts" setting). The chat bubble in the corner of this page is a live preview.</p>
+    <div class="code" id="snippet"></div>
+    <button class="btn-ghost" id="copy" type="button">Copy snippet</button>
+    <p class="hint" style="margin:14px 0 0">Tell your visitors about the chat in your own privacy notice. Our <a href="/dpa.html" style="color:var(--accent2)">data processing agreement</a> applies automatically.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Recent enquiries</h2>
+    <p class="hint">The latest 100, kept for 90 days.</p>
+    <div id="leads"><p class="hint">Loading…</p></div>
+  </section>
+
+  <section class="panel">
+    <h2>Plan &amp; usage</h2>
+    <p class="hint" id="usage"></p>
+    <div class="actions" id="planactions"></div>
+    <p style="margin-top:22px"><button class="danger-link" id="delete" type="button">Delete my account and all data</button></p>
+  </section>
+</main>
+<script src="dashboard.js"></script>
+</body>
+</html>

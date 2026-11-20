@@ -1,80 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="360 165 480 300" width="480" height="300" role="img">
-<title>Heario — AI Copilot for Meetings</title>
-<defs>
-  <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-    <stop offset="0%" stop-color="#4f8ef7"/>
-    <stop offset="50%" stop-color="#7fd1ff"/>
-    <stop offset="100%" stop-color="#a855f7"/>
-  </linearGradient>
-  <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-    <stop offset="0%" stop-color="#ffffff"/>
-    <stop offset="40%" stop-color="#cfe0ff"/>
-    <stop offset="80%" stop-color="#7fd1ff"/>
-    <stop offset="100%" stop-color="#ffffff"/>
-  </linearGradient>
-  <filter id="glow">
-    <feGaussianBlur stdDeviation="3" result="blur"/>
-    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-  </filter>
-  <filter id="micGlow">
-    <feGaussianBlur stdDeviation="6" result="blur"/>
-    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-  </filter>
-</defs>
-
-<!-- Microphone -->
-<g filter="url(#micGlow)" transform="translate(600,205)">
-  <rect x="-18" y="-32" width="36" height="48" rx="18" fill="none" stroke="url(#waveGrad)" stroke-width="3">
-    <animate attributeName="stroke-opacity" values="1;0.5;1"        dur="1.8s" repeatCount="indefinite"/>
-    <animate attributeName="stroke-width"   values="3;4;3"          dur="1.8s" repeatCount="indefinite"/>
-  </rect>
-  <path d="M-28 16 Q-28 44 0 44 Q28 44 28 16" fill="none" stroke="url(#waveGrad)" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="0" y1="44" x2="0" y2="58" stroke="#7fd1ff" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="-20" y1="58" x2="20" y2="58" stroke="#7fd1ff" stroke-width="2.5" stroke-linecap="round"/>
-</g>
-
-<!-- Left sound waves -->
-<g filter="url(#glow)" fill="none" stroke="#4f8ef7" stroke-linecap="round">
-  <path d="M 536 228 Q 524 243 536 258" stroke-width="2.5">
-    <animate attributeName="stroke-opacity" values="0.85;0.6;0.85"  dur="1.8s" begin="0s"    repeatCount="indefinite"/>
-    <animate attributeName="d"             values="M 536 228 Q 524 243 536 258;M 535 226 Q 522 243 535 260;M 536 228 Q 524 243 536 258" dur="1.8s" begin="0s" repeatCount="indefinite"/>
-  </path>
-  <path d="M 520 215 Q 500 243 520 271" stroke-width="2">
-    <animate attributeName="stroke-opacity" values="0.55;0.35;0.55" dur="1.8s" begin="0.22s" repeatCount="indefinite"/>
-    <animate attributeName="d"             values="M 520 215 Q 500 243 520 271;M 519 212 Q 497 243 519 274;M 520 215 Q 500 243 520 271" dur="1.8s" begin="0.22s" repeatCount="indefinite"/>
-  </path>
-  <path d="M 504 202 Q 478 243 504 284" stroke-width="1.5">
-    <animate attributeName="stroke-opacity" values="0.3;0.16;0.3"   dur="1.8s" begin="0.44s" repeatCount="indefinite"/>
-    <animate attributeName="d"             values="M 504 202 Q 478 243 504 284;M 502 199 Q 474 243 502 287;M 504 202 Q 478 243 504 284" dur="1.8s" begin="0.44s" repeatCount="indefinite"/>
-  </path>
-</g>
-
-<!-- Right sound waves -->
-<g filter="url(#glow)" fill="none" stroke="#7fd1ff" stroke-linecap="round">
-  <path d="M 664 228 Q 676 243 664 258" stroke-width="2.5">
-    <animate attributeName="stroke-opacity" values="0.85;0.6;0.85"  dur="1.8s" begin="0s"    repeatCount="indefinite"/>
-    <animate attributeName="d"             values="M 664 228 Q 676 243 664 258;M 665 226 Q 678 243 665 260;M 664 228 Q 676 243 664 258" dur="1.8s" begin="0s" repeatCount="indefinite"/>
-  </path>
-  <path d="M 680 215 Q 700 243 680 271" stroke-width="2">
-    <animate attributeName="stroke-opacity" values="0.55;0.35;0.55" dur="1.8s" begin="0.22s" repeatCount="indefinite"/>
-    <animate attributeName="d"             values="M 680 215 Q 700 243 680 271;M 681 212 Q 703 243 681 274;M 680 215 Q 700 243 680 271" dur="1.8s" begin="0.22s" repeatCount="indefinite"/>
-  </path>
-  <path d="M 696 202 Q 722 243 696 284" stroke-width="1.5">
-    <animate attributeName="stroke-opacity" values="0.3;0.16;0.3"   dur="1.8s" begin="0.44s" repeatCount="indefinite"/>
-    <animate attributeName="d"             values="M 696 202 Q 722 243 696 284;M 698 199 Q 726 243 698 287;M 696 202 Q 722 243 696 284" dur="1.8s" begin="0.44s" repeatCount="indefinite"/>
-  </path>
-</g>
-
-<!-- Title -->
-<text x="600" y="336" text-anchor="middle" font-family="'Space Grotesk','Sora',system-ui,sans-serif" font-size="82" font-weight="800" letter-spacing="-3" fill="url(#titleGrad)">Heario</text>
-<line x1="440" y1="354" x2="760" y2="354" stroke="url(#waveGrad)" stroke-width="1" stroke-opacity="0.5"/>
-<text x="600" y="390" text-anchor="middle" font-family="'Sora',system-ui,sans-serif" font-size="22" font-weight="400" fill="#7fd1ff" letter-spacing="0.5" fill-opacity="0.9">Your secret weapon.</text>
-
-<!-- Stat pills -->
-<rect x="380" y="416" width="130" height="34" rx="17" fill="#4f8ef7" fill-opacity="0.12" stroke="#4f8ef7" stroke-opacity="0.35" stroke-width="1"/>
-<text x="445" y="438" text-anchor="middle" font-family="'Sora',system-ui,sans-serif" font-size="13" font-weight="600" fill="#7fd1ff">&#9889; &lt;300ms</text>
-<rect x="535" y="416" width="130" height="34" rx="17" fill="#a855f7" fill-opacity="0.12" stroke="#a855f7" stroke-opacity="0.35" stroke-width="1"/>
-<text x="600" y="438" text-anchor="middle" font-family="'Sora',system-ui,sans-serif" font-size="13" font-weight="600" fill="#c084fc">&#128737; Undetectable</text>
-<rect x="690" y="416" width="130" height="34" rx="17" fill="#5fb85f" fill-opacity="0.12" stroke="#5fb85f" stroke-opacity="0.35" stroke-width="1"/>
-<text x="755" y="438" text-anchor="middle" font-family="'Sora',system-ui,sans-serif" font-size="13" font-weight="600" fill="#86efac">&#127992; Windows</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="a" cx="20%" cy="10%" r="70%"><stop offset="0" stop-color="#4f8ef7" stop-opacity=".45"/><stop offset="1" stop-color="#4f8ef7" stop-opacity="0"/></radialGradient>
+    <radialGradient id="b" cx="90%" cy="90%" r="60%"><stop offset="0" stop-color="#5fb85f" stop-opacity=".28"/><stop offset="1" stop-color="#5fb85f" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#0b0e13"/>
+  <rect width="1200" height="630" fill="url(#a)"/>
+  <rect width="1200" height="630" fill="url(#b)"/>
+  <text x="80" y="150" font-family="Helvetica, Arial, sans-serif" font-size="44" font-weight="700" fill="#ffffff">Heario</text>
+  <text x="80" y="290" font-family="Helvetica, Arial, sans-serif" font-size="72" font-weight="800" fill="#ffffff">Never miss a website</text>
+  <text x="80" y="375" font-family="Helvetica, Arial, sans-serif" font-size="72" font-weight="800" fill="#ffffff">enquiry again.</text>
+  <text x="80" y="450" font-family="Helvetica, Arial, sans-serif" font-size="32" fill="#8a94a8">AI website chat with instant WhatsApp alerts.</text>
+  <rect x="80" y="500" width="380" height="64" rx="14" fill="#4f8ef7"/>
+  <text x="270" y="542" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#ffffff">14-day free trial</text>
+  <rect x="760" y="120" width="360" height="110" rx="18" fill="#161c28" stroke="#1e2535"/>
+  <text x="790" y="165" font-family="Helvetica, Arial, sans-serif" font-size="22" fill="#e4e8f0">Can someone come out</text>
+  <text x="790" y="198" font-family="Helvetica, Arial, sans-serif" font-size="22" fill="#e4e8f0">tomorrow?</text>
+  <rect x="800" y="260" width="320" height="130" rx="18" fill="#14352b" stroke="#1d4a3b"/>
+  <text x="826" y="305" font-family="Helvetica, Arial, sans-serif" font-size="21" font-weight="700" fill="#ffffff">New website enquiry</text>
+  <text x="826" y="340" font-family="Helvetica, Arial, sans-serif" font-size="21" fill="#dff5ea">Ann · 087 111 2222</text>
+  <text x="826" y="372" font-family="Helvetica, Arial, sans-serif" font-size="21" fill="#7bb89c">via WhatsApp, instantly</text>
 </svg>

@@ -1,0 +1,82 @@
+# Heario chatbot: setup and launch guide
+
+Heario.ai is now a self-serve AI website chatbot with WhatsApp enquiry alerts.
+Customers log in with an emailed link (no passwords), add their business info, WhatsApp number and
+website, and paste one script tag onto their site. 14-day free trial, then a monthly Stripe subscription.
+
+```
+Customer's website --widget.js--> /api/chat --> Claude (Anthropic)
+                                      |--> Postgres (Neon): accounts, chatbots, enquiries
+                                      |--> WhatsApp Cloud API --> owner's phone  (email backup via Brevo)
+heario.ai/login.html, dashboard.html --> /api/* (login, settings, billing, enquiries)
+Stripe --> /api/stripe/webhook --> marks accounts subscribed / cancelled
+```
+
+Everything runs inside this one Vercel project: static pages plus serverless functions in `api/`.
+The old desktop-app backend (`api.heario.ai`) is not touched.
+
+## 1. Create the database (Neon)
+1. In Vercel: Project > Storage > add **Neon Postgres** (or use your existing Neon project). Copy the connection string as `DATABASE_URL`.
+2. Open Neon's **SQL Editor**, paste all of `schema.sql`, run it. Safe to re-run.
+   Use a **new database or schema** for this product, not the old licence tables.
+
+## 2. Services and keys
+
+| Variable | Where it comes from |
+|---|---|
+| `ANTHROPIC_API_KEY` | console.anthropic.com. Optional `ANTHROPIC_MODEL` (default `claude-haiku-5-5`) |
+| `DATABASE_URL` | Neon connection string |
+| `SESSION_SECRET` | any random string, 32+ chars: `openssl rand -hex 32` |
+| `APP_URL` | `https://heario.ai` (leave unset for Preview deployments so they use their own address) |
+| `BREVO_API_KEY`, `EMAIL_FROM` | Brevo > SMTP & API > **API keys** (this is different from the SMTP key). `EMAIL_FROM` must be a verified sender, e.g. `hello@heario.ai` |
+| `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, `STRIPE_WEBHOOK_SECRET` | see section 3 |
+| `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID` | see section 4 |
+| `WHATSAPP_TEMPLATE_NAME` | `new_enquiry` (default) |
+| `WHATSAPP_TEMPLATE_LANG` | `en` (default) |
+| `CRON_SECRET` | any random string. Vercel sends it to the daily cleanup job automatically |
+| `PLAN_MONTHLY_MESSAGES` | optional, default 3000 |
+| `TRIAL_DAYS` | optional, default 14 |
+| `LEAD_RETENTION_DAYS` | optional, default 90 (the privacy policy says 90) |
+| `BOT_HOURLY_MESSAGES`, `BOT_HOURLY_ENQUIRIES` | optional, defaults 300 and 20 per chatbot per hour |
+
+Add them in Vercel > Settings > Environment Variables, then redeploy.
+
+## 3. Stripe
+1. Products > create **Heario Chatbot**, recurring monthly price (the landing page currently says **EUR 29** as a placeholder; change `index.html` to match). Copy the price ID into `STRIPE_PRICE_ID`.
+2. Developers > Webhooks > add endpoint `https://heario.ai/api/stripe/webhook`, events:
+   `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`. Copy the signing secret into `STRIPE_WEBHOOK_SECRET`.
+3. Settings > Billing > **Customer portal**: enable it (cancellation, card updates, invoices).
+4. Consider enabling Stripe Tax for Irish/EU VAT.
+
+## 4. WhatsApp Cloud API (one Heario sender for all customers)
+1. developers.facebook.com: create a Business app with the WhatsApp product, add and verify the **Heario business number** (it can't also be on the normal WhatsApp app).
+2. Create a **System User** token with `whatsapp_business_messaging` and `whatsapp_business_management` (permanent, unlike the temporary token). Put it in `WHATSAPP_TOKEN`; the number's ID goes in `WHATSAPP_PHONE_NUMBER_ID`.
+3. WhatsApp Manager > Message templates > create a **Utility** template named `new_enquiry`, language English, body exactly:
+
+   `New website enquiry for {{1}}. Name: {{2}}. Contact: {{3}}. Message: {{4}}`
+
+   Give each variable a realistic sample value. Wait for approval (usually minutes to a day).
+4. To message more than a handful of numbers, complete Meta **business verification**.
+
+Customers must tick the consent box before any alert is sent; the time is stored.
+If WhatsApp delivery fails, the enquiry is emailed to the customer's login address instead.
+
+## 5. Test before launch
+- `npm test` runs 15 automated tests (login, settings, chat, WhatsApp fallback, Stripe webhook, widget safety). They use an in-memory database and stub every external service, so passing proves the logic, **not** that your keys and Meta template are right.
+- Use the Vercel **Preview** deployment for this branch: log in, fill in the dashboard, press **Send a test alert**, chat in the preview bubble, make a test enquiry, subscribe with a Stripe test card.
+
+## 6. Launch checklist
+- [ ] `npm run check-launch` passes (fills in your legal name, address, and hosting regions in the legal pages)
+- [ ] Have an Irish solicitor or data protection adviser review `privacy.html`, `terms.html` and `dpa.html`
+- [ ] Price on `index.html` matches Stripe
+- [ ] Switch Stripe, WhatsApp and Anthropic to live keys; confirm the template is approved
+- [ ] Add your own website to a test account and send yourself a real enquiry
+- [ ] Look at the old product pages: they're excluded from the deployment via `.vercelignore` but remain in git. Delete them whenever you like
+- [ ] If the old desktop-app subscribers still exist, decide how to wind them down. `manage.html` still lets them reach their billing portal via `api.heario.ai`
+
+## Known limits
+- Chat transcripts aren't stored; only the enquiry. The widget keeps the current conversation in the visitor's session storage.
+- One chatbot per account.
+- Rate limits: 20 messages a minute per visitor, 300 messages and 20 enquiries an hour per chatbot (`BOT_HOURLY_MESSAGES`, `BOT_HOURLY_ENQUIRIES`), and the monthly cap per chatbot.
+- The website allowlist is enforced by browsers only. Scripts can fake the site address and the chatbot key is public, so the caps above are the real protection. If abuse ever becomes a problem, add a Cloudflare Turnstile check to the widget.
+- Free-text WhatsApp messages aren't used, because Meta only allows templates to numbers that haven't messaged you in the last 24 hours.
