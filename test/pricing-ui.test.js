@@ -8,7 +8,7 @@ const read = (f) => fs.readFileSync(new URL("../" + f, import.meta.url), "utf8")
 
 function page(apiBody, { stored } = {}) {
   const dom = new JSDOM(
-    '<body><div class="amt" id="priceAmt">Simple monthly pricing</div><div class="cur-switch" id="curSwitch" hidden></div></body>',
+    '<body><div class="amt" id="priceAmt">Simple monthly pricing</div><div class="cur-switch" id="curSwitch" hidden></div><p id="setupNote" hidden></p></body>',
     { url: "https://heario.ai/", runScripts: "outside-only" }
   );
   const { window } = dom;
@@ -49,4 +49,16 @@ test("when prices are unavailable the card keeps its neutral text (no invented n
   await p.flush();
   assert.equal(p.d.getElementById("priceAmt").textContent, "Simple monthly pricing");
   assert.equal(p.d.getElementById("curSwitch").hidden, true);
+});
+
+test("homepage mentions the optional setup fee in the visitor's currency, and hides it when there isn't one", async () => {
+  const withSetup = page({ ...API, setup: { eur: { amount: 1999, display: "€19.99" }, gbp: { amount: 1699, display: "£16.99" } } });
+  await withSetup.flush();
+  const note = withSetup.d.getElementById("setupNote");
+  assert.equal(note.hidden, false);
+  assert.match(note.textContent, /£16\.99/);
+
+  const without = page(API);
+  await without.flush();
+  assert.equal(without.d.getElementById("setupNote").hidden, true);
 });

@@ -29,7 +29,7 @@ The old desktop app is retired and no longer part of this site.
 | `SESSION_SECRET` | any random string, 32+ chars: `openssl rand -hex 32` |
 | `APP_URL` | `https://heario.ai` (leave unset for Preview deployments so they use their own address) |
 | `BREVO_API_KEY`, `EMAIL_FROM` | Brevo > SMTP & API > **API keys** (this is different from the SMTP key). `EMAIL_FROM` must be a verified sender, e.g. `hello@heario.ai` |
-| `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, `STRIPE_WEBHOOK_SECRET` | see section 3 |
+| `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, `STRIPE_WEBHOOK_SECRET` | see section 3. Optional: `STRIPE_SETUP_PRICE_ID` for the setup-fee add-on |
 | `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID` | see section 4 |
 | `WHATSAPP_TEMPLATE_NAME` | `new_enquiry` (default) |
 | `WHATSAPP_TEMPLATE_LANG` | `en` (default) |
@@ -46,6 +46,7 @@ Add them in Vercel > Settings > Environment Variables, then redeploy.
    - The homepage and dashboard read these amounts from Stripe, so there is no price to edit in the code.
    - Irish, EU and rest-of-world visitors are shown EUR, UK visitors GBP, US visitors USD. Anyone can switch currency, and a customer's currency is fixed once they've paid.
    - **To change the price later:** create a new Price (all three currencies), put its ID in `STRIPE_PRICE_ID` and redeploy. New subscribers pay the new price; existing ones keep theirs unless you move them in Stripe. The site picks the new amounts up within 5 minutes.
+   - **Optional setup fee add-on:** create a second product, **Heario setup assistance**, with a **one-time** price (EUR 19.99, plus GBP 16.99 and USD 22.99 via "Add a price by currency", all tax-inclusive). Put its price ID in `STRIPE_SETUP_PRICE_ID`. Checkout then shows it as an add-on the customer can tick, only for people who have never been billed and only in a currency the price has. Leave the variable unset to switch the add-on off. Remember to create it in live mode too and use the live ID in Production.
 2. Developers > Webhooks > add endpoint `https://heario.ai/api/stripe/webhook`, events:
    `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`. Copy the signing secret into `STRIPE_WEBHOOK_SECRET`.
 3. Settings > Billing > **Customer portal**: enable it (cancellation, card updates, invoices).

@@ -8,7 +8,14 @@
     if (!info.prices) return; // keep the "Simple monthly pricing" fallback text
     var cur = window.HearioPricing.pick(info);
 
+    var note = document.getElementById('setupNote');
+
     function draw() {
+      if (note) {
+        var s = info.setup && info.setup[cur];
+        note.hidden = !s;
+        note.textContent = s ? 'Optional one-off setup assistance: ' + s.display + ' (add it at checkout)' : '';
+      }
       amt.textContent = '';
       amt.className = 'amt has-price';
       amt.appendChild(document.createTextNode(info.prices[cur].display));

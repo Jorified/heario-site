@@ -79,6 +79,9 @@
           buy.appendChild(sel);
         }
       }
+      if (priceInfo && priceInfo.setup && priceInfo.setup[cur] && !p.hasBilling) {
+        buy.appendChild(el('span', 'Optional at checkout: one-off setup assistance, ' + priceInfo.setup[cur].display + '.', 'hint'));
+      }
       var sub = el('button', 'Subscribe', 'btn-primary');
       sub.type = 'button';
       sub.onclick = function () { redirectTo('/api/billing/checkout', sub, cur ? { currency: cur } : {}); };

@@ -22,6 +22,7 @@ globalThis.__heario_query = async (text, params) => (await db.query(text, params
 let calls; // every outbound fetch the handlers make
 let claudeScript; // queue of fake Anthropic responses
 let stripePrice; // what the fake Stripe returns for the price lookup (null = Stripe fails)
+let setupPrice; // same, for the optional setup-fee price (price_setup)
 const PRICE = () => ({
   id: "price_1", active: true, currency: "eur", unit_amount: 2900, recurring: { interval: "month", interval_count: 1 },
   currency_options: { gbp: { unit_amount: 2500 }, usd: { unit_amount: 3100 } },
@@ -33,6 +34,7 @@ globalThis.fetch = async (url, init = {}) => {
   if (String(url).includes("brevo")) return ok({});
   if (String(url).includes("graph.facebook")) return ok({ messages: [{ id: "wamid" }] });
   if (String(url).includes("anthropic")) return ok(claudeScript.shift());
+  if (String(url).includes("api.stripe.com/v1/prices/price_setup")) return setupPrice ? ok(setupPrice) : new Response("{}", { status: 500 });
   if (String(url).includes("api.stripe.com/v1/prices/")) return stripePrice ? ok(stripePrice) : new Response("{}", { status: 500 });
   if (String(url).includes("stripe.com")) return ok({ url: "https://checkout.stripe.com/c/test" });
   throw new Error("unexpected fetch " + url);
@@ -88,6 +90,8 @@ const settings = (over = {}) => ({
 before(async () => { await db.exec(fs.readFileSync(new URL("../schema.sql", import.meta.url), "utf8")); });
 beforeEach(async () => {
   calls = []; claudeScript = []; stripePrice = PRICE(); resetPriceCache();
+  setupPrice = { id: "price_setup", active: true, currency: "eur", unit_amount: 1999, currency_options: { gbp: { unit_amount: 1699 }, usd: { unit_amount: 2299 } } };
+  delete process.env.STRIPE_SETUP_PRICE_ID;
   await db.exec("TRUNCATE accounts, login_tokens, rate_limits CASCADE");
 });
 
@@ -410,4 +414,54 @@ test("combined routes dispatch by ?action= and by path, and reject unknown actio
 
   // /api/bot/test-whatsapp is rewritten to /api/bot, whose POST is the test-alert handler.
   assert.equal((await h.botRoute.POST(req("/api/bot", { body: {} }))).status, 401);
+});
+
+test("setup fee: offered as an optional checkout add-on to first-time subscribers only, in the chosen currency", async () => {
+  process.env.STRIPE_SETUP_PRICE_ID = "price_setup";
+  const { cookie } = await login();
+  const checkout = (body) => h.checkout.POST(req("/api/billing/checkout", { cookie, body }));
+  const sent = () => decodeURIComponent(calls.filter((c) => c.url.includes("/checkout/sessions")).at(-1).body);
+
+  // The pricing API shows the amounts so the site can mention it.
+  const info = await priceFrom("IE");
+  assert.deepEqual(Object.fromEntries(Object.entries(info.setup).map(([k, v]) => [k, v.display])), { eur: "€19.99", gbp: "£16.99", usd: "$22.99" });
+
+  calls = [];
+  assert.equal((await checkout({ currency: "gbp" })).status, 200);
+  assert.match(sent(), /optional_items\[0\]\[price\]=price_setup/);
+  assert.match(sent(), /optional_items\[0\]\[adjustable_quantity\]\[maximum\]=1/);
+  assert.match(sent(), /optional_items\[0\]\[adjustable_quantity\]\[minimum\]=0/);
+  assert.match(sent(), /line_items\[0\]\[price\]=price_1/, "the subscription is still the required line item");
+
+  // Not offered once the person has a Stripe customer (already billed before).
+  await db.query("UPDATE accounts SET stripe_customer_id = 'cus_1', subscription_status = 'canceled'");
+  calls = [];
+  assert.equal((await checkout({ currency: "eur" })).status, 200);
+  assert.doesNotMatch(sent(), /optional_items/);
+});
+
+test("setup fee: no add-on when unset, invalid, or missing the chosen currency, and checkout still works", async () => {
+  const { cookie } = await login();
+  const checkout = (body) => h.checkout.POST(req("/api/billing/checkout", { cookie, body }));
+  const sent = () => decodeURIComponent(calls.filter((c) => c.url.includes("/checkout/sessions")).at(-1).body);
+
+  calls = [];
+  assert.equal((await checkout({ currency: "eur" })).status, 200);
+  assert.doesNotMatch(sent(), /optional_items/, "unset = off");
+  assert.equal((await priceFrom("IE")).setup, null);
+
+  process.env.STRIPE_SETUP_PRICE_ID = "price_setup";
+  setupPrice = { ...setupPrice, recurring: { interval: "month", interval_count: 1 } };
+  resetPriceCache(); calls = [];
+  assert.equal((await checkout({ currency: "eur" })).status, 200);
+  assert.doesNotMatch(sent(), /optional_items/, "a recurring price is not a valid setup fee");
+
+  setupPrice = null; resetPriceCache(); calls = [];
+  assert.equal((await checkout({ currency: "eur" })).status, 200, "Stripe failing on the add-on must not block the subscription");
+  assert.doesNotMatch(sent(), /optional_items/);
+
+  setupPrice = { id: "price_setup", active: true, currency: "eur", unit_amount: 1999 }; // euro only
+  resetPriceCache(); calls = [];
+  assert.equal((await checkout({ currency: "gbp" })).status, 200);
+  assert.doesNotMatch(sent(), /optional_items/, "no sterling price for the fee, so it isn't offered in sterling");
 });
