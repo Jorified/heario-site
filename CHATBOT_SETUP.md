@@ -72,7 +72,7 @@ If WhatsApp delivery fails, the enquiry is emailed to the customer's login addre
 - [ ] Switch Stripe, WhatsApp and Anthropic to live keys; confirm the template is approved
 - [ ] Add your own website to a test account and send yourself a real enquiry
 - [ ] Look at the old product pages: they're excluded from the deployment via `.vercelignore` but remain in git. Delete them whenever you like
-- [ ] Retire the old desktop-app backend: switch off its Stripe webhook (or use a separate Stripe account for the chatbot) so chatbot payments can't trigger old licence-key emails
+- [x] Old desktop-app Stripe webhook switched off (done by Jack, 20 Nov 2026), so chatbot payments can't trigger old licence-key emails. If you ever re-enable it, use a separate Stripe account for the chatbot
 
 ## Known limits
 - Chat transcripts aren't stored; only the enquiry. The widget keeps the current conversation in the visitor's session storage.
