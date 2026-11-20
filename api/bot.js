@@ -1,4 +1,5 @@
 // PUT /api/bot -> save the customer's chatbot settings.
+// POST (reached as /api/bot/test-whatsapp via a vercel.json rewrite) -> send a test alert.
 import { botView, validateBotInput } from "../lib/bot.js";
 import { one } from "../lib/db.js";
 import { guard } from "../lib/guard.js";
@@ -31,3 +32,5 @@ export async function PUT(request) {
   );
   return json({ ok: true, bot: botView(saved) });
 }
+
+export { POST } from "../lib/handlers/bot-test-whatsapp.js";

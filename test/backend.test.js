@@ -39,19 +39,22 @@ globalThis.fetch = async (url, init = {}) => {
 };
 
 const h = {
-  request: await import("../api/auth/request.js"),
-  verify: await import("../api/auth/verify.js"),
+  request: await import("../lib/handlers/auth-request.js"),
+  verify: await import("../lib/handlers/auth-verify.js"),
   me: await import("../api/me.js"),
   bot: await import("../api/bot.js"),
-  testWa: await import("../api/bot/test-whatsapp.js"),
+  testWa: await import("../lib/handlers/bot-test-whatsapp.js"),
   leads: await import("../api/leads.js"),
   chat: await import("../api/chat.js"),
   widget: await import("../api/widget-config.js"),
-  checkout: await import("../api/billing/checkout.js"),
+  checkout: await import("../lib/handlers/billing-checkout.js"),
   webhook: await import("../api/stripe/webhook.js"),
   account: await import("../api/account.js"),
   cron: await import("../api/cron/cleanup.js"),
   pricing: await import("../api/pricing.js"),
+  authRoute: await import("../api/auth.js"),
+  billingRoute: await import("../api/billing.js"),
+  botRoute: await import("../api/bot.js"),
 };
 const { normalizeNumber } = await import("../lib/whatsapp.js");
 const { verifyStripeSignature } = await import("../lib/stripe.js");
@@ -385,4 +388,26 @@ test("checkout: a subscriber's currency is locked after their first payment (Str
   const sent = decodeURIComponent(calls.filter((c) => c.url.includes("/checkout/sessions")).at(-1).body);
   assert.match(sent, /currency=gbp/);
   assert.doesNotMatch(sent, /currency=usd/);
+});
+
+test("combined routes dispatch by ?action= and by path, and reject unknown actions", async () => {
+  // The rewrites in vercel.json send /api/auth/request to /api/auth?action=request; both forms must work.
+  const viaQuery = await h.authRoute.POST(req("/api/auth?action=request", { body: { email: "not-an-email" } }));
+  assert.equal(viaQuery.status, 400);
+  const viaPath = await h.authRoute.POST(req("/api/auth/request", { body: { email: "not-an-email" } }));
+  assert.equal(viaPath.status, 400);
+  const logout = await h.authRoute.POST(req("/api/auth?action=logout", { body: {} }));
+  assert.equal(logout.status, 200);
+  assert.match(logout.headers.get("set-cookie") || "", /Max-Age=0|Expires=/i);
+
+  assert.equal((await h.authRoute.POST(req("/api/auth", { body: {} }))).status, 404);
+  assert.equal((await h.authRoute.POST(req("/api/auth?action=constructor", { body: {} }))).status, 404);
+
+  // Billing needs a login; unknown actions are 404, known ones reach the real handler (401 without a cookie).
+  assert.equal((await h.billingRoute.POST(req("/api/billing?action=checkout", { body: {} }))).status, 401);
+  assert.equal((await h.billingRoute.POST(req("/api/billing/portal", { body: {} }))).status, 401);
+  assert.equal((await h.billingRoute.POST(req("/api/billing?action=nope", { body: {} }))).status, 404);
+
+  // /api/bot/test-whatsapp is rewritten to /api/bot, whose POST is the test-alert handler.
+  assert.equal((await h.botRoute.POST(req("/api/bot", { body: {} }))).status, 401);
 });
