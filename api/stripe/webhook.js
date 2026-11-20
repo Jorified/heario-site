@@ -14,9 +14,10 @@ export async function POST(request) {
 
   if (event.type === "checkout.session.completed" && obj.mode === "subscription" && obj.client_reference_id) {
     await query(
-      `UPDATE accounts SET stripe_customer_id = $2, stripe_subscription_id = $3, subscription_status = 'active'
+      `UPDATE accounts SET stripe_customer_id = $2, stripe_subscription_id = $3, subscription_status = 'active',
+         billing_currency = COALESCE($4::text, billing_currency)
        WHERE id = $1`,
-      [obj.client_reference_id, obj.customer, obj.subscription]
+      [obj.client_reference_id, obj.customer, obj.subscription, obj.currency ? String(obj.currency).toLowerCase() : null]
     );
   } else if (event.type === "customer.subscription.created" || event.type === "customer.subscription.updated") {
     await query(

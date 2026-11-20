@@ -17,7 +17,7 @@ The old desktop app is retired and no longer part of this site.
 
 ## 1. Create the database (Neon)
 1. In Vercel: Project > Storage > add **Neon Postgres** (or use your existing Neon project). Copy the connection string as `DATABASE_URL`.
-2. Open Neon's **SQL Editor**, paste all of `schema.sql`, run it. Safe to re-run.
+2. Open Neon's **SQL Editor**, paste all of `schema.sql`, run it. Safe to re-run (if you ran it before, run it again to add the `billing_currency` column).
    Use a **new database or schema** for this product, not the old licence tables.
 
 ## 2. Services and keys
@@ -42,11 +42,14 @@ The old desktop app is retired and no longer part of this site.
 Add them in Vercel > Settings > Environment Variables, then redeploy.
 
 ## 3. Stripe
-1. Products > create **Heario Chatbot**, recurring monthly price (the landing page currently says **EUR 29** as a placeholder; change `index.html` to match). Copy the price ID into `STRIPE_PRICE_ID`.
+1. Products > create **Heario Chatbot** with ONE recurring **monthly** price. Set the amount in EUR, then use **Add prices for other currencies** to add GBP and USD amounts (you choose each amount; they don't have to be converted rates). Copy the price ID into `STRIPE_PRICE_ID`.
+   - The homepage and dashboard read these amounts from Stripe, so there is no price to edit in the code.
+   - Irish, EU and rest-of-world visitors are shown EUR, UK visitors GBP, US visitors USD. Anyone can switch currency, and a customer's currency is fixed once they've paid.
+   - **To change the price later:** create a new Price (all three currencies), put its ID in `STRIPE_PRICE_ID` and redeploy. New subscribers pay the new price; existing ones keep theirs unless you move them in Stripe. The site picks the new amounts up within 5 minutes.
 2. Developers > Webhooks > add endpoint `https://heario.ai/api/stripe/webhook`, events:
    `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`. Copy the signing secret into `STRIPE_WEBHOOK_SECRET`.
 3. Settings > Billing > **Customer portal**: enable it (cancellation, card updates, invoices).
-4. Consider enabling Stripe Tax for Irish/EU VAT.
+4. Decide how VAT is handled (prices shown including or excluding VAT) and consider enabling Stripe Tax. This isn't wired into checkout yet, so tell me which way you want it.
 
 ## 4. WhatsApp Cloud API (one Heario sender for all customers)
 1. developers.facebook.com: create a Business app with the WhatsApp product, add and verify the **Heario business number** (it can't also be on the normal WhatsApp app).
@@ -68,7 +71,7 @@ If WhatsApp delivery fails, the enquiry is emailed to the customer's login addre
 ## 6. Launch checklist
 - [ ] `npm run check-launch` passes (fills in your legal name, address, and hosting regions in the legal pages)
 - [ ] Have an Irish solicitor or data protection adviser review `privacy.html`, `terms.html` and `dpa.html`
-- [ ] Price on `index.html` matches Stripe
+- [ ] Check the price shows correctly in EUR, GBP and USD on the homepage (use the currency buttons) and in the dashboard
 - [ ] Switch Stripe, WhatsApp and Anthropic to live keys; confirm the template is approved
 - [ ] Add your own website to a test account and send yourself a real enquiry
 - [ ] Look at the old product pages: they're excluded from the deployment via `.vercelignore` but remain in git. Delete them whenever you like

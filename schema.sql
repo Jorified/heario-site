@@ -12,6 +12,9 @@ CREATE TABLE IF NOT EXISTS accounts (
   subscription_status     text NOT NULL DEFAULT 'none'
 );
 
+-- Added with multi-currency pricing. Re-run this file on an existing database to pick it up.
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS billing_currency text;
+
 CREATE TABLE IF NOT EXISTS bots (
   id                  uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   account_id          uuid NOT NULL UNIQUE REFERENCES accounts(id) ON DELETE CASCADE,

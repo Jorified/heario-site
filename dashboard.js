@@ -1,6 +1,7 @@
 (function () {
   var $ = function (id) { return document.getElementById(id); };
   var state = null;
+  var priceInfo = null;
 
   function api(method, path, body) {
     return fetch(path, {
@@ -61,10 +62,28 @@
     }
     box.appendChild(text);
     if (!p.paid) {
+      var buy = el('div'), cur = '';
+      buy.style.cssText = 'display:flex;gap:10px;align-items:center;flex-wrap:wrap';
+      if (priceInfo && priceInfo.prices) {
+        cur = HearioPricing.pick(priceInfo, p.billingCurrency);
+        buy.appendChild(el('span', priceInfo.prices[cur].display + ' / month', 'hint'));
+        var codes = Object.keys(priceInfo.prices);
+        if (!p.billingCurrency && codes.length > 1) {
+          var sel = el('select', undefined, 'cb-select');
+          sel.setAttribute('aria-label', 'Currency');
+          codes.forEach(function (c) {
+            var o = el('option', HearioPricing.labels[c] || c.toUpperCase());
+            o.value = c; o.selected = c === cur; sel.appendChild(o);
+          });
+          sel.onchange = function () { HearioPricing.remember(sel.value); renderPlan(me); };
+          buy.appendChild(sel);
+        }
+      }
       var sub = el('button', 'Subscribe', 'btn-primary');
       sub.type = 'button';
-      sub.onclick = function () { redirectTo('/api/billing/checkout', sub); };
-      box.appendChild(sub);
+      sub.onclick = function () { redirectTo('/api/billing/checkout', sub, cur ? { currency: cur } : {}); };
+      buy.appendChild(sub);
+      box.appendChild(buy);
       actions.appendChild(el('span', 'Subscribe any time to keep the chatbot running after your trial.', 'hint'));
     }
     if (p.hasBilling) {
@@ -77,9 +96,9 @@
     $('usage').textContent = me.usage.messages.toLocaleString() + ' of ' + me.usage.limit.toLocaleString() + ' chat messages used this month.';
   }
 
-  function redirectTo(path, btn) {
+  function redirectTo(path, btn, body) {
     btn.disabled = true;
-    api('POST', path, {}).then(function (d) { location.href = d.url; })
+    api('POST', path, body || {}).then(function (d) { location.href = d.url; })
       .catch(function (e) { btn.disabled = false; alert(e.message); });
   }
 
@@ -167,6 +186,7 @@
   });
 
   var q = location.search.match(/billing=(\w+)/);
+  HearioPricing.load().then(function (d) { priceInfo = d; if (state) renderPlan(state); });
   api('GET', '/api/me').then(function (me) {
     fill(me);
     loadLeads();

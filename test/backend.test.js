@@ -21,6 +21,11 @@ globalThis.__heario_query = async (text, params) => (await db.query(text, params
 
 let calls; // every outbound fetch the handlers make
 let claudeScript; // queue of fake Anthropic responses
+let stripePrice; // what the fake Stripe returns for the price lookup (null = Stripe fails)
+const PRICE = () => ({
+  id: "price_1", active: true, currency: "eur", unit_amount: 2900, recurring: { interval: "month", interval_count: 1 },
+  currency_options: { gbp: { unit_amount: 2500 }, usd: { unit_amount: 3100 } },
+});
 globalThis.fetch = async (url, init = {}) => {
   const body = init.body ? (init.headers?.["content-type"]?.includes("json") || init.headers?.["Content-Type"]?.includes("json") ? JSON.parse(init.body) : init.body) : null;
   calls.push({ url: String(url), body });
@@ -28,6 +33,7 @@ globalThis.fetch = async (url, init = {}) => {
   if (String(url).includes("brevo")) return ok({});
   if (String(url).includes("graph.facebook")) return ok({ messages: [{ id: "wamid" }] });
   if (String(url).includes("anthropic")) return ok(claudeScript.shift());
+  if (String(url).includes("api.stripe.com/v1/prices/")) return stripePrice ? ok(stripePrice) : new Response("{}", { status: 500 });
   if (String(url).includes("stripe.com")) return ok({ url: "https://checkout.stripe.com/c/test" });
   throw new Error("unexpected fetch " + url);
 };
@@ -45,10 +51,12 @@ const h = {
   webhook: await import("../api/stripe/webhook.js"),
   account: await import("../api/account.js"),
   cron: await import("../api/cron/cleanup.js"),
+  pricing: await import("../api/pricing.js"),
 };
 const { normalizeNumber } = await import("../lib/whatsapp.js");
 const { verifyStripeSignature } = await import("../lib/stripe.js");
 const { originAllowed, parseOrigins } = await import("../lib/bot.js");
+const { currencyForCountry, formatMoney, resetPriceCache } = await import("../lib/pricing.js");
 
 const SITE = "https://heario.ai";
 const req = (path, { method = "POST", body, cookie, origin = SITE } = {}) =>
@@ -76,7 +84,7 @@ const settings = (over = {}) => ({
 
 before(async () => { await db.exec(fs.readFileSync(new URL("../schema.sql", import.meta.url), "utf8")); });
 beforeEach(async () => {
-  calls = []; claudeScript = [];
+  calls = []; claudeScript = []; stripePrice = PRICE(); resetPriceCache();
   await db.exec("TRUNCATE accounts, login_tokens, rate_limits CASCADE");
 });
 
@@ -288,4 +296,93 @@ test("helpers: phone numbers, origins, Stripe signature", () => {
   assert.equal(originAllowed("https://foo.ie", "http://foo.ie"), false);
   assert.equal(originAllowed("", "https://foo.ie"), false);
   assert.equal(verifyStripeSignature("{}", null, "s"), false);
+});
+
+const priceFrom = (country) =>
+  h.pricing.GET(new Request(SITE + "/api/pricing", { headers: country ? { "x-vercel-ip-country": country } : {} })).then((r) => r.json());
+
+test("pricing: currency by country (UK pounds, US dollars, everyone else euro) with amounts straight from Stripe", async () => {
+  assert.equal(currencyForCountry("GB"), "gbp");
+  assert.equal(currencyForCountry("gb"), "gbp");
+  assert.equal(currencyForCountry("US"), "usd");
+  for (const c of ["IE", "DE", "FR", "PL", "SE", "CA", "AU", "", undefined]) assert.equal(currencyForCountry(c), "eur", String(c));
+
+  const ie = await priceFrom("IE");
+  assert.equal(ie.currency, "eur");
+  assert.deepEqual(Object.fromEntries(Object.entries(ie.prices).map(([k, v]) => [k, v.display])), { eur: "€29", gbp: "£25", usd: "$31" });
+  assert.equal((await priceFrom("GB")).currency, "gbp");
+  assert.equal((await priceFrom("US")).currency, "usd");
+  assert.equal((await priceFrom(null)).currency, "eur");
+  assert.equal(formatMoney(2950, "eur"), "€29.50");
+});
+
+test("pricing: only the currencies Stripe actually has a price for are offered", async () => {
+  stripePrice = { ...PRICE(), currency_options: { gbp: { unit_amount: 2500 }, cad: { unit_amount: 4000 } } };
+  const r = await priceFrom("US");
+  assert.deepEqual(Object.keys(r.prices).sort(), ["eur", "gbp"]);
+  assert.equal(r.currency, "eur", "US visitors fall back to the default when there is no dollar price");
+});
+
+test("pricing: if Stripe is unreachable or the price is wrong, the page gets prices:null instead of an error or a made-up number", async () => {
+  stripePrice = null;
+  const down = await priceFrom("IE");
+  assert.equal(down.prices, null);
+  assert.equal(down.currency, "eur");
+  resetPriceCache();
+  stripePrice = { ...PRICE(), recurring: { interval: "year", interval_count: 1 } };
+  assert.equal((await priceFrom("IE")).prices, null, "yearly price is rejected");
+  resetPriceCache();
+  const saved = process.env.STRIPE_PRICE_ID;
+  delete process.env.STRIPE_PRICE_ID;
+  assert.equal((await priceFrom("IE")).prices, null);
+  process.env.STRIPE_PRICE_ID = saved;
+});
+
+test("checkout: charges in the chosen currency, defaults by region, rejects unsupported currencies", async () => {
+  const { cookie } = await login();
+  const checkout = (body, country) =>
+    h.checkout.POST(new Request(SITE + "/api/billing/checkout", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: SITE, cookie, ...(country && { "x-vercel-ip-country": country }) },
+      body: JSON.stringify(body),
+    }));
+  const stripeBody = () => decodeURIComponent(calls.filter((c) => c.url.includes("/checkout/sessions")).at(-1).body);
+
+  calls = [];
+  assert.equal((await checkout({ currency: "gbp" })).status, 200);
+  assert.match(stripeBody(), /currency=gbp/);
+  assert.match(stripeBody(), /price_1/);
+
+  calls = [];
+  await checkout({ currency: "eur" });
+  assert.doesNotMatch(stripeBody(), /currency=/, "the price's own currency needs no override");
+
+  calls = [];
+  await checkout({}, "US");
+  assert.match(stripeBody(), /currency=usd/, "no choice made: region decides");
+
+  assert.equal((await checkout({ currency: "jpy" })).status, 400);
+  stripePrice = null; resetPriceCache();
+  assert.equal((await checkout({ currency: "gbp" })).status, 503, "no checkout when the price can't be confirmed");
+});
+
+test("checkout: a subscriber's currency is locked after their first payment (Stripe allows one currency per customer)", async () => {
+  const { cookie } = await login();
+  const id = (await db.query("SELECT id FROM accounts")).rows[0].id;
+  const event = JSON.stringify({ type: "checkout.session.completed", data: { object: { mode: "subscription", client_reference_id: id, customer: "cus_9", subscription: "sub_9", currency: "GBP" } } });
+  const t = Math.floor(Date.now() / 1000);
+  const sig = `t=${t},v1=${crypto.createHmac("sha256", "whsec_test").update(`${t}.${event}`).digest("hex")}`;
+  await h.webhook.POST(new Request(SITE + "/api/stripe/webhook", { method: "POST", headers: { "stripe-signature": sig }, body: event }));
+  assert.equal((await db.query("SELECT billing_currency c FROM accounts")).rows[0].c, "gbp");
+  const me = await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json();
+  assert.equal(me.plan.billingCurrency, "gbp");
+
+  // They cancel, then come back wanting dollars: still pounds.
+  await db.query("UPDATE accounts SET subscription_status = 'canceled'");
+  calls = [];
+  const res = await h.checkout.POST(req("/api/billing/checkout", { cookie, body: { currency: "usd" } }));
+  assert.equal(res.status, 200);
+  const sent = decodeURIComponent(calls.filter((c) => c.url.includes("/checkout/sessions")).at(-1).body);
+  assert.match(sent, /currency=gbp/);
+  assert.doesNotMatch(sent, /currency=usd/);
 });

@@ -135,7 +135,8 @@
     <h2 class="cb-h2">Simple pricing</h2>
     <p class="section-sub">One plan. Try it free first.</p>
     <div class="price-card">
-      <div class="amt">&euro;29<small> / month</small></div>
+      <div class="amt" id="priceAmt" aria-live="polite">Simple monthly pricing</div>
+      <div class="cur-switch" id="curSwitch" role="group" aria-label="Currency" hidden></div>
       <p class="hero-reassure" style="margin:8px 0 0">14-day free trial, no card needed</p>
       <ul>
         <li>AI chat assistant on your website</li>
@@ -220,5 +221,7 @@
   </div>
 </footer>
 
+<script src="pricing.js"></script>
+<script src="home.js"></script>
 </body>
 </html>
