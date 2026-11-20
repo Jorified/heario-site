@@ -13,7 +13,7 @@ Stripe --> /api/stripe/webhook --> marks accounts subscribed / cancelled
 ```
 
 Everything runs inside this one Vercel project: static pages plus serverless functions in `api/`.
-The old desktop-app backend (`api.heario.ai`) is not touched.
+The old desktop app is retired and no longer part of this site.
 
 ## 1. Create the database (Neon)
 1. In Vercel: Project > Storage > add **Neon Postgres** (or use your existing Neon project). Copy the connection string as `DATABASE_URL`.
@@ -72,7 +72,7 @@ If WhatsApp delivery fails, the enquiry is emailed to the customer's login addre
 - [ ] Switch Stripe, WhatsApp and Anthropic to live keys; confirm the template is approved
 - [ ] Add your own website to a test account and send yourself a real enquiry
 - [ ] Look at the old product pages: they're excluded from the deployment via `.vercelignore` but remain in git. Delete them whenever you like
-- [ ] If the old desktop-app subscribers still exist, decide how to wind them down. `manage.html` still lets them reach their billing portal via `api.heario.ai`
+- [ ] Retire the old desktop-app backend: switch off its Stripe webhook (or use a separate Stripe account for the chatbot) so chatbot payments can't trigger old licence-key emails
 
 ## Known limits
 - Chat transcripts aren't stored; only the enquiry. The widget keeps the current conversation in the visitor's session storage.
