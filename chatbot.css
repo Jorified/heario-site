@@ -822,3 +822,19 @@ button:disabled { opacity: .55; cursor: default; }
 }
 .lv-av.logo { background: #0b0e13; }
 .lv-av.logo svg { width: 78%; height: 78%; }
+
+/* NAV LOGO: same spinning orb + gradient wordmark as the footer */
+.nav .logo {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 22px; letter-spacing: -.4px;
+  background: linear-gradient(110deg, #fff 8%, var(--accent2) 52%, var(--accent3, #a78bfa) 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+}
+.nav .logo::before {
+  content: ""; flex: none; width: 18px; height: 18px; border-radius: 6px;
+  background: conic-gradient(from 140deg, var(--accent), var(--accent3, #a78bfa), var(--accent2), var(--accent));
+  box-shadow: 0 0 16px rgba(79,142,247,.65), inset 0 0 6px rgba(255,255,255,.45);
+  animation: flOrb 6s linear infinite;
+  -webkit-text-fill-color: initial;
+}
+@media (prefers-reduced-motion: reduce) { .nav .logo::before { animation: none; } }
