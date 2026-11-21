@@ -74,7 +74,7 @@
     dio.observe(demo);
   }
 
-  var groups = ['.eyebrow', '.cb-h2', '.section-sub', '.pain-card', '.pain-sum', '.install-note', '.cb-step', '.bento-card', '.price-card', '.faq-list details', '.cta-panel'];
+  var groups = ['.live-panel', '.eyebrow', '.cb-h2', '.section-sub', '.pain-card', '.pain-sum', '.install-note', '.cb-step', '.bento-card', '.price-card', '.faq-list details', '.cta-panel'];
   var els = [];
   groups.forEach(function (sel) {
     var list = document.querySelectorAll('.cb-section ' + sel + ', .final-cta ' + sel);
@@ -146,4 +146,19 @@
   }
   new IntersectionObserver(function (es) { pastHero = !es[0].isIntersecting; update(); }, { rootMargin: '-80px 0px 0px 0px' }).observe(hero);
   if (end) new IntersectionObserver(function (es) { atEnd = es[0].isIntersecting; update(); }).observe(end);
+})();
+
+// Heario's own chatbot on this page: reveal "Try it live" only once the chat has actually loaded.
+(function () {
+  function ready() {
+    document.body.classList.add('has-hw');
+    Array.prototype.forEach.call(document.querySelectorAll('#try, .try-link'), function (n) { n.hidden = false; });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-open-chat]'), function (b) {
+      b.addEventListener('click', function () { if (window.HearioWidget) window.HearioWidget.open(); });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-ask]'), function (b) {
+      b.addEventListener('click', function () { if (window.HearioWidget) window.HearioWidget.ask(b.getAttribute('data-ask')); });
+    });
+  }
+  window.addEventListener('heario:ready', ready, { once: true });
 })();

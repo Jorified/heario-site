@@ -4,7 +4,7 @@
 import { originAllowed } from "../lib/bot.js";
 import { one, query } from "../lib/db.js";
 import { sendEmail } from "../lib/email.js";
-import { monthKey, monthlyLimit, planState } from "../lib/plan.js";
+import { hourlyLimit, monthKey, monthlyLimit, planState } from "../lib/plan.js";
 import { clientIp, esc, isOwnOrigin, json, oneLine, rateLimit } from "../lib/util.js";
 import { sendEnquiryAlert } from "../lib/whatsapp.js";
 
@@ -145,7 +145,7 @@ export async function POST(request) {
 
   // Per-chatbot ceiling across ALL visitors. The embed key is public and the Origin header can be
   // forged by scripts, so this caps the damage if someone tries to burn a customer's quota.
-  const hourlyCap = Number(process.env.BOT_HOURLY_MESSAGES) || 300;
+  const hourlyCap = hourlyLimit(bot.embed_key);
   if (!(await rateLimit(`bot-hour:${bot.id}`, hourlyCap, 3600))) {
     return json({ reply: "This assistant is very busy right now. Please try again shortly, or contact the business directly.", notified: false }, 200, cors);
   }
@@ -163,7 +163,7 @@ export async function POST(request) {
      ON CONFLICT (bot_id, month) DO UPDATE SET messages = usage.messages + 1 RETURNING messages`,
     [bot.id, monthKey()]
   );
-  if (used.messages > monthlyLimit()) return json({ reply: unavailable, notified: false }, 200, cors);
+  if (used.messages > monthlyLimit(bot.embed_key)) return json({ reply: unavailable, notified: false }, 200, cors);
 
   try {
     let convo = messages;

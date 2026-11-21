@@ -17,7 +17,7 @@ export async function GET(request) {
   return json({
     email: account.email,
     plan: { ...planState(account), hasBilling: !!account.stripe_customer_id, billingCurrency: account.billing_currency || null },
-    usage: { messages: usage?.messages ?? 0, limit: monthlyLimit() },
+    usage: { messages: usage?.messages ?? 0, limit: monthlyLimit(bot.embed_key) },
     bot: botView(bot),
   });
 }

@@ -6,7 +6,7 @@ import { JSDOM } from "jsdom";
 
 const code = fs.readFileSync(new URL("../widget.js", import.meta.url), "utf8");
 
-function boot({ config, chatReply }) {
+function boot({ config, chatReply, data = {} }) {
   const dom = new JSDOM("<!doctype html><body></body>", { url: "https://murphyplumbing.ie/", pretendToBeVisual: true });
   const { window } = dom;
   const sent = [];
@@ -15,7 +15,7 @@ function boot({ config, chatReply }) {
     if (url.includes("widget-config")) return new Response(JSON.stringify(config.body), { status: config.status });
     return new Response(JSON.stringify(chatReply.body), { status: chatReply.status });
   };
-  const script = { dataset: { key: "hb_" + "a".repeat(24) }, src: "https://heario.ai/widget.js" };
+  const script = { dataset: { key: "hb_" + "a".repeat(24), ...data }, src: "https://heario.ai/widget.js" };
   const doc = new Proxy(window.document, {
     get: (t, p) => (p === "currentScript" ? script : typeof t[p] === "function" ? t[p].bind(t) : t[p]),
   });
@@ -70,4 +70,72 @@ test("failed chat call shows a friendly error and keeps message order valid", as
   await t.flush();
   const second = JSON.parse(t.sent.filter((s) => s.url.endsWith("/api/chat")).at(-1).init.body);
   assert.deepEqual(second.messages.map((m) => m.role), ["user"], "failed turn was dropped");
+});
+
+test("page API: open() shows the chat, ask() sends a question, and ready fires", async () => {
+  let ready = false;
+  const t = boot({
+    config: { status: 200, body: { title: "Chat with Heario", greeting: "Hi", color: "#4f8ef7" } },
+    chatReply: { status: 200, body: { reply: "It costs 19.99 a month.", notified: false } },
+  });
+  t.window.addEventListener("heario:ready", () => (ready = true));
+  await t.flush();
+  const d = t.window.document;
+  assert.equal(ready || !!d.querySelector(".hw-btn"), true);
+  assert.equal(d.querySelector(".hw-box").classList.contains("open"), false);
+  t.window.HearioWidget.open();
+  assert.equal(d.querySelector(".hw-box").classList.contains("open"), true);
+  assert.equal(d.querySelector(".hw-btn").getAttribute("aria-expanded"), "true");
+  t.window.HearioWidget.ask("How much is it?");
+  assert.ok(d.querySelector(".hw-typing"), "typing indicator while waiting");
+  await t.flush();
+  assert.equal(d.querySelector(".hw-typing"), null, "typing indicator replaced by the reply");
+  const bots = [...d.querySelectorAll(".hw-m.bot")];
+  assert.equal(bots.at(-1).textContent, "It costs 19.99 a month.");
+  const call = JSON.parse(t.sent.find((x) => x.url.endsWith("/api/chat")).init.body);
+  assert.deepEqual(call.messages, [{ role: "user", content: "How much is it?" }]);
+  assert.equal(d.querySelector(".hw-av").textContent.charAt(0), "H", "avatar uses the business initial");
+});
+
+test("shows a confirmation when the owner was notified", async () => {
+  const t = boot({
+    config: { status: 200, body: { title: "T", greeting: "G", color: "#112233" } },
+    chatReply: { status: 200, body: { reply: "Thanks, passed on.", notified: true } },
+  });
+  await t.flush();
+  t.window.HearioWidget.ask("Ann, 087 111 2222, boiler");
+  await t.flush();
+  assert.match(t.window.document.querySelector(".hw-note").textContent, /Enquiry sent/);
+});
+
+test("dark theme and teaser are opt-in via data attributes", async () => {
+  const plain = boot({ config: { status: 200, body: { title: "T", greeting: "G", color: "#112233" } }, chatReply: { status: 200, body: {} } });
+  await plain.flush();
+  assert.equal(plain.window.document.querySelector(".hw-teaser"), null);
+  assert.match(plain.window.document.head.querySelector("style").textContent, /#ffffff/);
+
+  const t = boot({
+    config: { status: 200, body: { title: "T", greeting: "G", color: "#112233" } },
+    chatReply: { status: 200, body: {} },
+    data: { theme: "dark", teaser: "Hi there|Ask me anything" },
+  });
+  await t.flush();
+  const d = t.window.document;
+  assert.match(d.head.querySelector("style").textContent, /#0f141d/);
+  assert.equal(d.querySelector(".hw-teaser b").textContent, "Hi there");
+  assert.equal(d.querySelector(".hw-teaser span").textContent, "Ask me anything");
+  d.querySelector(".hw-teaser").click();
+  assert.equal(d.querySelector(".hw-box").classList.contains("open"), true, "clicking the teaser opens the chat");
+});
+
+test("data-avatar shows a logo in the header, and ignores unsafe values", async () => {
+  const ok = boot({ config: { status: 200, body: { title: "Chat with Heario", greeting: "G", color: "#4f8ef7" } }, chatReply: { status: 200, body: {} }, data: { avatar: "/favicon.svg" } });
+  await ok.flush();
+  assert.equal(ok.window.document.querySelector(".hw-av img").getAttribute("src"), "/favicon.svg");
+
+  for (const bad of ["javascript:alert(1)", "//evil.example/x.png", "http://insecure.example/x.png", 'x" onerror="alert(1)']) {
+    const t = boot({ config: { status: 200, body: { title: "T", greeting: "G", color: "#4f8ef7" } }, chatReply: { status: 200, body: {} }, data: { avatar: bad } });
+    await t.flush();
+    assert.equal(t.window.document.querySelector(".hw-av img"), null, bad);
+  }
 });

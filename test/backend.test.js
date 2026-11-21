@@ -465,3 +465,20 @@ test("setup fee: no add-on when unset, invalid, or missing the chosen currency, 
   assert.equal((await checkout({ currency: "gbp" })).status, 200);
   assert.doesNotMatch(sent(), /optional_items/, "no sterling price for the fee, so it isn't offered in sterling");
 });
+
+test("Heario's own demo bot gets bigger limits than a customer plan", async () => {
+  const { hourlyLimit, isHouseBot, monthlyLimit } = await import("../lib/plan.js");
+  const house = "hb_f307f807bdebb7339ec7ca27";
+  const customer = "hb_" + "c".repeat(24);
+  assert.equal(isHouseBot(house), true);
+  assert.equal(isHouseBot(customer), false);
+  assert.equal(monthlyLimit(customer), 3000);
+  assert.ok(monthlyLimit(house) > monthlyLimit(customer));
+  assert.ok(hourlyLimit(house) > hourlyLimit(customer));
+  process.env.HOUSE_EMBED_KEYS = "";
+  try {
+    assert.equal(isHouseBot(house), false, "can be switched off");
+  } finally {
+    delete process.env.HOUSE_EMBED_KEYS;
+  }
+});
