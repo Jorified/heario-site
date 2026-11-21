@@ -243,8 +243,11 @@ test("widget config is origin-checked", async () => {
   const { cookie } = await login();
   await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings() }));
   const key = (await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json()).bot.embed_key;
-  const get = (origin) => h.widget.GET(new Request(`${SITE}/api/widget-config?key=${key}`, { headers: origin ? { origin } : {} }));
+  const get = (origin, extra = {}) => h.widget.GET(new Request(`${SITE}/api/widget-config?key=${key}`, { headers: { ...(origin ? { origin } : {}), ...extra } }));
   assert.equal((await get("https://evil.com")).status, 403);
+  assert.equal((await get(null)).status, 403, "no origin and not same-origin is refused");
+  assert.equal((await get(null, { "sec-fetch-site": "same-origin" })).status, 200, "same-origin GET without Origin header works");
+  assert.equal((await get(null, { "sec-fetch-site": "cross-site" })).status, 403);
   const cfg = await (await get("https://murphyplumbing.ie")).json();
   assert.equal(cfg.title, "Chat with Murphy Plumbing");
   assert.match(cfg.greeting, /AI assistant/);

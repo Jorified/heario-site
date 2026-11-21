@@ -4,7 +4,10 @@ import { one } from "../lib/db.js";
 import { isOwnOrigin, json } from "../lib/util.js";
 
 export async function GET(request) {
-  const origin = request.headers.get("origin");
+  // Browsers omit the Origin header on same-origin GETs (e.g. the widget on heario.ai itself),
+  // so fall back to the browser-set Sec-Fetch-Site header, which page scripts cannot forge.
+  const sameSite = request.headers.get("sec-fetch-site") === "same-origin";
+  const origin = request.headers.get("origin") || (sameSite ? new URL(request.url).origin : null);
   const key = new URL(request.url).searchParams.get("key") ?? "";
   const bot = /^hb_[a-f0-9]{24}$/.test(key) ? await one("SELECT * FROM bots WHERE embed_key = $1", [key]) : null;
   if (!bot) return json({ error: "Unknown chatbot." }, 404);
