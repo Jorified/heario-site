@@ -940,3 +940,14 @@ button:disabled { opacity: .55; cursor: default; }
 .leads .lead-status .lead-alert { display: inline-block; margin-top: 8px; }
 .leads tr.done td:last-child .lead-alert { opacity: .62; }
 @media (max-width: 640px) { .leads .lead-status .lead-stage { display: inline-block; } .leads .lead-status .lead-alert { margin: 0 0 0 8px; vertical-align: middle; } }
+
+/* Questions it couldn't answer */
+.q-count { display:inline-block; min-width:22px; padding:1px 8px; margin-left:6px; border-radius:999px; background:var(--accent, #4f8ef7); color:#fff; font-size:.75em; vertical-align:middle; text-align:center; -webkit-text-fill-color:#fff; background-clip:border-box; -webkit-background-clip:border-box; font-weight:600; }
+.q-count:empty { display:none; }
+.q-list { list-style:none; margin:12px 0 0; padding:0; display:grid; gap:10px; }
+.q-item { border:1px solid var(--border); border-radius:12px; padding:14px 16px; }
+.q-text { font-weight:600; overflow-wrap:anywhere; }
+.q-meta { font-size:.85em; color:var(--muted); margin:4px 0 10px; }
+.q-actions { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.q-actions[hidden], .q-form[hidden] { display:none; }
+.q-answer { min-height:80px; margin-bottom:8px; }

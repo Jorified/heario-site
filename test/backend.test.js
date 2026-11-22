@@ -985,3 +985,86 @@ test("spreadsheet export: the owner's enquiries only, Excel-friendly, formulas d
   const theirs = await (await h.leads.GET(req("/api/leads?format=csv", { method: "GET", cookie: other.cookie, origin: null }))).text();
   assert.equal(theirs.split("\r\n").filter(Boolean).length, 1, "another account sees only the header row");
 });
+
+// A chat turn where the AI logs a question it couldn't answer; returns { cookie, key, reply }.
+async function askUnknown(question, { cookie, key } = {}) {
+  if (!cookie) {
+    ({ cookie } = await login());
+    await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings() }));
+    key = (await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json()).bot.embed_key;
+  }
+  calls = [];
+  claudeScript = [
+    { stop_reason: "tool_use", content: [{ type: "tool_use", id: "q1", name: "log_unanswered_question", input: { question } }] },
+    { stop_reason: "end_turn", content: [{ type: "text", text: "I'm not sure, but I can pass that on." }] },
+  ];
+  const res = await h.chat.POST(req("/api/chat", { body: { key, messages: [{ role: "user", content: question }] }, origin: "https://murphyplumbing.ie" }));
+  return { cookie, key, reply: (await res.json()).reply };
+}
+const openQuestions = async (cookie) => (await (await h.botRoute.GET(req("/api/bot/questions", { method: "GET", cookie, origin: null }))).json()).questions;
+
+test("unanswered questions: recorded from the chat, personal details scrubbed, repeats counted, the visitor still gets a reply", async () => {
+  const a = await askUnknown("Do you work on Sundays?");
+  assert.equal(a.reply, "I'm not sure, but I can pass that on.");
+  const sys = calls.find((c) => c.url.includes("anthropic")).body;
+  assert.ok(sys.tools.some((t) => t.name === "log_unanswered_question"));
+  assert.match(sys.system, /log_unanswered_question/);
+  await askUnknown("do you work on sundays?", a);
+  await askUnknown("Can Ann at ann@x.ie or 087 123 4567 get a discount for 2 jobs?", a);
+  const qs = await openQuestions(a.cookie);
+  assert.equal(qs.length, 2);
+  assert.equal(qs[0].question, "Do you work on Sundays?");
+  assert.equal(qs[0].times, 2);
+  assert.equal(qs[1].question, "Can Ann at [email] or [number] get a discount for 2 jobs?");
+  const other = await login("someone-else@example.com");
+  assert.equal((await openQuestions(other.cookie)).length, 0, "another account sees none");
+  assert.equal((await h.botRoute.GET(req("/api/bot/questions", { method: "GET", origin: null }))).status, 401);
+});
+
+test("unanswered questions: limited per visitor so the list can't be flooded", async () => {
+  let a = null;
+  for (let i = 0; i < 8; i++) a = await askUnknown("Question number " + "abcdefgh"[i] + "?", a || undefined);
+  assert.equal((await openQuestions(a.cookie)).length, 5);
+});
+
+test("Add an answer appends Q/A to the business information, goes live in the prompt, and can't be done twice or by others", async () => {
+  const a = await askUnknown("Do you work on Sundays?");
+  const [q] = await openQuestions(a.cookie);
+  const post = (action, body, cookie = a.cookie) => h.botRoute.POST(req("/api/bot/" + action, { body, cookie }));
+  assert.equal((await post("answer-question", { id: q.id, answer: "  " })).status, 400);
+  assert.equal((await post("answer-question", { id: q.id, answer: "x".repeat(1001) })).status, 400);
+  const other = await login("someone-else@example.com");
+  assert.equal((await post("answer-question", { id: q.id, answer: "Yes" }, other.cookie)).status, 404);
+  const res = await (await post("answer-question", { id: q.id, answer: "Yes, 10am to 4pm, at the normal rate." })).json();
+  assert.equal(res.added, "Q: Do you work on Sundays?\nA: Yes, 10am to 4pm, at the normal rate.");
+  assert.equal(res.knowledge, "We fix boilers. Call-out is 80 euro.\n\n" + res.added);
+  assert.equal((await post("answer-question", { id: q.id, answer: "Again" })).status, 404, "double click doesn't add it twice");
+  assert.equal((await openQuestions(a.cookie)).length, 0);
+  await askUnknown("Anything else?", a);
+  assert.ok(calls.find((c) => c.url.includes("anthropic")).body.system.includes("A: Yes, 10am to 4pm"), "the assistant now knows");
+  assert.equal((await h.botRoute.POST(req("/api/bot/answer-question", { body: { id: q.id, answer: "x" }, cookie: a.cookie, origin: "https://evil.com" }))).status, 403);
+});
+
+test("Add an answer refuses when the business information is full, and leaves the question open; dismiss hides it", async () => {
+  const a = await askUnknown("Do you do gas certs?");
+  await db.query("UPDATE bots SET knowledge = $1", ["k".repeat(7990)]);
+  const [q] = await openQuestions(a.cookie);
+  const r = await h.botRoute.POST(req("/api/bot/answer-question", { body: { id: q.id, answer: "Yes we do, 120 euro." }, cookie: a.cookie }));
+  assert.equal(r.status, 400);
+  assert.match((await r.json()).error, /full/);
+  assert.equal((await openQuestions(a.cookie)).length, 1, "still open");
+  assert.equal((await db.query("SELECT length(knowledge) n FROM bots")).rows[0].n, 7990);
+  assert.equal((await h.botRoute.POST(req("/api/bot/dismiss-question", { body: { id: q.id }, cookie: a.cookie }))).status, 200);
+  assert.equal((await openQuestions(a.cookie)).length, 0);
+  await askUnknown("Do you do gas certs?", a);
+  assert.equal((await openQuestions(a.cookie)).length, 1, "asked again later -> shows again");
+});
+
+test("cron cleanup removes old questions too", async () => {
+  process.env.CRON_SECRET = "s3cret";
+  const a = await askUnknown("Old question?");
+  await db.query("UPDATE questions SET last_asked_at = now() - interval '100 days'");
+  const res = await (await h.cron.GET(new Request(SITE + "/api/cron/cleanup", { headers: { authorization: "Bearer s3cret" } }))).json();
+  assert.equal(res.questions, 1);
+  assert.equal((await openQuestions(a.cookie)).length, 0);
+});

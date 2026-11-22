@@ -1,6 +1,7 @@
 // PUT /api/bot -> save the customer's chatbot settings.
 // POST /api/bot/test-whatsapp -> send a test alert; POST /api/bot/import-site -> draft info from the website.
-// (Both reach this file via a vercel.json rewrite.)
+// GET /api/bot/questions, POST /api/bot/answer-question and /api/bot/dismiss-question -> questions it couldn't answer.
+// (All reach this file via a vercel.json rewrite.)
 import { botView, validateBotInput } from "../lib/bot.js";
 import { one } from "../lib/db.js";
 import { guard } from "../lib/guard.js";
@@ -8,6 +9,9 @@ import { json } from "../lib/util.js";
 import { dispatch } from "../lib/route.js";
 import { POST as testWhatsapp } from "../lib/handlers/bot-test-whatsapp.js";
 import { POST as importSite } from "../lib/handlers/bot-import-site.js";
+import { answer as answerQuestion, dismiss as dismissQuestion, list as listQuestions } from "../lib/handlers/bot-questions.js";
+
+export const GET = dispatch({ questions: listQuestions });
 
 export async function PUT(request) {
   const g = await guard(request, { mutating: true });
@@ -39,6 +43,6 @@ export async function PUT(request) {
   return json({ ok: true, bot: botView(saved) });
 }
 
-const post = dispatch({ "test-whatsapp": testWhatsapp, "import-site": importSite });
+const post = dispatch({ "test-whatsapp": testWhatsapp, "import-site": importSite, "answer-question": answerQuestion, "dismiss-question": dismissQuestion });
 // Old rewrite sent /api/bot/test-whatsapp here with no action; keep that working.
 export const POST = (request) => (new URL(request.url).searchParams.get("action") || /\/api\/bot\/[a-z-]+$/.test(new URL(request.url).pathname) ? post(request) : testWhatsapp(request));

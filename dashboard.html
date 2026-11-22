@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="style.css?v=30" />
-  <link rel="stylesheet" href="chatbot.css?v=14" />
+  <link rel="stylesheet" href="chatbot.css?v=15" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -107,6 +107,13 @@
   </section>
 
   <section class="panel">
+    <h2>Questions it couldn't answer <span class="q-count" id="qcount"></span></h2>
+    <p class="hint">When a visitor asks something your business information doesn't cover, it shows up here. Add an answer and the assistant will use it straight away.</p>
+    <span id="qmsg" class="cb-msg" role="status" aria-live="polite" style="margin:0"></span>
+    <div id="questions"><p class="hint">Loading…</p></div>
+  </section>
+
+  <section class="panel">
     <h2>Plan &amp; usage</h2>
     <p class="hint" id="usage"></p>
     <div class="actions" id="planactions"></div>
@@ -114,6 +121,6 @@
   </section>
 </main>
 <script src="pricing.js"></script>
-<script src="dashboard.js?v=6"></script>
+<script src="dashboard.js?v=7"></script>
 </body>
 </html>

@@ -206,6 +206,71 @@
   }
   $('leadexport').onclick = exportLeads;
 
+  var questionsData = [];
+  function renderQuestions() {
+    var box = $('questions');
+    box.textContent = '';
+    $('qcount').textContent = questionsData.length ? String(questionsData.length) : '';
+    if (!questionsData.length) { box.appendChild(el('p', 'Nothing here yet. Questions the assistant couldn\u2019t answer will appear here.', 'hint')); return; }
+    var list = el('ul', undefined, 'q-list');
+    questionsData.forEach(function (q) {
+      var li = el('li', undefined, 'q-item');
+      li.appendChild(el('div', q.question, 'q-text'));
+      var last = new Date(q.last_asked_at);
+      li.appendChild(el('div', (q.times > 1 ? 'Asked ' + q.times + ' times, last on ' : 'Asked on ') + last.toLocaleDateString(undefined, { day: 'numeric', month: 'short' }), 'q-meta'));
+      var row = el('div', undefined, 'q-actions');
+      var add = el('button', 'Add an answer', 'btn-primary q-add'), skip = el('button', 'Not relevant', 'btn-ghost');
+      add.type = skip.type = 'button';
+      row.appendChild(add); row.appendChild(skip);
+      li.appendChild(row);
+      var form = el('div', undefined, 'q-form');
+      form.hidden = true;
+      var ta = el('textarea', undefined, 'cb-textarea q-answer');
+      ta.maxLength = 1000; ta.rows = 3; ta.placeholder = 'Write the answer as you\u2019d tell a customer.';
+      ta.setAttribute('aria-label', 'Answer to: ' + q.question);
+      var save = el('button', 'Save answer', 'btn-primary'), cancel = el('button', 'Cancel', 'btn-ghost');
+      save.type = cancel.type = 'button';
+      var fr = el('div', undefined, 'q-actions');
+      fr.appendChild(save); fr.appendChild(cancel);
+      form.appendChild(ta); form.appendChild(fr);
+      li.appendChild(form);
+      add.onclick = function () { row.hidden = true; form.hidden = false; ta.focus(); };
+      cancel.onclick = function () { form.hidden = true; row.hidden = false; };
+      save.onclick = function () {
+        if (!ta.value.trim()) { ta.focus(); return; }
+        save.disabled = true;
+        api('POST', '/api/bot/answer-question', { id: q.id, answer: ta.value }).then(function (d) {
+          // Keep the form in step, without losing anything typed in Business information but not saved yet.
+          var k = $('knowledge');
+          if (k.value === state.bot.knowledge) k.value = d.knowledge;
+          else k.value = k.value.replace(/\s+$/, '') + (k.value.trim() ? '\n\n' : '') + d.added;
+          state.bot.knowledge = d.knowledge;
+          questionsData = questionsData.filter(function (x) { return x.id !== q.id; });
+          renderQuestions();
+          say('qmsg', 'Added to your business information. The assistant will use it from now on.', 'ok');
+        }).catch(function (e) { save.disabled = false; say('qmsg', e.message, 'err'); });
+      };
+      skip.onclick = function () {
+        skip.disabled = true;
+        api('POST', '/api/bot/dismiss-question', { id: q.id }).then(function () {
+          questionsData = questionsData.filter(function (x) { return x.id !== q.id; });
+          renderQuestions();
+          say('qmsg', '');
+        }).catch(function (e) { skip.disabled = false; say('qmsg', e.message, 'err'); });
+      };
+      list.appendChild(li);
+    });
+    box.appendChild(list);
+  }
+
+  function loadQuestions() {
+    api('GET', '/api/bot/questions').then(function (d) { questionsData = d.questions; renderQuestions(); }).catch(function () {
+      var box = $('questions');
+      box.textContent = '';
+      box.appendChild(el('p', "We couldn't load these just now. Refresh the page to try again.", 'hint'));
+    });
+  }
+
   function loadLeads() {
     api('GET', '/api/leads').then(function (d) {
       leadsData = d.leads.map(function (l) { l.stage = l.stage || 'new'; return l; });
@@ -325,6 +390,7 @@
   api('GET', '/api/me').then(function (me) {
     fill(me);
     loadLeads();
+    loadQuestions();
     if (q && q[1] === 'success') say('savemsg', 'Thanks! Your subscription is being activated. Refresh in a moment if it still shows as a trial.', 'ok');
   }).catch(function () {});
 })();

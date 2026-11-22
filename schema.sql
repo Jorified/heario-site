@@ -75,3 +75,15 @@ CREATE TABLE IF NOT EXISTS rate_limits (
   window_start timestamptz NOT NULL,
   n            integer NOT NULL
 );
+
+-- Questions the assistant couldn't answer, shown in the dashboard so the owner can add an answer. Safe to re-run.
+CREATE TABLE IF NOT EXISTS questions (
+  id            bigserial PRIMARY KEY,
+  bot_id        uuid NOT NULL REFERENCES bots(id) ON DELETE CASCADE,
+  question      text NOT NULL,
+  times         integer NOT NULL DEFAULT 1,
+  status        text NOT NULL DEFAULT 'open',
+  created_at    timestamptz NOT NULL DEFAULT now(),
+  last_asked_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS questions_open_unique ON questions (bot_id, lower(question)) WHERE status = 'open';
