@@ -852,3 +852,33 @@ button:disabled { opacity: .55; cursor: default; }
 .import-draft textarea { min-height: 260px; }
 .import-draft small { color: var(--muted); font-size: 12px; word-break: break-word; }
 @media (max-width: 560px) { .import-row { flex-direction: column; } }
+
+/* Feature card: fills itself in from your website */
+.bento-fill { display: grid; grid-template-columns: 1fr 1.15fr; gap: 28px; align-items: center; }
+.bento-fill .bf-copy h3 { font-size: 22px; }
+.bento-fill .bf-copy p { max-width: 44ch; }
+.bf-demo { display: grid; gap: 12px; min-width: 0; }
+.bf-url {
+  display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 14px;
+  border: 1px solid rgba(127,209,255,.28); background: rgba(8,12,22,.55); border-radius: 12px;
+  font-family: var(--font-mono); font-size: 13px; color: #dbeafe;
+}
+.bf-url svg { width: 16px; height: 16px; flex: none; color: var(--accent2); }
+.bf-addr { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bf-btn {
+  flex: none; padding: 7px 12px; border-radius: 9px; font-family: var(--font-display); font-size: 12.5px; font-weight: 600;
+  color: #fff; background: linear-gradient(120deg, var(--accent), #6aa6ff); box-shadow: 0 6px 16px rgba(79,142,247,.35);
+}
+.bf-draft { display: grid; gap: 7px; padding: 14px; border-radius: 12px; background: rgba(8,12,22,.5); border: 1px dashed rgba(127,209,255,.28); }
+.bf-line { display: grid; grid-template-columns: 86px 1fr; gap: 10px; font-size: 13px; line-height: 1.45; }
+.bf-line b { color: var(--accent2); font-weight: 600; }
+.bf-line span { color: #cfd8e6; min-width: 0; }
+.bf-check { display: flex; align-items: center; gap: 8px; margin-top: 2px; font-size: 12.5px; color: #8fe0a8; font-weight: 600; }
+.bf-check svg { width: 15px; height: 15px; flex: none; }
+.bento-fill.reveal .bf-line, .bento-fill.reveal .bf-check { opacity: 0; transform: translateY(8px); }
+.bento-fill.in .bf-line { animation: bfIn .5s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(.5s + var(--i) * .35s); }
+.bento-fill.in .bf-check { animation: bfIn .5s cubic-bezier(.2,.8,.2,1) 2.1s forwards; }
+@keyframes bfIn { to { opacity: 1; transform: none; } }
+@media (max-width: 860px) { .bento-fill { grid-template-columns: 1fr; gap: 20px; } }
+@media (max-width: 420px) { .bf-line { grid-template-columns: 1fr; gap: 0; } .bf-btn { display: none; } }
+@media (prefers-reduced-motion: reduce) { .bento-fill.reveal .bf-line, .bento-fill.reveal .bf-check { opacity: 1; transform: none; animation: none !important; } }
