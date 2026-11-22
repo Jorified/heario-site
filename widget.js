@@ -99,7 +99,7 @@
       ".hw-send{flex:0 0 38px;height:38px;border:0;border-radius:12px;background:linear-gradient(140deg," + C + "," + C2 + ");color:#fff;cursor:pointer;display:grid;place-items:center;padding:0}" +
       ".hw-send:disabled{opacity:.5;cursor:default}" +
       ".hw-foot{font-size:11px;text-align:center;color:" + T.muted + ";padding:6px;background:" + T.input + "}.hw-foot a{color:inherit}" +
-      "@media (max-width:480px){.hw-box{right:0;bottom:0;width:100%;max-width:none;height:100%;max-height:none;border-radius:0;border:0}.hw-btn.open{display:none}.hw-teaser{right:16px;bottom:90px}}" +
+      "@media (max-width:480px){.hw-box{right:0;bottom:0;width:100%;max-width:none;height:100%;max-height:none;border-radius:0;border:0}.hw-btn.open{display:none}.hw-teaser{right:16px;bottom:90px}.hw-in{font-size:16px}}" +
       "@media (prefers-reduced-motion:reduce){.hw-btn::before,.hw-box.open,.hw-m,.hw-typing i{animation:none}}";
 
     var btn = el("button", "hw-btn");

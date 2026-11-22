@@ -882,3 +882,27 @@ button:disabled { opacity: .55; cursor: default; }
 @media (max-width: 860px) { .bento-fill { grid-template-columns: 1fr; gap: 20px; } }
 @media (max-width: 420px) { .bf-line { grid-template-columns: 1fr; gap: 0; } .bf-btn { display: none; } }
 @media (prefers-reduced-motion: reduce) { .bento-fill.reveal .bf-line, .bento-fill.reveal .bf-check { opacity: 1; transform: none; animation: none !important; } }
+
+/* Phone header: keep "Log in" and the button on one line each */
+@media (max-width: 480px) {
+  .nav-inner { padding: 0 16px; gap: 12px; }
+  .nav .logo { font-size: 19px; gap: 8px; }
+  .nav .logo::before { width: 16px; height: 16px; border-radius: 5px; }
+  .nav-meta { gap: 14px; }
+  .nav-meta a { white-space: nowrap; }
+  .nav-meta .nav-cta { padding: 7px 13px; font-size: 14px; }
+}
+@media (max-width: 359px) { .nav-meta a.lang { display: none; } }
+
+/* Final banner: keep floating bubbles at the panel edges, clear of the headline */
+.cta-panel .float-bubbles i:nth-child(1) { left: -12px; }
+.cta-panel .float-bubbles i:nth-child(2) { left: 4px; }
+.cta-panel .float-bubbles i:nth-child(6) { left: -6px; }
+.cta-panel .float-bubbles i:nth-child(3) { left: auto; right: -10px; }
+.cta-panel .float-bubbles i:nth-child(4) { left: auto; right: 6px; }
+.cta-panel .float-bubbles i:nth-child(5) { left: auto; right: -4px; }
+
+/* Dashboard */
+.import-draft[hidden] { display: none; }
+.dash .row2 { align-items: start; }
+#importmsg:empty { display: none; }

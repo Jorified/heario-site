@@ -135,7 +135,11 @@
       });
       t.appendChild(body);
       box.appendChild(t);
-    }).catch(function () {});
+    }).catch(function () {
+      var box = $('leads');
+      box.textContent = '';
+      box.appendChild(el('p', "We couldn't load your enquiries just now. Refresh the page to try again.", 'hint'));
+    });
   }
 
   $('form').addEventListener('submit', function (ev) {
