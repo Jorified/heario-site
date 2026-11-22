@@ -1068,3 +1068,12 @@ test("cron cleanup removes old questions too", async () => {
   assert.equal(res.questions, 1);
   assert.equal((await openQuestions(a.cookie)).length, 0);
 });
+
+test("Add an answer: the owner can tidy the question wording first; edited wording is still scrubbed", async () => {
+  const a = await askUnknown("do u do sundays??");
+  const [q] = await openQuestions(a.cookie);
+  const post = (body) => h.botRoute.POST(req("/api/bot/answer-question", { body: { id: q.id, ...body }, cookie: a.cookie }));
+  assert.equal((await post({ question: "  ", answer: "Yes" })).status, 400);
+  const res = await (await post({ question: "Do you work on Sundays? Call 087 123 4567", answer: "Yes, 10am to 4pm." })).json();
+  assert.equal(res.added, "Q: Do you work on Sundays? Call [number]\nA: Yes, 10am to 4pm.");
+});

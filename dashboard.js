@@ -225,21 +225,26 @@
       li.appendChild(row);
       var form = el('div', undefined, 'q-form');
       form.hidden = true;
+      var qi = el('input', undefined, 'cb-input q-edit');
+      qi.type = 'text'; qi.maxLength = 200; qi.value = q.question;
+      var ql = el('label', 'Question (tidy the wording if you like)', 'q-label'), al = el('label', 'Your answer', 'q-label');
+      qi.id = 'qq' + q.id; ql.htmlFor = qi.id;
       var ta = el('textarea', undefined, 'cb-textarea q-answer');
       ta.maxLength = 1000; ta.rows = 3; ta.placeholder = 'Write the answer as you\u2019d tell a customer.';
-      ta.setAttribute('aria-label', 'Answer to: ' + q.question);
+      ta.id = 'qa' + q.id; al.htmlFor = ta.id;
       var save = el('button', 'Save answer', 'btn-primary'), cancel = el('button', 'Cancel', 'btn-ghost');
       save.type = cancel.type = 'button';
       var fr = el('div', undefined, 'q-actions');
       fr.appendChild(save); fr.appendChild(cancel);
-      form.appendChild(ta); form.appendChild(fr);
+      form.appendChild(ql); form.appendChild(qi); form.appendChild(al); form.appendChild(ta); form.appendChild(fr);
       li.appendChild(form);
       add.onclick = function () { row.hidden = true; form.hidden = false; ta.focus(); };
       cancel.onclick = function () { form.hidden = true; row.hidden = false; };
       save.onclick = function () {
+        if (qi.value.trim().length < 4) { qi.focus(); return; }
         if (!ta.value.trim()) { ta.focus(); return; }
         save.disabled = true;
-        api('POST', '/api/bot/answer-question', { id: q.id, answer: ta.value }).then(function (d) {
+        api('POST', '/api/bot/answer-question', { id: q.id, question: qi.value, answer: ta.value }).then(function (d) {
           // Keep the form in step, without losing anything typed in Business information but not saved yet.
           var k = $('knowledge');
           if (k.value === state.bot.knowledge) k.value = d.knowledge;
