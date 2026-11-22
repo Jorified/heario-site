@@ -953,6 +953,18 @@ test("enquiry status and notes: owner can update their own, not anyone else's; b
   assert.equal((await db.query("SELECT stage FROM leads")).rows[0].stage, "won");
 });
 
+test("spreadsheet export uses the owner's time zone, falls back to UTC, and refuses without login", async () => {
+  const { cookie } = await enquire({ name: "Zone", contact: "087 111 2222", enquiry: "Time zone check" });
+  await db.query("UPDATE leads SET created_at = '2026-07-01T12:30:00Z'");
+  const get = async (q) => (await h.leads.GET(req("/api/leads?format=csv" + q, { method: "GET", cookie, origin: null }))).text();
+  const dub = (await get("&tz=Europe/Dublin")).split("\r\n");
+  assert.ok(dub[0].includes('"Date (Europe/Dublin)"'));
+  assert.ok(dub[1].startsWith('"2026-07-01 13:30"'), dub[1]);
+  const bad = (await get("&tz=Not/AZone")).split("\r\n");
+  assert.ok(bad[0].includes('"Date (UTC)"') && bad[1].startsWith('"2026-07-01 12:30"'));
+  assert.equal((await h.leads.GET(req("/api/leads?format=csv", { method: "GET", origin: null }))).status, 401);
+});
+
 test("spreadsheet export: the owner's enquiries only, Excel-friendly, formulas defused", async () => {
   const { cookie } = await enquire({ name: "=HYPERLINK(\"http://evil\")", contact: "+353 87 111 2222", enquiry: "Needs \"urgent\" help, today", urgent: true });
   const id = (await (await h.leads.GET(req("/api/leads", { method: "GET", cookie, origin: null }))).json()).leads[0].id;

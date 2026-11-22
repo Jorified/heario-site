@@ -165,7 +165,11 @@
       var note = el('input', undefined, 'lead-note');
       note.type = 'text'; note.maxLength = 500; note.value = l.note || ''; note.placeholder = 'Add a note…';
       note.setAttribute('aria-label', 'Note for ' + l.name);
-      note.onchange = function () { saveLead(l, { note: note.value }, note); };
+      var noteTimer, noteSaved = note.value;
+      function saveNote() { clearTimeout(noteTimer); if (note.value === noteSaved) return; noteSaved = note.value; saveLead(l, { note: note.value }, note); }
+      note.oninput = function () { clearTimeout(noteTimer); noteTimer = setTimeout(saveNote, 1200); };
+      note.onchange = saveNote;
+      note.onblur = saveNote;
       enq.appendChild(note);
       tr.appendChild(enq);
       var st = el('td', undefined, 'lead-status'), sel = el('select', undefined, 'lead-stage stage-' + l.stage);
@@ -185,6 +189,22 @@
     wrap.appendChild(t);
     box.appendChild(wrap);
   }
+
+  function exportLeads(e) {
+    e.preventDefault();
+    var tz = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (x) {}
+    fetch('/api/leads?format=csv&tz=' + encodeURIComponent(tz), { credentials: 'same-origin' }).then(function (r) {
+      if (r.status === 401) { location.replace('/login.html'); return null; }
+      if (!r.ok) throw new Error('export');
+      return r.blob().then(function (b) {
+        var a = document.createElement('a'), m = /filename="([^"]+)"/.exec(r.headers.get('content-disposition') || '');
+        a.href = URL.createObjectURL(b); a.download = m ? m[1] : 'heario-enquiries.csv';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+      });
+    }).catch(function () { alert("We couldn't download your spreadsheet just now. Please try again."); });
+  }
+  $('leadexport').onclick = exportLeads;
 
   function loadLeads() {
     api('GET', '/api/leads').then(function (d) {

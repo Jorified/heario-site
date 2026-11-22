@@ -32,7 +32,7 @@ export async function GET(request) {
      WHERE b.account_id = $1 ORDER BY l.created_at DESC LIMIT ${csv ? 2000 : 100}`,
     [g.account.id]
   );
-  return csv ? toCsv(leads) : json({ leads });
+  return csv ? toCsv(leads, new URL(request.url).searchParams.get("tz")) : json({ leads });
 }
 
 export const STAGES = ["new", "contacted", "won", "lost"];
@@ -64,10 +64,20 @@ function cell(v) {
 }
 const STAGE_LABEL = { new: "New", contacted: "Contacted", won: "Won", lost: "Lost" };
 
-function toCsv(leads) {
-  const head = ["Date (UTC)", "Name", "Contact", "Enquiry", "Urgent", "Status", "Note", "Alert"];
+// Times in the owner's own time zone (sent by their browser); anything unrecognised falls back to UTC.
+function stamper(tz) {
+  let zone = "UTC";
+  try { if (tz && /^[A-Za-z_]+(?:[/+\-][A-Za-z0-9_+\-]+)*$/.test(tz)) { new Intl.DateTimeFormat("en", { timeZone: tz }); zone = tz; } } catch {}
+  const f = new Intl.DateTimeFormat("en-GB", { timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+  const fmt = (d) => { const p = Object.fromEntries(f.formatToParts(new Date(d)).map((x) => [x.type, x.value])); return `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}`; };
+  return { zone, fmt };
+}
+
+function toCsv(leads, tz) {
+  const { zone, fmt } = stamper(tz);
+  const head = [zone === "UTC" ? "Date (UTC)" : `Date (${zone})`, "Name", "Contact", "Enquiry", "Urgent", "Status", "Note", "Alert"];
   const rows = leads.map((l) => [
-    new Date(l.created_at).toISOString().slice(0, 16).replace("T", " "),
+    fmt(l.created_at),
     l.name, l.contact, l.enquiry, l.urgent ? "Yes" : "", STAGE_LABEL[l.stage] || l.stage, oneLine(l.note, 500), l.whatsapp_status,
   ]);
   const text = "\uFEFF" + [head, ...rows].map((r) => r.map(cell).join(",")).join("\r\n") + "\r\n";
