@@ -158,3 +158,17 @@ test("only the owner's booking link is clickable in replies; other links and the
   assert.equal(links[0].closest(".hw-m").className.includes("bot"), true);
   assert.equal(d.querySelectorAll(".hw-m.bot").item(1).textContent, "Book at https://calendly.com/murphy. Or see https://evil.example now.");
 });
+
+test("booking link is still clickable when the AI drops https:// or the trailing slash", async () => {
+  const t = boot({
+    config: { status: 200, body: { title: "T", greeting: "Hi", color: "#112233", booking_url: "https://calendly.com/murphy/" } },
+    chatReply: { status: 200, body: { reply: "Book at calendly.com/murphy or https://calendly.com/murphy/ thanks", notified: false } },
+  });
+  await t.flush();
+  const d = t.window.document;
+  d.querySelector(".hw-in").value = "book";
+  d.querySelector(".hw-form").dispatchEvent(new t.window.Event("submit", { cancelable: true }));
+  await t.flush();
+  const links = [...d.querySelectorAll(".hw-msgs a")];
+  assert.deepEqual(links.map((a) => [a.textContent, a.href]), [["calendly.com/murphy", "https://calendly.com/murphy/"], ["https://calendly.com/murphy/", "https://calendly.com/murphy/"]]);
+});

@@ -1141,3 +1141,48 @@ test("the prompt: booking link offered; outside hours no 'within 2 hours' promis
   assert.ok(!/BOOKING|OPENING HOURS/.test(plain), "nothing added when not set");
   assert.equal(h.chat.replyWhen(bot, new Date("2026-11-27T21:00:00Z"), true).when, "when Murphy Plumbing opens on Saturday at 10am", "emails name the day");
 });
+
+test("holiday closures: validation, and closed-until / reopening worked out around them", () => {
+  const p = hoursLib.parseHoursInput;
+  assert.match(p({ tz: "Europe/Dublin", days: null, closed: [["2026-12-25", "2026-12-24"]] }).error, /on or after/);
+  assert.match(p({ tz: "Europe/Dublin", days: null, closed: [["2026-02-30", "2026-03-01"]] }).error, /start and end date/);
+  assert.match(p({ tz: "Europe/Dublin", days: null, closed: Array(21).fill(["2026-12-25", "2026-12-25"]) }).error, /up to 20/);
+  assert.deepEqual(p({ tz: "Europe/Dublin", days: null, closed: [["", ""]] }), { value: "" }, "empty rows are ignored");
+  const xmas = [["2026-12-24", "2027-01-02"], ["2027-01-03", "2027-01-03"]];
+  const withHours = hoursLib.readHours(p({ tz: "Europe/Dublin", days: WEEKDAYS, closed: xmas }).value);
+  const s = hoursLib.hoursStatus(withHours, new Date("2026-12-25T12:00:00Z"));
+  assert.equal(s.open, false);
+  assert.equal(s.holiday, true);
+  assert.equal(s.until, "Sunday 3 January", "back-to-back closures are joined");
+  assert.equal(s.next, "on Monday 4 January at 9am");
+  const eve = hoursLib.hoursStatus(withHours, new Date("2026-12-23T18:00:00Z"));
+  assert.equal(eve.next, "on Monday 4 January at 9am", "evening before a closure skips it");
+  assert.equal(hoursLib.hoursStatus(withHours, new Date("2026-12-23T12:00:00Z")).open, true);
+  const datesOnly = hoursLib.readHours(p({ tz: "America/New_York", days: null, closed: [["2026-11-26", "2026-11-27"]] }).value);
+  const t = hoursLib.hoursStatus(datesOnly, new Date("2026-11-26T15:00:00Z"));
+  assert.deepEqual([t.open, t.next, t.until], [false, "on Saturday, November 28", "Friday, November 27"], "no weekly hours: back the day after, US date style");
+  assert.equal(hoursLib.hoursStatus(datesOnly, new Date("2026-11-25T15:00:00Z")).unknown, true, "outside closures with no weekly hours, nothing is claimed");
+});
+
+test("the prompt: holidays announced and listed; weekly hours override the business information", async () => {
+  const bot = { business_name: "Murphy Plumbing", owner_name: "Sean", response_time: "within 2 hours", knowledge: "Open 8 to 8",
+    opening_hours: JSON.stringify({ tz: "Europe/Dublin", days: WEEKDAYS, closed: [["2026-12-24", "2027-01-02"]] }) };
+  const xmas = h.chat.systemPrompt(bot, new Date("2026-12-27T10:00:00Z"));
+  assert.match(xmas, /closed for a holiday \(the last closed day is Saturday 2 January\)/);
+  assert.match(xmas, /Sean will be in touch when Murphy Plumbing opens on Monday 4 January at 9am/);
+  assert.match(xmas, /HOLIDAY CLOSURES \(closed all day\): Thursday 24 December to Saturday 2 January/);
+  assert.match(xmas, /if the business information says otherwise, go by these/);
+  const nov = h.chat.systemPrompt(bot, new Date("2026-11-23T10:00:00Z"));
+  assert.match(nov, /HOLIDAY CLOSURES/, "upcoming closure is mentioned so visitors can ask about Christmas");
+  assert.match(nov, /Sean will be in touch within 2 hours/);
+  const datesOnly = { ...bot, opening_hours: JSON.stringify({ tz: "Europe/Dublin", days: null, closed: [["2026-12-24", "2027-01-02"]] }) };
+  const plain = h.chat.systemPrompt(datesOnly, new Date("2026-11-23T10:00:00Z"));
+  assert.ok(!/OPENING HOURS|It is now/.test(plain), "no weekly hours and not closed: no claims about being open");
+  assert.match(h.chat.systemPrompt(datesOnly, new Date("2026-12-30T10:00:00Z")), /opens again on Sunday 3 January/);
+});
+
+test("closures save through the dashboard API and come back", async () => {
+  const { cookie } = await login();
+  const res = await (await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings({ opening_hours: { tz: "Europe/Dublin", days: null, closed: [["2026-12-24", "2027-01-02"]] } }) }))).json();
+  assert.deepEqual(res.bot.opening_hours, { tz: "Europe/Dublin", days: null, closed: [["2026-12-24", "2027-01-02"]] });
+});

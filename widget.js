@@ -180,7 +180,9 @@
     function setText(m, text) {
       m.textContent = "";
       var s = String(text || "");
-      var forms = BOOK ? [BOOK, BOOK.replace(/\/$/, "")].filter(function (v, i, a) { return v && a.indexOf(v) === i; }) : [];
+      // The AI may drop "https://" or a trailing slash; those still count as the booking link.
+      var bare = BOOK.replace(/^https:\/\//, "");
+      var forms = BOOK ? [BOOK, BOOK.replace(/\/$/, ""), bare, bare.replace(/\/$/, "")].filter(function (v, i, a) { return v.length > 8 && a.indexOf(v) === i; }) : [];
       while (s) {
         var at = -1, hit = "";
         forms.forEach(function (f) { var i = s.indexOf(f); if (i > -1 && (at === -1 || i < at || (i === at && f.length > hit.length))) { at = i; hit = f; } });

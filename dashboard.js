@@ -60,8 +60,21 @@
     sel.textContent = '';
     zones.sort().forEach(function (z) { var o = el('option', z.replace(/_/g, ' ')); o.value = z; o.selected = z === selected; sel.appendChild(o); });
   }
+  function today() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function syncTz() { $('tzwrap').hidden = !($('hours_on').checked || $('closures').children.length); }
+  function addClosure(from, to) {
+    var row = el('div', undefined, 'closure-row'), a = el('input', undefined, 'cb-input hours-time closure-from'), b = el('input', undefined, 'cb-input hours-time closure-to');
+    a.type = b.type = 'date'; a.value = from || today(); b.value = to || a.value;
+    a.setAttribute('aria-label', 'Closed from'); b.setAttribute('aria-label', 'Closed until (last closed day)');
+    a.onchange = function () { if (!b.value || b.value < a.value) b.value = a.value; };
+    var rm = el('button', 'Remove', 'danger-link closure-rm'); rm.type = 'button';
+    rm.onclick = function () { row.remove(); syncTz(); };
+    row.appendChild(a); row.appendChild(el('span', 'to', 'hours-to')); row.appendChild(b); row.appendChild(rm);
+    $('closures').appendChild(row);
+    syncTz();
+  }
   function renderHours(h) {
-    var on = !!h, days = (h && h.days) || DEFAULT_HOURS, box = $('hours_days');
+    var on = !!(h && h.days), days = (h && h.days) || DEFAULT_HOURS, box = $('hours_days');
     $('hours_on').checked = on;
     $('hours').hidden = !on;
     fillZones((h && h.tz) || browserTz());
@@ -75,21 +88,32 @@
       from.value = v ? v[0] : '09:00'; to.value = v ? v[1] : '17:30';
       from.setAttribute('aria-label', d[1] + ' opening time'); to.setAttribute('aria-label', d[1] + ' closing time');
       var closed = el('span', 'Closed', 'hours-closed');
-      function sync() { from.hidden = to.hidden = dash.hidden = !open.checked; closed.hidden = open.checked; }
       var dash = el('span', 'to', 'hours-to');
+      function sync() { from.hidden = to.hidden = dash.hidden = !open.checked; closed.hidden = open.checked; }
       open.onchange = sync;
       row.appendChild(lab); row.appendChild(from); row.appendChild(dash); row.appendChild(to); row.appendChild(closed);
       box.appendChild(row);
       sync();
     });
+    $('closures').textContent = '';
+    ((h && h.closed) || []).forEach(function (c) { if (c[1] >= today()) addClosure(c[0], c[1]); });
+    syncTz();
   }
   function readHoursForm() {
-    if (!$('hours_on').checked) return null;
-    var days = {};
-    DAYS.forEach(function (d) { days[d[0]] = $('h_' + d[0]).checked ? [$('h_' + d[0] + '_from').value, $('h_' + d[0] + '_to').value] : null; });
-    return { tz: $('hours_tz').value, days: days };
+    var days = null, closed = [];
+    if ($('hours_on').checked) {
+      days = {};
+      DAYS.forEach(function (d) { days[d[0]] = $('h_' + d[0]).checked ? [$('h_' + d[0] + '_from').value, $('h_' + d[0] + '_to').value] : null; });
+    }
+    [].forEach.call($('closures').children, function (r) {
+      var a = r.querySelector('.closure-from').value, b = r.querySelector('.closure-to').value;
+      if (a || b) closed.push([a, b]);
+    });
+    if (!days && !closed.length) return null;
+    return { tz: $('hours_tz').value, days: days, closed: closed };
   }
-  $('hours_on').addEventListener('change', function () { $('hours').hidden = !$('hours_on').checked; });
+  $('hours_on').addEventListener('change', function () { $('hours').hidden = !$('hours_on').checked; syncTz(); });
+  $('addclosure').addEventListener('click', function () { addClosure(); });
 
   function renderPlan(me) {
     var p = me.plan, banner = $('banner'), actions = $('planactions');

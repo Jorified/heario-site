@@ -5,7 +5,7 @@ import { originAllowed } from "../lib/bot.js";
 import { one, query } from "../lib/db.js";
 import { confirmToVisitor, emailEnquiry, emailIn } from "../lib/enquiry-email.js";
 import { recordQuestion } from "../lib/questions.js";
-import { describeHours, hoursStatus, readHours } from "../lib/hours.js";
+import { describeHours, hoursStatus, readHours, upcomingClosures } from "../lib/hours.js";
 import { hourlyLimit, monthKey, monthlyLimit, planState } from "../lib/plan.js";
 import { clientIp, esc, isOwnOrigin, json, oneLine, rateLimit } from "../lib/util.js";
 import { sendEnquiryAlert } from "../lib/whatsapp.js";
@@ -50,13 +50,23 @@ export function replyWhen(bot, now = new Date(), dated = false) {
   return { when: bot.response_time || "as soon as possible", status };
 }
 
-function hoursSection(bot, status) {
+function hoursSection(bot, status, now) {
   const hours = readHours(bot.opening_hours);
   if (!hours || !status) return "";
-  const usual = bot.response_time ? ` Don't promise a reply ${bot.response_time}; that only applies during opening hours.` : "";
-  return `\n\nOPENING HOURS (${hours.tz} time): ${describeHours(hours)}. It is now ${status.now} there, so ${bot.business_name || "the business"} is ${
-    status.open ? "open." : `closed. It opens again ${status.next}. If you mention when they'll hear back, say it will be when it opens ${status.next}.${usual}`
-  }`;
+  const biz = bot.business_name || "the business";
+  const parts = [];
+  if (hours.days) parts.push(`OPENING HOURS (${hours.tz} time): ${describeHours(hours)}. These are correct; if the business information says otherwise, go by these.`);
+  const closures = upcomingClosures(hours, now);
+  if (closures.length) parts.push(`HOLIDAY CLOSURES (closed all day): ${closures.join("; ")}.`);
+  if (!status.unknown) {
+    const usual = bot.response_time ? ` Don't promise a reply ${bot.response_time}; that only applies when open.` : "";
+    parts.push(
+      status.open
+        ? `It is now ${status.now} there, so ${biz} is open.`
+        : `It is now ${status.now} there, so ${biz} is closed${status.holiday ? ` for a holiday (the last closed day is ${status.until})` : ""}. It opens again ${status.next}. If you mention when they'll hear back, say it will be when it opens ${status.next}.${usual}`
+    );
+  }
+  return "\n\n" + parts.join("\n");
 }
 
 function bookingSection(bot) {
@@ -80,7 +90,7 @@ If a visitor asks something about ${name} that the business information doesn't 
 BUSINESS INFORMATION (written by the business owner):
 <business_info>
 ${bot.knowledge || "(none provided yet)"}
-</business_info>${hoursSection(bot, status)}${bookingSection(bot)}`;
+</business_info>${hoursSection(bot, status, now)}${bookingSection(bot)}`;
 }
 
 const corsHeaders = (origin) => ({
