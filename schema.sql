@@ -49,6 +49,12 @@ ALTER TABLE leads ADD COLUMN IF NOT EXISTS wa_message_id text;
 ALTER TABLE leads ADD COLUMN IF NOT EXISTS emailed_at timestamptz;
 CREATE UNIQUE INDEX IF NOT EXISTS leads_wa_message_id ON leads (wa_message_id) WHERE wa_message_id IS NOT NULL;
 
+-- Added with enquiry status/notes, the urgent flag and visitor confirmation emails. Safe to re-run.
+ALTER TABLE bots  ADD COLUMN IF NOT EXISTS confirm_visitor boolean NOT NULL DEFAULT true;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS stage text NOT NULL DEFAULT 'new';
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS note text NOT NULL DEFAULT '';
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS urgent boolean NOT NULL DEFAULT false;
+
 CREATE TABLE IF NOT EXISTS usage (
   bot_id   uuid NOT NULL REFERENCES bots(id) ON DELETE CASCADE,
   month    text NOT NULL,

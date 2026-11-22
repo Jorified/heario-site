@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="style.css?v=30" />
-  <link rel="stylesheet" href="chatbot.css?v=13" />
+  <link rel="stylesheet" href="chatbot.css?v=14" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -69,6 +69,7 @@
       <div class="field"><label for="owner_whatsapp">Your WhatsApp number</label><input id="owner_whatsapp" class="cb-input" type="tel" placeholder="+353 85 123 4567" /><small>Include the country code.</small></div>
       <label class="check"><input type="checkbox" id="whatsapp_consent" /><span>I agree to receive enquiry alerts on this WhatsApp number from Heario. I can turn them off at any time by removing the number here.</span></label>
       <label class="check"><input type="checkbox" id="email_copy" /><span>Also email me a copy of every enquiry.</span></label>
+      <label class="check"><input type="checkbox" id="confirm_visitor" /><span>Email visitors a confirmation when they leave an email address. It's sent in your business's name, and their replies come to your login email.</span></label>
       <div class="actions"><button class="btn-ghost" id="testwa" type="button">Send a test alert</button><span id="testmsg" class="cb-msg" style="margin:0"></span></div>
     </section>
 
@@ -100,7 +101,8 @@
 
   <section class="panel">
     <h2>Recent enquiries</h2>
-    <p class="hint">The latest 100, kept for 90 days.</p>
+    <p class="hint">The latest 100, kept for 90 days. Set a status and add notes to keep track of each one.</p>
+    <div class="lead-bar"><div class="lead-filters" id="leadfilters" role="group" aria-label="Show enquiries"></div><a class="btn-ghost lead-export" id="leadexport" href="/api/leads?format=csv" download>Download spreadsheet</a></div>
     <div id="leads"><p class="hint">Loading…</p></div>
   </section>
 
@@ -112,6 +114,6 @@
   </section>
 </main>
 <script src="pricing.js"></script>
-<script src="dashboard.js?v=4"></script>
+<script src="dashboard.js?v=5"></script>
 </body>
 </html>

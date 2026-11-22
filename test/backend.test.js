@@ -848,3 +848,128 @@ test("a failure report that lands before the chat finishes still finds the enqui
     globalThis.fetch = realFetch;
   }
 });
+
+// One enquiry through the chat with any notify_owner input; returns { cookie, chatOut }.
+async function enquire(input, over = {}) {
+  const { cookie } = await login();
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings(over) }));
+  const key = (await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json()).bot.embed_key;
+  calls = [];
+  claudeScript = [
+    { stop_reason: "tool_use", content: [{ type: "tool_use", id: "t1", name: "notify_owner", input }] },
+    { stop_reason: "end_turn", content: [{ type: "text", text: "Thanks." }] },
+  ];
+  await h.chat.POST(req("/api/chat", { body: { key, messages: [{ role: "user", content: "help" }] }, origin: "https://murphyplumbing.ie" }));
+  return { cookie };
+}
+
+test("urgent enquiries are flagged in WhatsApp, email and the dashboard; the prompt sends danger to emergency services", async () => {
+  const { cookie } = await enquire({ name: "Ann", contact: "0871112222", enquiry: "Water pouring through the ceiling", urgent: true });
+  const wa = calls.find((c) => c.url.includes("graph.facebook"));
+  assert.equal(wa.body.template.components[0].parameters[3].text, "\u{1F6A8} URGENT: Water pouring through the ceiling");
+  const claude = calls.find((c) => c.url.includes("anthropic")).body;
+  assert.ok(claude.tools[0].input_schema.properties.urgent);
+  assert.match(claude.system, /emergency services/);
+  const leads = await (await h.leads.GET(req("/api/leads", { method: "GET", cookie, origin: null }))).json();
+  assert.equal(leads.leads[0].urgent, true);
+  assert.equal(leads.leads[0].stage, "new");
+
+  await db.exec("TRUNCATE accounts, login_tokens, rate_limits CASCADE");
+  await enquire({ name: "Ann", contact: "0871112222", enquiry: "Leak", urgent: true }, { owner_whatsapp: "", whatsapp_consent: false });
+  const mail = calls.find((c) => c.url.includes("brevo") && c.body.to[0].email === "owner@example.com");
+  assert.match(mail.body.subject, /^URGENT: New website enquiry from Ann/);
+  assert.match(mail.body.textContent, /URGENT: they need help today/);
+
+  await db.exec("TRUNCATE accounts, login_tokens, rate_limits CASCADE");
+  await enquire({ name: "Ann", contact: "0871112222", enquiry: "Quote for a bathroom" });
+  assert.equal(calls.find((c) => c.url.includes("graph.facebook")).body.template.components[0].parameters[3].text, "Quote for a bathroom");
+});
+
+test("visitor confirmation: sent in the business's name with replies to the owner, can be switched off, and can't be used to spam", async () => {
+  await enquire({ name: "Ann Byrne", contact: "ann@example.com", enquiry: "Boiler service" });
+  const conf = calls.find((c) => c.url.includes("brevo") && c.body.to[0].email === "ann@example.com");
+  assert.ok(conf, "visitor got a confirmation");
+  assert.equal(conf.body.sender.name, "Murphy Plumbing via Heario");
+  assert.deepEqual(conf.body.replyTo, { email: "owner@example.com" });
+  assert.match(conf.body.textContent, /^Hi Ann,[\s\S]*Sean will be in touch within 2 hours[\s\S]*Your enquiry: Boiler service/);
+  const toolResult = calls.filter((c) => c.url.includes("anthropic"))[1].body.messages.at(-1).content[0].content;
+  assert.match(toolResult, /confirmation email has been sent to the visitor/);
+
+  // Phone only -> nothing to confirm to.
+  await db.exec("TRUNCATE accounts, login_tokens, rate_limits CASCADE");
+  await enquire({ name: "Ann", contact: "087 111 2222", enquiry: "Leak" });
+  assert.ok(!calls.some((c) => c.url.includes("brevo")));
+
+  // Owner switched it off.
+  await db.exec("TRUNCATE accounts, login_tokens, rate_limits CASCADE");
+  const { cookie } = await enquire({ name: "Ann", contact: "ann@example.com", enquiry: "Leak" }, { confirm_visitor: false });
+  assert.ok(!calls.some((c) => c.url.includes("brevo") && c.body.to[0].email === "ann@example.com"));
+  const me = await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json();
+  assert.equal(me.bot.confirm_visitor, false);
+
+  // Same address, many enquiries: at most 2 confirmations a day.
+  await db.exec("TRUNCATE accounts, login_tokens, rate_limits CASCADE");
+  let sent = 0;
+  const { cookie: c2 } = await login();
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie: c2, body: settings() }));
+  const key = (await (await h.me.GET(req("/api/me", { method: "GET", cookie: c2, origin: null }))).json()).bot.embed_key;
+  const realFetch = globalThis.fetch;
+  let n = 0;
+  globalThis.fetch = (url, init) => String(url).includes("graph.facebook") ? Promise.resolve(new Response(JSON.stringify({ messages: [{ id: "wamid-" + n++ }] }))).then((r) => { calls.push({ url: String(url), body: JSON.parse(init.body) }); return r; }) : realFetch(url, init);
+  for (let i = 0; i < 4; i++) {
+    calls = [];
+    claudeScript = [
+      { stop_reason: "tool_use", content: [{ type: "tool_use", id: "t" + i, name: "notify_owner", input: { name: "X", contact: "victim@example.com", enquiry: "hi " + i } }] },
+      { stop_reason: "end_turn", content: [{ type: "text", text: "ok" }] },
+    ];
+    await h.chat.POST(new Request(SITE + "/api/chat", { method: "POST", headers: { "content-type": "application/json", origin: "https://murphyplumbing.ie", "x-forwarded-for": "10.0.0." + i }, body: JSON.stringify({ key, messages: [{ role: "user", content: "hi" }] }) }));
+    sent += calls.filter((c) => c.url.includes("brevo") && c.body.to[0].email === "victim@example.com").length;
+  }
+  globalThis.fetch = realFetch;
+  assert.equal(sent, 2);
+});
+
+test("enquiry status and notes: owner can update their own, not anyone else's; bad input refused", async () => {
+  const { cookie } = await enquire({ name: "Ann", contact: "0871112222", enquiry: "Leak" });
+  const id = (await (await h.leads.GET(req("/api/leads", { method: "GET", cookie, origin: null }))).json()).leads[0].id;
+  const patch = (body, opts = {}) => h.leads.PATCH(req("/api/leads", { method: "PATCH", cookie, body, ...opts }));
+
+  let r = await patch({ id, stage: "contacted", note: "  Called, coming Tuesday  " });
+  assert.equal(r.status, 200);
+  const lead = (await r.json()).lead;
+  assert.equal(lead.stage, "contacted");
+  assert.equal(lead.note, "Called, coming Tuesday");
+  r = await patch({ id, stage: "won" });
+  assert.equal((await r.json()).lead.note, "Called, coming Tuesday", "changing status keeps the note");
+  assert.equal((await patch({ id, stage: "maybe" })).status, 400);
+  assert.equal((await patch({ id: "1; DROP TABLE leads", stage: "won" })).status, 400);
+  assert.equal((await patch({ id, note: "x".repeat(900) })).status, 200);
+  assert.equal((await db.query("SELECT length(note) AS n FROM leads")).rows[0].n, 500);
+  assert.equal((await patch({ id, stage: "lost" }, { origin: "https://evil.com" })).status, 403);
+  assert.equal((await h.leads.PATCH(req("/api/leads", { method: "PATCH", body: { id, stage: "lost" } }))).status, 401);
+
+  const other = await login("someone-else@example.com");
+  assert.equal((await h.leads.PATCH(req("/api/leads", { method: "PATCH", cookie: other.cookie, body: { id, stage: "lost" } }))).status, 404);
+  assert.equal((await db.query("SELECT stage FROM leads")).rows[0].stage, "won");
+});
+
+test("spreadsheet export: the owner's enquiries only, Excel-friendly, formulas defused", async () => {
+  const { cookie } = await enquire({ name: "=HYPERLINK(\"http://evil\")", contact: "+353 87 111 2222", enquiry: "Needs \"urgent\" help, today", urgent: true });
+  const id = (await (await h.leads.GET(req("/api/leads", { method: "GET", cookie, origin: null }))).json()).leads[0].id;
+  await h.leads.PATCH(req("/api/leads", { method: "PATCH", cookie, body: { id, stage: "contacted", note: "@sean call back" } }));
+  const res = await h.leads.GET(req("/api/leads?format=csv", { method: "GET", cookie, origin: null }));
+  assert.equal(res.status, 200);
+  assert.match(res.headers.get("content-type"), /^text\/csv/);
+  assert.match(res.headers.get("content-disposition"), /attachment; filename="heario-enquiries-\d{4}-\d{2}-\d{2}\.csv"/);
+  const bytes = new Uint8Array(await res.arrayBuffer());
+  assert.deepEqual([...bytes.slice(0, 3)], [0xef, 0xbb, 0xbf], "BOM so Excel reads euro signs and fadas");
+  const text = new TextDecoder().decode(bytes);
+  assert.ok(text.startsWith('"Date (UTC)","Name"'));
+  const row = text.split("\r\n")[1];
+  assert.match(row, /,"'=HYPERLINK\(""http:\/\/evil""\)",/, "formula defused and quotes escaped");
+  assert.match(row, /,"\+353 87 111 2222",/, "phone numbers left alone");
+  assert.match(row, /"Yes","Contacted","'@sean call back"/);
+  const other = await login("someone-else@example.com");
+  const theirs = await (await h.leads.GET(req("/api/leads?format=csv", { method: "GET", cookie: other.cookie, origin: null }))).text();
+  assert.equal(theirs.split("\r\n").filter(Boolean).length, 1, "another account sees only the header row");
+});

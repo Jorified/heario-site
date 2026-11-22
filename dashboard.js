@@ -37,6 +37,7 @@
     $('owner_whatsapp').value = b.owner_whatsapp;
     $('whatsapp_consent').checked = b.whatsapp_consent;
     $('email_copy').checked = !!b.email_copy;
+    $('confirm_visitor').checked = b.confirm_visitor !== false;
     $('allowed_origins').value = b.allowed_origins.join(', ');
     if (!$('import_url').value && b.allowed_origins.length) $('import_url').value = b.allowed_origins[0].replace(/^https?:\/\//, '');
     $('color').value = b.color;
@@ -115,33 +116,87 @@
     document.body.appendChild(s);
   }
 
+  var leadsData = [], leadFilter = 'all';
+  var STAGES = [['new', 'New'], ['contacted', 'Contacted'], ['won', 'Won'], ['lost', 'Lost']];
+  var ALERTS = { sent: ['WhatsApp sent', 'sent'], delivered: ['WhatsApp delivered', 'sent'], read: ['WhatsApp read', 'sent'], emailed: ['Emailed', ''], failed_emailed: ['WhatsApp failed, emailed', 'failed'], failed: ['Delivery failed', 'failed'], skipped: ['Not sent', ''] };
+
+  function saveLead(l, change, flash) {
+    return api('PATCH', '/api/leads', Object.assign({ id: l.id }, change))
+      .then(function (d) { l.stage = d.lead.stage; l.note = d.lead.note; if (flash) { flash.classList.add('saved'); setTimeout(function () { flash.classList.remove('saved'); }, 1200); } })
+      .catch(function (e) { alert(e.message); });
+  }
+
+  function renderFilters() {
+    var box = $('leadfilters');
+    box.textContent = '';
+    [['all', 'All']].concat(STAGES).forEach(function (s) {
+      var n = s[0] === 'all' ? leadsData.length : leadsData.filter(function (l) { return l.stage === s[0]; }).length;
+      var b = el('button', s[1] + ' ' + n, 'lead-filter' + (leadFilter === s[0] ? ' on' : ''));
+      b.type = 'button';
+      b.setAttribute('aria-pressed', leadFilter === s[0] ? 'true' : 'false');
+      b.onclick = function () { leadFilter = s[0]; renderLeads(); };
+      box.appendChild(b);
+    });
+  }
+
+  function renderLeads() {
+    var box = $('leads');
+    box.textContent = '';
+    renderFilters();
+    $('leadexport').style.display = leadsData.length ? '' : 'none';
+    if (!leadsData.length) { box.appendChild(el('p', 'No enquiries yet. They will appear here as they come in.', 'hint')); return; }
+    var shown = leadsData.filter(function (l) { return leadFilter === 'all' || l.stage === leadFilter; });
+    if (!shown.length) { box.appendChild(el('p', 'No enquiries with this status.', 'hint')); return; }
+    var t = el('table', undefined, 'leads'), head = el('thead'), hr = el('tr');
+    ['When', 'From', 'Enquiry', 'Status'].forEach(function (h) { hr.appendChild(el('th', h)); });
+    head.appendChild(hr); t.appendChild(head);
+    var body = el('tbody');
+    shown.forEach(function (l) {
+      var tr = el('tr', undefined, l.stage === 'won' || l.stage === 'lost' ? 'done' : ''), lab = ALERTS[l.whatsapp_status] || [l.whatsapp_status, ''];
+      var when = new Date(l.created_at);
+      tr.appendChild(el('td', when.toLocaleDateString(undefined, { day: 'numeric', month: 'short' }) + ', ' + when.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }), 'lead-when'));
+      var who = el('td');
+      who.appendChild(el('div', l.name, 'lead-name'));
+      who.appendChild(el('div', l.contact, 'lead-contact'));
+      tr.appendChild(who);
+      var enq = el('td', undefined, 'lead-enq');
+      if (l.urgent) enq.appendChild(el('span', 'Urgent', 'tag urgent'));
+      enq.appendChild(el('div', l.enquiry, 'lead-text'));
+      var note = el('input', undefined, 'lead-note');
+      note.type = 'text'; note.maxLength = 500; note.value = l.note || ''; note.placeholder = 'Add a note…';
+      note.setAttribute('aria-label', 'Note for ' + l.name);
+      note.onchange = function () { saveLead(l, { note: note.value }, note); };
+      enq.appendChild(note);
+      tr.appendChild(enq);
+      var st = el('td', undefined, 'lead-status'), sel = el('select', undefined, 'lead-stage stage-' + l.stage);
+      sel.setAttribute('aria-label', 'Status for ' + l.name);
+      STAGES.forEach(function (s) { var o = el('option', s[1]); o.value = s[0]; o.selected = l.stage === s[0]; sel.appendChild(o); });
+      sel.onchange = function () {
+        sel.className = 'lead-stage stage-' + sel.value;
+        saveLead(l, { stage: sel.value }, sel).then(function () { renderFilters(); tr.className = l.stage === 'won' || l.stage === 'lost' ? 'done' : ''; });
+      };
+      st.appendChild(sel);
+      st.appendChild(el('span', lab[0], 'tag lead-alert ' + lab[1]));
+      tr.appendChild(st);
+      body.appendChild(tr);
+    });
+    t.appendChild(body);
+    var wrap = el('div', undefined, 'leads-wrap');
+    wrap.appendChild(t);
+    box.appendChild(wrap);
+  }
+
   function loadLeads() {
     api('GET', '/api/leads').then(function (d) {
-      var box = $('leads');
-      box.textContent = '';
-      if (!d.leads.length) { box.appendChild(el('p', 'No enquiries yet. They will appear here as they come in.', 'hint')); return; }
-      var t = el('table', undefined, 'leads'), head = el('thead'), hr = el('tr');
-      ['When', 'Name', 'Contact', 'Enquiry', 'Alert'].forEach(function (h) { hr.appendChild(el('th', h)); });
-      head.appendChild(hr); t.appendChild(head);
-      var body = el('tbody');
-      var labels = { sent: ['WhatsApp sent', 'sent'], delivered: ['WhatsApp delivered', 'sent'], read: ['WhatsApp read', 'sent'], emailed: ['Emailed', ''], failed_emailed: ['WhatsApp failed, emailed', 'failed'], failed: ['Delivery failed', 'failed'], skipped: ['Not sent', ''] };
-      d.leads.forEach(function (l) {
-        var tr = el('tr'), lab = labels[l.whatsapp_status] || [l.whatsapp_status, ''];
-        tr.appendChild(el('td', new Date(l.created_at).toLocaleString()));
-        tr.appendChild(el('td', l.name));
-        tr.appendChild(el('td', l.contact));
-        tr.appendChild(el('td', l.enquiry));
-        var td = el('td'); td.appendChild(el('span', lab[0], 'tag ' + lab[1])); tr.appendChild(td);
-        body.appendChild(tr);
-      });
-      t.appendChild(body);
-      box.appendChild(t);
+      leadsData = d.leads.map(function (l) { l.stage = l.stage || 'new'; return l; });
+      renderLeads();
     }).catch(function () {
       var box = $('leads');
       box.textContent = '';
       box.appendChild(el('p', "We couldn't load your enquiries just now. Refresh the page to try again.", 'hint'));
     });
   }
+
 
   $('form').addEventListener('submit', function (ev) {
     ev.preventDefault();
@@ -155,6 +210,7 @@
       owner_whatsapp: $('owner_whatsapp').value,
       whatsapp_consent: $('whatsapp_consent').checked,
       email_copy: $('email_copy').checked,
+      confirm_visitor: $('confirm_visitor').checked,
       allowed_origins: $('allowed_origins').value,
       color: $('color').value,
       greeting: $('greeting').value,
