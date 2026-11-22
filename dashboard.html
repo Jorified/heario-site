@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="style.css?v=30" />
-  <link rel="stylesheet" href="chatbot.css?v=16" />
+  <link rel="stylesheet" href="chatbot.css?v=17" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -61,6 +61,15 @@
       </div>
       <div class="field"><label for="knowledge">Business information</label><textarea id="knowledge" class="cb-textarea" maxlength="8000" placeholder="What we do:&#10;Prices:&#10;Areas we cover:&#10;Opening hours:&#10;How booking works:&#10;Common questions:&#10;What we don't do:"></textarea></div>
       <div class="field"><label for="response_time">How quickly do you reply to enquiries?</label><input id="response_time" class="cb-input" maxlength="100" placeholder="e.g. within 2 hours, or by the next working day" /></div>
+      <div class="field"><label for="booking_url">Online booking link (optional)</label><input id="booking_url" class="cb-input" type="url" maxlength="300" placeholder="https://calendly.com/yourname" /><small>If you use Calendly, Acuity, Square, Fresha or another booking page, the assistant gives this link to visitors who want an appointment.</small></div>
+      <div class="field">
+        <label class="check" style="margin:0"><input type="checkbox" id="hours_on" /><span>Set opening hours</span></label>
+        <small>Outside these hours, the assistant tells visitors when you'll reply (for example "when we open tomorrow at 9am") instead of promising your usual reply time.</small>
+        <div id="hours" class="hours" hidden>
+          <div id="hours_days" class="hours-days"></div>
+          <div class="field" style="margin:12px 0 0"><label for="hours_tz">Time zone</label><select id="hours_tz" class="cb-select"></select></div>
+        </div>
+      </div>
     </section>
 
     <section class="panel">
@@ -121,6 +130,6 @@
   </section>
 </main>
 <script src="pricing.js"></script>
-<script src="dashboard.js?v=8"></script>
+<script src="dashboard.js?v=9"></script>
 </body>
 </html>

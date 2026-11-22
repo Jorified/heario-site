@@ -87,3 +87,7 @@ CREATE TABLE IF NOT EXISTS questions (
   last_asked_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE UNIQUE INDEX IF NOT EXISTS questions_open_unique ON questions (bot_id, lower(question)) WHERE status = 'open';
+
+-- Booking link and opening hours. Safe to re-run.
+ALTER TABLE bots ADD COLUMN IF NOT EXISTS booking_url text NOT NULL DEFAULT '';
+ALTER TABLE bots ADD COLUMN IF NOT EXISTS opening_hours text NOT NULL DEFAULT '';

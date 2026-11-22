@@ -139,3 +139,22 @@ test("data-avatar shows a logo in the header, and ignores unsafe values", async 
     assert.equal(t.window.document.querySelector(".hw-av img"), null, bad);
   }
 });
+
+test("only the owner's booking link is clickable in replies; other links and the visitor's text stay plain", async () => {
+  const t = boot({
+    config: { status: 200, body: { title: "T", greeting: "Hi", color: "#112233", booking_url: "https://calendly.com/murphy/" } },
+    chatReply: { status: 200, body: { reply: "Book at https://calendly.com/murphy. Or see https://evil.example now.", notified: false } },
+  });
+  await t.flush();
+  const d = t.window.document;
+  d.querySelector(".hw-in").value = "see https://calendly.com/murphy/";
+  d.querySelector(".hw-form").dispatchEvent(new t.window.Event("submit", { cancelable: true }));
+  await t.flush();
+  const links = [...d.querySelectorAll(".hw-msgs a")];
+  assert.equal(links.length, 1);
+  assert.equal(links[0].href, "https://calendly.com/murphy/");
+  assert.equal(links[0].target, "_blank");
+  assert.match(links[0].rel, /noopener/);
+  assert.equal(links[0].closest(".hw-m").className.includes("bot"), true);
+  assert.equal(d.querySelectorAll(".hw-m.bot").item(1).textContent, "Book at https://calendly.com/murphy. Or see https://evil.example now.");
+});

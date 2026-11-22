@@ -1077,3 +1077,67 @@ test("Add an answer: the owner can tidy the question wording first; edited wordi
   const res = await (await post({ question: "Do you work on Sundays? Call 087 123 4567", answer: "Yes, 10am to 4pm." })).json();
   assert.equal(res.added, "Q: Do you work on Sundays? Call [number]\nA: Yes, 10am to 4pm.");
 });
+
+const hoursLib = await import("../lib/hours.js");
+const WEEKDAYS = { mon: ["09:00", "17:30"], tue: ["09:00", "17:30"], wed: ["09:00", "17:30"], thu: ["09:00", "17:30"], fri: ["09:00", "17:30"], sat: ["10:00", "14:00"], sun: null };
+
+test("opening hours: validation", () => {
+  const p = hoursLib.parseHoursInput;
+  assert.deepEqual(p(null), { value: "" });
+  assert.match(p({ tz: "Mars/Base", days: WEEKDAYS }).error, /time zone/);
+  assert.match(p({ tz: "Europe/Dublin", days: { mon: ["17:00", "09:00"] } }).error, /Monday.*after/);
+  assert.match(p({ tz: "Europe/Dublin", days: { mon: ["9am", "5pm"] } }).error, /Monday/);
+  assert.match(p({ tz: "Europe/Dublin", days: {} }).error, /at least one day/);
+  const ok = JSON.parse(p({ tz: "Europe/Dublin", days: { ...WEEKDAYS, junk: ["x"] } }).value);
+  assert.deepEqual(Object.keys(ok.days), hoursLib.DAYS, "only real days are kept");
+});
+
+test("opening hours: open/closed and when we next open, in the business's own time zone", () => {
+  const h = { tz: "Europe/Dublin", days: WEEKDAYS };
+  const at = (iso) => hoursLib.hoursStatus(h, new Date(iso));
+  assert.equal(at("2026-11-23T10:00:00Z").open, true, "Monday 10am");
+  assert.deepEqual([at("2026-11-23T07:00:00Z").next, at("2026-11-23T07:00:00Z").nextDated], ["later today at 9am", "today at 9am"]);
+  assert.equal(at("2026-11-23T17:30:00Z").next, "tomorrow at 9am", "closing time itself counts as closed");
+  assert.equal(at("2026-11-28T15:00:00Z").next, "on Monday at 9am", "Saturday after 2pm skips closed Sunday");
+  assert.equal(at("2026-11-28T15:00:00Z").nextDated, "on Monday at 9am");
+  assert.equal(at("2026-11-27T18:00:00Z").next, "tomorrow at 10am", "Friday evening -> Saturday");
+  assert.equal(at("2026-07-06T08:30:00Z").open, true, "summer time: 8:30 UTC is 9:30 in Dublin");
+  const ny = hoursLib.hoursStatus({ tz: "America/New_York", days: WEEKDAYS }, new Date("2026-11-23T10:00:00Z"));
+  assert.deepEqual([ny.open, ny.next], [false, "later today at 9am"], "10:00 UTC is 5am in New York");
+  assert.equal(hoursLib.clock("17:30"), "5:30pm");
+  assert.equal(hoursLib.clock("00:00"), "12am");
+  assert.equal(hoursLib.hoursStatus(null), null);
+});
+
+test("booking link and opening hours: saved, validated, shown in the dashboard and the widget config", async () => {
+  const { cookie } = await login();
+  const put = (over) => h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings(over) }));
+  assert.equal((await put({ booking_url: "http://calendly.com/sean" })).status, 400, "https only");
+  assert.equal((await put({ booking_url: "javascript:alert(1)" })).status, 400);
+  assert.equal((await put({ opening_hours: { tz: "Europe/Dublin", days: { mon: ["18:00", "09:00"] } } })).status, 400);
+  const saved = await (await put({ booking_url: "calendly.com/murphy-plumbing", opening_hours: { tz: "Europe/Dublin", days: WEEKDAYS } })).json();
+  assert.equal(saved.bot.booking_url, "https://calendly.com/murphy-plumbing");
+  assert.equal(saved.bot.opening_hours.tz, "Europe/Dublin");
+  assert.deepEqual(saved.bot.opening_hours.days.sat, ["10:00", "14:00"]);
+  const me = await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json();
+  const cfg = await (await h.widget.GET(new Request(`${SITE}/api/widget-config?key=${me.bot.embed_key}`, { headers: { origin: "https://murphyplumbing.ie" } }))).json();
+  assert.equal(cfg.booking_url, "https://calendly.com/murphy-plumbing");
+  const cleared = await (await put({ booking_url: "", opening_hours: null })).json();
+  assert.deepEqual([cleared.bot.booking_url, cleared.bot.opening_hours], ["", null]);
+});
+
+test("the prompt: booking link offered; outside hours no 'within 2 hours' promise; during hours unchanged", async () => {
+  const bot = { business_name: "Murphy Plumbing", owner_name: "Sean", response_time: "within 2 hours", knowledge: "x",
+    booking_url: "https://calendly.com/murphy", opening_hours: JSON.stringify({ tz: "Europe/Dublin", days: WEEKDAYS }) };
+  const closed = h.chat.systemPrompt(bot, new Date("2026-11-27T21:00:00Z"));
+  assert.match(closed, /calendly\.com\/murphy/);
+  assert.match(closed, /Sean will be in touch when Murphy Plumbing opens tomorrow at 10am/);
+  assert.match(closed, /It is now Friday 9pm there, so Murphy Plumbing is closed/);
+  assert.match(closed, /Don't promise a reply within 2 hours/);
+  const open = h.chat.systemPrompt(bot, new Date("2026-11-27T11:00:00Z"));
+  assert.match(open, /Sean will be in touch within 2 hours/);
+  assert.match(open, /is open\./);
+  const plain = h.chat.systemPrompt({ ...bot, booking_url: "", opening_hours: "" });
+  assert.ok(!/BOOKING|OPENING HOURS/.test(plain), "nothing added when not set");
+  assert.equal(h.chat.replyWhen(bot, new Date("2026-11-27T21:00:00Z"), true).when, "when Murphy Plumbing opens on Saturday at 10am", "emails name the day");
+});

@@ -20,6 +20,7 @@ export async function GET(request) {
       title: bot.business_name ? `Chat with ${bot.business_name}` : "Chat with us",
       greeting: bot.greeting || defaultGreeting(bot.business_name),
       color: bot.color,
+      booking_url: bot.booking_url || "",
     },
     200,
     { "access-control-allow-origin": origin, vary: "Origin" }

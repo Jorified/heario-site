@@ -34,6 +34,8 @@
     $('owner_name').value = b.owner_name;
     $('knowledge').value = b.knowledge;
     $('response_time').value = b.response_time;
+    $('booking_url').value = b.booking_url || '';
+    renderHours(b.opening_hours);
     $('owner_whatsapp').value = b.owner_whatsapp;
     $('whatsapp_consent').checked = b.whatsapp_consent;
     $('email_copy').checked = !!b.email_copy;
@@ -47,6 +49,47 @@
     renderPlan(me);
     loadPreview(b.embed_key);
   }
+
+  var DAYS = [['mon', 'Monday'], ['tue', 'Tuesday'], ['wed', 'Wednesday'], ['thu', 'Thursday'], ['fri', 'Friday'], ['sat', 'Saturday'], ['sun', 'Sunday']];
+  var DEFAULT_HOURS = { mon: ['09:00', '17:30'], tue: ['09:00', '17:30'], wed: ['09:00', '17:30'], thu: ['09:00', '17:30'], fri: ['09:00', '17:30'], sat: null, sun: null };
+  function browserTz() { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Dublin'; } catch (e) { return 'Europe/Dublin'; } }
+  function fillZones(selected) {
+    var sel = $('hours_tz'), zones = [];
+    try { zones = Intl.supportedValuesOf('timeZone'); } catch (e) {}
+    ['Europe/Dublin', 'Europe/London', 'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles', selected].forEach(function (z) { if (z && zones.indexOf(z) === -1) zones.push(z); });
+    sel.textContent = '';
+    zones.sort().forEach(function (z) { var o = el('option', z.replace(/_/g, ' ')); o.value = z; o.selected = z === selected; sel.appendChild(o); });
+  }
+  function renderHours(h) {
+    var on = !!h, days = (h && h.days) || DEFAULT_HOURS, box = $('hours_days');
+    $('hours_on').checked = on;
+    $('hours').hidden = !on;
+    fillZones((h && h.tz) || browserTz());
+    box.textContent = '';
+    DAYS.forEach(function (d) {
+      var v = days[d[0]], row = el('div', undefined, 'hours-row'), open = el('input'), lab = el('label', undefined, 'hours-day');
+      open.type = 'checkbox'; open.checked = !!v; open.id = 'h_' + d[0];
+      lab.appendChild(open); lab.appendChild(el('span', d[1]));
+      var from = el('input', undefined, 'cb-input hours-time'), to = el('input', undefined, 'cb-input hours-time');
+      from.type = to.type = 'time'; from.id = 'h_' + d[0] + '_from'; to.id = 'h_' + d[0] + '_to';
+      from.value = v ? v[0] : '09:00'; to.value = v ? v[1] : '17:30';
+      from.setAttribute('aria-label', d[1] + ' opening time'); to.setAttribute('aria-label', d[1] + ' closing time');
+      var closed = el('span', 'Closed', 'hours-closed');
+      function sync() { from.hidden = to.hidden = dash.hidden = !open.checked; closed.hidden = open.checked; }
+      var dash = el('span', 'to', 'hours-to');
+      open.onchange = sync;
+      row.appendChild(lab); row.appendChild(from); row.appendChild(dash); row.appendChild(to); row.appendChild(closed);
+      box.appendChild(row);
+      sync();
+    });
+  }
+  function readHoursForm() {
+    if (!$('hours_on').checked) return null;
+    var days = {};
+    DAYS.forEach(function (d) { days[d[0]] = $('h_' + d[0]).checked ? [$('h_' + d[0] + '_from').value, $('h_' + d[0] + '_to').value] : null; });
+    return { tz: $('hours_tz').value, days: days };
+  }
+  $('hours_on').addEventListener('change', function () { $('hours').hidden = !$('hours_on').checked; });
 
   function renderPlan(me) {
     var p = me.plan, banner = $('banner'), actions = $('planactions');
@@ -297,6 +340,8 @@
       owner_name: $('owner_name').value,
       knowledge: $('knowledge').value,
       response_time: $('response_time').value,
+      booking_url: $('booking_url').value,
+      opening_hours: readHoursForm(),
       owner_whatsapp: $('owner_whatsapp').value,
       whatsapp_consent: $('whatsapp_consent').checked,
       email_copy: $('email_copy').checked,

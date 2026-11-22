@@ -5,6 +5,7 @@ import { originAllowed } from "../lib/bot.js";
 import { one, query } from "../lib/db.js";
 import { confirmToVisitor, emailEnquiry, emailIn } from "../lib/enquiry-email.js";
 import { recordQuestion } from "../lib/questions.js";
+import { describeHours, hoursStatus, readHours } from "../lib/hours.js";
 import { hourlyLimit, monthKey, monthlyLimit, planState } from "../lib/plan.js";
 import { clientIp, esc, isOwnOrigin, json, oneLine, rateLimit } from "../lib/util.js";
 import { sendEnquiryAlert } from "../lib/whatsapp.js";
@@ -41,10 +42,32 @@ const TOOLS = [
   },
 ];
 
-function systemPrompt(bot) {
+// When the owner will reply: their usual response time, or "when we open tomorrow at 9am" outside opening hours.
+// dated: name the day ("on Monday at 9am") instead of "tomorrow", for an email that may be read later.
+export function replyWhen(bot, now = new Date(), dated = false) {
+  const status = hoursStatus(readHours(bot.opening_hours), now);
+  if (status && !status.open) return { when: `when ${bot.business_name || "the business"} opens ${dated ? status.nextDated : status.next}`, status };
+  return { when: bot.response_time || "as soon as possible", status };
+}
+
+function hoursSection(bot, status) {
+  const hours = readHours(bot.opening_hours);
+  if (!hours || !status) return "";
+  const usual = bot.response_time ? ` Don't promise a reply ${bot.response_time}; that only applies during opening hours.` : "";
+  return `\n\nOPENING HOURS (${hours.tz} time): ${describeHours(hours)}. It is now ${status.now} there, so ${bot.business_name || "the business"} is ${
+    status.open ? "open." : `closed. It opens again ${status.next}. If you mention when they'll hear back, say it will be when it opens ${status.next}.${usual}`
+  }`;
+}
+
+function bookingSection(bot) {
+  if (!bot.booking_url) return "";
+  return `\n\nBOOKING: Visitors can book an appointment online at ${bot.booking_url} . When someone wants to book an appointment, give them this link written out in full exactly as shown (not as a markdown link). If they'd rather be contacted, or want a quote first, take their details as normal.`;
+}
+
+export function systemPrompt(bot, now = new Date()) {
   const name = bot.business_name || "this business";
   const owner = bot.owner_name || "the team";
-  const when = bot.response_time || "as soon as possible";
+  const { when, status } = replyWhen(bot, now);
   return `You are the AI assistant on the website of ${name}. You are an AI, not a person; say so if asked.
 Answer visitors' questions using only the business information below. If the answer isn't there, say you don't know and offer to pass the question to ${owner}. Never invent prices, availability, policies or promises.
 Be friendly and brief (usually 2-4 sentences), in plain language, and reply in the visitor's language.
@@ -57,7 +80,7 @@ If a visitor asks something about ${name} that the business information doesn't 
 BUSINESS INFORMATION (written by the business owner):
 <business_info>
 ${bot.knowledge || "(none provided yet)"}
-</business_info>`;
+</business_info>${hoursSection(bot, status)}${bookingSection(bot)}`;
 }
 
 const corsHeaders = (origin) => ({
@@ -154,7 +177,7 @@ async function handleEnquiry(bot, input, ip) {
   ) {
     try {
       await confirmToVisitor({
-        to: visitorEmail, business: bot.business_name, owner: bot.owner_name, when: bot.response_time,
+        to: visitorEmail, business: bot.business_name, owner: bot.owner_name, when: replyWhen(bot, new Date(), true).when,
         name, enquiry, replyTo: bot.account_email,
       });
       confirmed = true;

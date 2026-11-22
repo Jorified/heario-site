@@ -87,6 +87,7 @@
       ".hw-m{max-width:84%;padding:9px 12px;border-radius:16px;white-space:pre-wrap;word-wrap:break-word;animation:hw-pop .25s ease-out}" +
       "@keyframes hw-pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}" +
       ".hw-m.bot{background:" + T.bot + ";border:1px solid " + T.line + ";align-self:flex-start;border-top-left-radius:5px}" +
+      ".hw-link{color:inherit;text-decoration:underline;font-weight:600;word-break:break-all}" +
       ".hw-m.me{background:linear-gradient(135deg," + C + "," + C2 + ");color:#fff;align-self:flex-end;border-top-right-radius:5px}" +
       ".hw-typing{display:inline-flex;gap:4px;align-items:center;padding:12px 14px}" +
       ".hw-typing i{width:7px;height:7px;border-radius:50%;background:" + T.muted + ";animation:hw-dot 1s infinite}" +
@@ -174,8 +175,27 @@
     nodes = [css, btn, box];
     if (teaser) { document.body.appendChild(teaser); nodes.push(teaser); }
 
+    // The owner's booking link (and only that) becomes clickable in the assistant's replies.
+    var BOOK = typeof cfg.booking_url === "string" && /^https:\/\//.test(cfg.booking_url) ? cfg.booking_url : "";
+    function setText(m, text) {
+      m.textContent = "";
+      var s = String(text || "");
+      var forms = BOOK ? [BOOK, BOOK.replace(/\/$/, "")].filter(function (v, i, a) { return v && a.indexOf(v) === i; }) : [];
+      while (s) {
+        var at = -1, hit = "";
+        forms.forEach(function (f) { var i = s.indexOf(f); if (i > -1 && (at === -1 || i < at || (i === at && f.length > hit.length))) { at = i; hit = f; } });
+        if (at === -1) { m.appendChild(document.createTextNode(s)); break; }
+        if (at) m.appendChild(document.createTextNode(s.slice(0, at)));
+        var a = document.createElement("a");
+        a.href = BOOK; a.target = "_blank"; a.rel = "noopener noreferrer"; a.className = "hw-link";
+        a.textContent = hit;
+        m.appendChild(a);
+        s = s.slice(at + hit.length);
+      }
+    }
     function add(role, text) {
-      var m = el("div", "hw-m " + (role === "user" ? "me" : "bot"), text);
+      var m = el("div", "hw-m " + (role === "user" ? "me" : "bot"));
+      if (role === "user") m.textContent = text || ""; else setText(m, text);
       msgs.appendChild(m);
       msgs.scrollTop = msgs.scrollHeight;
       return m;
@@ -191,7 +211,7 @@
     function settle(m, text) {
       m.classList.remove("hw-typing");
       m.removeAttribute("aria-label");
-      m.textContent = text;
+      setText(m, text);
       msgs.scrollTop = msgs.scrollHeight;
     }
     function save() { try { sessionStorage.setItem(STORE, JSON.stringify(history.slice(-30))); } catch (e) {} }
