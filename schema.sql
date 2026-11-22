@@ -43,6 +43,12 @@ CREATE TABLE IF NOT EXISTS leads (
 );
 CREATE INDEX IF NOT EXISTS leads_bot_created ON leads (bot_id, created_at DESC);
 
+-- Added with WhatsApp delivery reports and the optional email copy. Safe to re-run.
+ALTER TABLE bots  ADD COLUMN IF NOT EXISTS email_copy boolean NOT NULL DEFAULT false;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS wa_message_id text;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS emailed_at timestamptz;
+CREATE UNIQUE INDEX IF NOT EXISTS leads_wa_message_id ON leads (wa_message_id) WHERE wa_message_id IS NOT NULL;
+
 CREATE TABLE IF NOT EXISTS usage (
   bot_id   uuid NOT NULL REFERENCES bots(id) ON DELETE CASCADE,
   month    text NOT NULL,

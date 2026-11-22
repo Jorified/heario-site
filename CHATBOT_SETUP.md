@@ -34,6 +34,8 @@ The old desktop app is retired and no longer part of this site.
 | `WHATSAPP_TEMPLATE_NAME` | `new_enquiry` (default) |
 | `WHATSAPP_TEMPLATE_PHONE_NAME` | `new_enquiry_phone` (default) |
 | `WHATSAPP_TEMPLATE_LANG` | `en` (default) |
+| `WHATSAPP_APP_SECRET` | Meta app > App settings > Basic > App secret (checks delivery reports are really from Meta) |
+| `WHATSAPP_VERIFY_TOKEN` | Any long random string you make up; type the same one into Meta's webhook setup |
 | `CRON_SECRET` | any random string. Vercel sends it to the daily cleanup job automatically |
 | `PLAN_MONTHLY_MESSAGES` | optional, default 3000 |
 | `TRIAL_DAYS` | optional, default 14 |
@@ -83,13 +85,19 @@ Add them in Vercel > Settings > Environment Variables, then redeploy.
    The phone version is used when the visitor leaves a **mobile** number Heario can place (international format, or a
    local number when the owner is in Ireland, the UK or North America; Irish and UK landlines are skipped). If it isn't approved yet, alerts fall back to
    `new_enquiry` automatically. Wait for approval (usually minutes, at most a day).
-4. To message more than a handful of numbers, complete Meta **business verification**.
+4. **Delivery reports (webhook).** Meta app > WhatsApp > Configuration > Webhook: Callback URL
+   `https://heario.ai/api/whatsapp/webhook`, Verify token = your `WHATSAPP_VERIFY_TOKEN`, then Verify and save
+   and subscribe to the **messages** field. Heario then shows "WhatsApp delivered/read" on each enquiry, and if
+   WhatsApp accepts an alert but can't deliver it later (wrong number, not on WhatsApp, blocked), the enquiry is
+   emailed to the owner automatically. Deploy with both env vars set before clicking Verify.
+5. To message more than a handful of numbers, complete Meta **business verification**.
 
 Customers must tick the consent box before any alert is sent; the time is stored.
-If WhatsApp delivery fails, the enquiry is emailed to the customer's login address instead.
+If WhatsApp delivery fails (straight away or later, via the delivery report), the enquiry is emailed to the customer's
+login address instead. Customers can also tick "Also email me a copy of every enquiry" (off by default).
 
 ## 5. Test before launch
-- `npm test` runs 15 automated tests (login, settings, chat, WhatsApp fallback, Stripe webhook, widget safety). They use an in-memory database and stub every external service, so passing proves the logic, **not** that your keys and Meta template are right.
+- `npm test` runs 48 automated tests (login, settings, chat, WhatsApp alerts, delivery reports and fallback, Stripe webhook, website reader, widget safety). They use an in-memory database and stub every external service, so passing proves the logic, **not** that your keys and Meta template are right.
 - Use the Vercel **Preview** deployment for this branch: log in, fill in the dashboard, press **Send a test alert**, chat in the preview bubble, make a test enquiry, subscribe with a Stripe test card.
 
 ## 6. Launch checklist

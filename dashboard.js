@@ -36,6 +36,7 @@
     $('response_time').value = b.response_time;
     $('owner_whatsapp').value = b.owner_whatsapp;
     $('whatsapp_consent').checked = b.whatsapp_consent;
+    $('email_copy').checked = !!b.email_copy;
     $('allowed_origins').value = b.allowed_origins.join(', ');
     if (!$('import_url').value && b.allowed_origins.length) $('import_url').value = b.allowed_origins[0].replace(/^https?:\/\//, '');
     $('color').value = b.color;
@@ -123,7 +124,7 @@
       ['When', 'Name', 'Contact', 'Enquiry', 'Alert'].forEach(function (h) { hr.appendChild(el('th', h)); });
       head.appendChild(hr); t.appendChild(head);
       var body = el('tbody');
-      var labels = { sent: ['WhatsApp sent', 'sent'], emailed: ['Emailed', ''], failed_emailed: ['WhatsApp failed, emailed', 'failed'], failed: ['Delivery failed', 'failed'], skipped: ['Not sent', ''] };
+      var labels = { sent: ['WhatsApp sent', 'sent'], delivered: ['WhatsApp delivered', 'sent'], read: ['WhatsApp read', 'sent'], emailed: ['Emailed', ''], failed_emailed: ['WhatsApp failed, emailed', 'failed'], failed: ['Delivery failed', 'failed'], skipped: ['Not sent', ''] };
       d.leads.forEach(function (l) {
         var tr = el('tr'), lab = labels[l.whatsapp_status] || [l.whatsapp_status, ''];
         tr.appendChild(el('td', new Date(l.created_at).toLocaleString()));
@@ -153,6 +154,7 @@
       response_time: $('response_time').value,
       owner_whatsapp: $('owner_whatsapp').value,
       whatsapp_consent: $('whatsapp_consent').checked,
+      email_copy: $('email_copy').checked,
       allowed_origins: $('allowed_origins').value,
       color: $('color').value,
       greeting: $('greeting').value,
@@ -169,7 +171,7 @@
     say('testmsg', 'Sending…');
     $('testwa').disabled = true;
     api('POST', '/api/bot/test-whatsapp', {})
-      .then(function () { say('testmsg', 'Sent. Check your WhatsApp.', 'ok'); })
+      .then(function () { say('testmsg', 'Sent. It should arrive within a minute. If it doesn\u2019t, check the number and the country code.', 'ok'); })
       .catch(function (e) { say('testmsg', e.message, 'err'); })
       .then(function () { $('testwa').disabled = false; });
   });

@@ -3,7 +3,7 @@
 // saves the lead and sends the owner a WhatsApp alert (email fallback).
 import { originAllowed } from "../lib/bot.js";
 import { one, query } from "../lib/db.js";
-import { sendEmail } from "../lib/email.js";
+import { emailEnquiry } from "../lib/enquiry-email.js";
 import { hourlyLimit, monthKey, monthlyLimit, planState } from "../lib/plan.js";
 import { clientIp, esc, isOwnOrigin, json, oneLine, rateLimit } from "../lib/util.js";
 import { sendEnquiryAlert } from "../lib/whatsapp.js";
@@ -90,29 +90,40 @@ async function handleEnquiry(bot, input, ip) {
   );
 
   let status = "skipped";
+  let waId = null;
   if (bot.owner_whatsapp && bot.whatsapp_consent_at) {
     try {
-      await sendEnquiryAlert({ to: bot.owner_whatsapp, business: bot.business_name, name, contact, message: enquiry, leadId: lead.id });
+      waId = await sendEnquiryAlert({ to: bot.owner_whatsapp, business: bot.business_name, name, contact, message: enquiry, leadId: lead.id });
       status = "sent";
+      // Save Meta's id straight away so a quick delivery report can find this enquiry.
+      if (waId) await query("UPDATE leads SET whatsapp_status = 'sent', wa_message_id = $2 WHERE id = $1", [lead.id, waId]);
     } catch (err) {
       console.error("whatsapp alert failed:", err.message);
       status = "failed";
     }
   }
-  if (status !== "sent") {
+  // Email when WhatsApp isn't set up or failed, or as a copy if the owner turned that on.
+  // (If WhatsApp accepts the alert but can't deliver it later, the delivery report emails it then.)
+  let emailed = false;
+  if (status !== "sent" || bot.email_copy) {
     try {
-      await sendEmail({
-        to: bot.account_email,
-        subject: `New website enquiry from ${name}`,
-        text: `Name: ${name}\nContact: ${contact}\nEnquiry: ${enquiry}`,
-        html: `<p><b>New website enquiry</b></p><p>Name: ${esc(name)}<br>Contact: ${esc(contact)}<br>Enquiry: ${esc(enquiry)}</p>`,
-      });
-      status = status === "failed" ? "failed_emailed" : "emailed";
+      const reason = status === "sent" ? "copy" : status === "failed" ? "fallback" : "plain";
+      await emailEnquiry({ to: bot.account_email, business: bot.business_name, name, contact, enquiry, reason });
+      emailed = true;
+      if (status !== "sent") status = status === "failed" ? "failed_emailed" : "emailed";
     } catch (err) {
-      console.error("email fallback failed:", err.message);
+      console.error("enquiry email failed:", err.message);
     }
   }
-  await query("UPDATE leads SET whatsapp_status = $2 WHERE id = $1", [lead.id, status]);
+  // Only the status/email fields: a delivery report may already have moved the status on (e.g. to "failed_emailed").
+  await query(
+    `UPDATE leads SET
+       whatsapp_status = CASE WHEN whatsapp_status IN ('skipped', 'sent') THEN $2 ELSE whatsapp_status END,
+       wa_message_id = COALESCE(wa_message_id, $3),
+       emailed_at = CASE WHEN $4::boolean THEN COALESCE(emailed_at, now()) ELSE emailed_at END
+     WHERE id = $1`,
+    [lead.id, status, waId, emailed]
+  );
   return { ok: true };
 }
 

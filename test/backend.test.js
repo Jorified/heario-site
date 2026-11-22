@@ -12,6 +12,8 @@ process.env.EMAIL_FROM = "hello@heario.ai";
 process.env.ANTHROPIC_API_KEY = "ant";
 process.env.WHATSAPP_TOKEN = "wa";
 process.env.WHATSAPP_PHONE_NUMBER_ID = "123";
+process.env.WHATSAPP_APP_SECRET = "app-secret-for-tests";
+process.env.WHATSAPP_VERIFY_TOKEN = "verify-me";
 process.env.STRIPE_SECRET_KEY = "sk_test";
 process.env.STRIPE_PRICE_ID = "price_1";
 process.env.STRIPE_WEBHOOK_SECRET = "whsec_test";
@@ -707,4 +709,142 @@ test("reply links: European local mobiles are read in the owner's own country fo
   assert.equal(replyNumber("087 111 2222", "353851234567"), "353871112222");
   assert.equal(replyNumber("07700 900123", "447700900000"), "447700900123");
   assert.equal(replyNumber("(415) 555-0123", "14155550000"), "14155550123");
+});
+
+// Makes one real enquiry through the chat endpoint; returns the dashboard cookie.
+async function makeEnquiry(over = {}) {
+  const { cookie } = await login();
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings(over) }));
+  const key = (await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json()).bot.embed_key;
+  calls = [];
+  claudeScript = [
+    { stop_reason: "tool_use", content: [{ type: "tool_use", id: "t1", name: "notify_owner", input: { name: "Ann", contact: "0871112222", enquiry: "Boiler not working" } }] },
+    { stop_reason: "end_turn", content: [{ type: "text", text: "Thanks." }] },
+  ];
+  await h.chat.POST(req("/api/chat", { body: { key, messages: [{ role: "user", content: "boiler" }] }, origin: "https://murphyplumbing.ie" }));
+  return cookie;
+}
+const leadRow = async () => (await db.query("SELECT whatsapp_status, wa_message_id, emailed_at FROM leads")).rows[0];
+const hook = (payload, secret = process.env.WHATSAPP_APP_SECRET) => {
+  const raw = JSON.stringify(payload);
+  const sig = "sha256=" + crypto.createHmac("sha256", secret).update(raw).digest("hex");
+  return h.leads.POST(new Request(SITE + "/api/leads?action=wa-webhook", { method: "POST", headers: { "content-type": "application/json", "x-hub-signature-256": sig }, body: raw }));
+};
+const statusReport = (status, extra = {}) => ({ object: "whatsapp_business_account", entry: [{ changes: [{ field: "messages", value: { statuses: [{ id: "wamid", status, ...extra }] } }] }] });
+
+test("email copy is off by default, and on when the owner ticks it", async () => {
+  let cookie = await makeEnquiry();
+  assert.ok(!calls.some((c) => c.url.includes("brevo")), "no email when WhatsApp sent and copy is off");
+  let me = await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json();
+  assert.equal(me.bot.email_copy, false);
+  assert.equal((await leadRow()).wa_message_id, "wamid");
+
+  await db.exec("TRUNCATE accounts, login_tokens, rate_limits CASCADE");
+  cookie = await makeEnquiry({ email_copy: true });
+  const mail = calls.find((c) => c.url.includes("brevo"));
+  assert.ok(mail, "copy emailed");
+  assert.match(mail.body.textContent, /A copy of your WhatsApp alert[\s\S]*Name: Ann[\s\S]*dashboard\.html/);
+  const row = await leadRow();
+  assert.equal(row.whatsapp_status, "sent");
+  assert.ok(row.emailed_at);
+  me = await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json();
+  assert.equal(me.bot.email_copy, true);
+});
+
+test("WhatsApp webhook: Meta's check, signatures, delivered/read, and a late failure emails the enquiry once", async () => {
+  const get = (q) => h.leads.GET(new Request(SITE + "/api/leads?action=wa-webhook&" + q, { method: "GET" }));
+  const okv = await get("hub.mode=subscribe&hub.verify_token=verify-me&hub.challenge=12345");
+  assert.equal(okv.status, 200);
+  assert.equal(await okv.text(), "12345");
+  assert.equal((await get("hub.mode=subscribe&hub.verify_token=wrong&hub.challenge=1")).status, 403);
+
+  await makeEnquiry();
+  assert.equal((await hook(statusReport("failed"), "not-the-secret")).status, 401, "unsigned reports are refused");
+  assert.equal((await leadRow()).whatsapp_status, "sent");
+
+  await hook(statusReport("read"));
+  assert.equal((await leadRow()).whatsapp_status, "read");
+  await hook(statusReport("delivered"));
+  assert.equal((await leadRow()).whatsapp_status, "read", "a late 'delivered' doesn't move it backwards");
+
+  calls = [];
+  const failed = statusReport("failed", { errors: [{ code: 131026, title: "Message undeliverable" }] });
+  assert.equal((await hook(failed)).status, 200);
+  assert.equal(calls.filter((c) => c.url.includes("brevo")).length, 1);
+  assert.match(calls.find((c) => c.url.includes("brevo")).body.textContent, /couldn't deliver this enquiry to your WhatsApp[\s\S]*Ann/);
+  assert.equal((await leadRow()).whatsapp_status, "failed_emailed");
+  await hook(failed);
+  assert.equal(calls.filter((c) => c.url.includes("brevo")).length, 1, "a repeated report doesn't email twice");
+
+  await hook({ entry: [{ changes: [{ value: { statuses: [{ id: "unknown", status: "failed" }] } }] }] });
+  assert.equal((await hook({ hello: "world" })).status, 200, "odd payloads are ignored");
+});
+
+test("WhatsApp webhook: copy already emailed -> no second email on failure; email outage -> marked failed and retried next time", async () => {
+  await makeEnquiry({ email_copy: true });
+  calls = [];
+  await hook(statusReport("failed"));
+  assert.equal(calls.filter((c) => c.url.includes("brevo")).length, 0, "they already have it by email");
+  assert.equal((await leadRow()).whatsapp_status, "failed_emailed");
+
+  await db.exec("TRUNCATE accounts, login_tokens, rate_limits CASCADE");
+  await makeEnquiry();
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init) => (String(url).includes("brevo") ? new Response("down", { status: 500 }) : realFetch(url, init));
+  let first;
+  try { first = await hook(statusReport("failed")); } finally { globalThis.fetch = realFetch; }
+  assert.equal(first.status, 500, "asks Meta to retry when the backup email couldn't be sent");
+  let row = await leadRow();
+  assert.equal(row.whatsapp_status, "failed");
+  assert.equal(row.emailed_at, null);
+  calls = [];
+  await hook(statusReport("failed"));
+  assert.equal(calls.filter((c) => c.url.includes("brevo")).length, 1, "Meta's retry gets it emailed");
+  assert.equal((await leadRow()).whatsapp_status, "failed_emailed");
+});
+
+test("reply link and webhook work whether Vercel passes the original or the rewritten URL", async () => {
+  await makeEnquiry();
+  const code = calls.find((c) => c.url.includes("graph.facebook")).body.template.components[1].parameters[0].text;
+  const viaPath = await h.leads.GET(new Request(SITE + "/r/" + code, { method: "GET" }));
+  assert.match(viaPath.headers.get("location"), /^https:\/\/wa\.me\/353871112222\?text=/);
+  const v = await h.leads.GET(new Request(SITE + "/api/whatsapp/webhook?hub.mode=subscribe&hub.verify_token=verify-me&hub.challenge=777", { method: "GET" }));
+  assert.equal(await v.text(), "777");
+  const raw = JSON.stringify(statusReport("delivered"));
+  const sig = "sha256=" + crypto.createHmac("sha256", process.env.WHATSAPP_APP_SECRET).update(raw).digest("hex");
+  const p = await h.leads.POST(new Request(SITE + "/api/whatsapp/webhook", { method: "POST", headers: { "x-hub-signature-256": sig }, body: raw }));
+  assert.equal(p.status, 200);
+  assert.equal((await leadRow()).whatsapp_status, "delivered");
+});
+
+test("a failure report that lands before the chat finishes still finds the enquiry, and isn't overwritten", async () => {
+  // Meta's 'failed' report arrives while the chat is still sending the copy email, before its final update.
+  const realFetch = globalThis.fetch;
+  try {
+    const cookie = await (async () => {
+      const { cookie } = await login();
+      await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings({ email_copy: true }) }));
+      return cookie;
+    })();
+    const key = (await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json()).bot.embed_key;
+    let reported = false;
+    const emailFetch = globalThis.fetch;
+    globalThis.fetch = async (url, init) => {
+      // The copy email is the step after WhatsApp; Meta's failure report arrives first.
+      if (String(url).includes("brevo") && !reported) { reported = true; await hook(statusReport("failed")); }
+      return emailFetch(url, init);
+    };
+    calls = [];
+    claudeScript = [
+      { stop_reason: "tool_use", content: [{ type: "tool_use", id: "t1", name: "notify_owner", input: { name: "Ann", contact: "0871112222", enquiry: "Boiler" } }] },
+      { stop_reason: "end_turn", content: [{ type: "text", text: "Thanks." }] },
+    ];
+    await h.chat.POST(req("/api/chat", { body: { key, messages: [{ role: "user", content: "boiler" }] }, origin: "https://murphyplumbing.ie" }));
+    const row = await leadRow();
+    assert.ok(reported);
+    assert.equal(row.whatsapp_status, "failed_emailed", "the chat's own update doesn't put it back to 'sent'");
+    assert.ok(row.emailed_at);
+  } finally {
+    globalThis.fetch = realFetch;
+  }
 });

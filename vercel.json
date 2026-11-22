@@ -63,6 +63,10 @@
       "destination": "/api/billing?action=:action"
     },
     {
+      "source": "/api/whatsapp/webhook",
+      "destination": "/api/leads?action=wa-webhook"
+    },
+    {
       "source": "/r/:code",
       "destination": "/api/leads?r=:code"
     },

@@ -65,9 +65,10 @@
 
     <section class="panel">
       <h2>2. WhatsApp alerts</h2>
-      <p class="hint">Each enquiry is sent to this number in WhatsApp, from Heario's number. If delivery fails, we email it to your login address instead.</p>
+      <p class="hint">Each enquiry is sent to this number in WhatsApp, from Heario's number. If WhatsApp can't deliver it, we email it to your login address instead.</p>
       <div class="field"><label for="owner_whatsapp">Your WhatsApp number</label><input id="owner_whatsapp" class="cb-input" type="tel" placeholder="+353 85 123 4567" /><small>Include the country code.</small></div>
       <label class="check"><input type="checkbox" id="whatsapp_consent" /><span>I agree to receive enquiry alerts on this WhatsApp number from Heario. I can turn them off at any time by removing the number here.</span></label>
+      <label class="check"><input type="checkbox" id="email_copy" /><span>Also email me a copy of every enquiry.</span></label>
       <div class="actions"><button class="btn-ghost" id="testwa" type="button">Send a test alert</button><span id="testmsg" class="cb-msg" style="margin:0"></span></div>
     </section>
 
@@ -111,6 +112,6 @@
   </section>
 </main>
 <script src="pricing.js"></script>
-<script src="dashboard.js?v=3"></script>
+<script src="dashboard.js?v=4"></script>
 </body>
 </html>

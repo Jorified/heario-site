@@ -27,11 +27,13 @@ export async function PUT(request) {
        whatsapp_consent_at = CASE WHEN $11::boolean THEN now()
                                   WHEN $12::boolean THEN NULL
                                   ELSE whatsapp_consent_at END,
+       email_copy = $13,
        updated_at = now()
      WHERE id = $1 RETURNING *`,
     [
       current.id, v.business_name, v.owner_name, v.knowledge, v.response_time, v.greeting,
       v.color, v.allowed_origins, v.owner_whatsapp, v.enabled, v.consent_now, v.consent_clear,
+      v.email_copy,
     ]
   );
   return json({ ok: true, bot: botView(saved) });
