@@ -838,3 +838,17 @@ button:disabled { opacity: .55; cursor: default; }
   -webkit-text-fill-color: initial;
 }
 @media (prefers-reduced-motion: reduce) { .nav .logo::before { animation: none; } }
+
+/* Dashboard: fill business information from the website */
+.import-box { border: 1px dashed rgba(127,209,255,.35); background: rgba(79,142,247,.06); border-radius: 14px; padding: 16px; margin: 4px 0 18px; display: grid; gap: 10px; }
+.import-head { display: grid; gap: 4px; }
+.import-head strong { color: #fff; font-size: 15px; }
+.import-head span { color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+.import-row { display: flex; gap: 10px; }
+.import-row .cb-input { flex: 1; min-width: 0; }
+.import-row .btn-ghost { flex: none; }
+.import-draft { display: grid; gap: 8px; margin-top: 4px; }
+.import-draft label { font-size: 13.5px; color: #cfe3ff; }
+.import-draft textarea { min-height: 260px; }
+.import-draft small { color: var(--muted); font-size: 12px; word-break: break-word; }
+@media (max-width: 560px) { .import-row { flex-direction: column; } }

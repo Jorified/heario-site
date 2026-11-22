@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="style.css?v=30" />
-  <link rel="stylesheet" href="chatbot.css?v=1" />
+  <link rel="stylesheet" href="chatbot.css?v=11" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -40,6 +40,24 @@
       <div class="row2">
         <div class="field"><label for="business_name">Business name</label><input id="business_name" class="cb-input" maxlength="100" /></div>
         <div class="field"><label for="owner_name">Your first name</label><input id="owner_name" class="cb-input" maxlength="60" /><small>Used when the chat says who will be in touch.</small></div>
+      </div>
+      <div class="import-box">
+        <div class="import-head"><strong>Fill this in from your website</strong><span>We read your public pages and write a draft for you to check. Nothing is saved until you click Save.</span></div>
+        <div class="import-row">
+          <input id="import_url" class="cb-input" placeholder="yourbusiness.ie" inputmode="url" autocomplete="url" aria-label="Your website address" />
+          <button class="btn-ghost" id="importbtn" type="button">Read my website</button>
+        </div>
+        <span id="importmsg" class="cb-msg" role="status" style="margin:0"></span>
+        <div id="importdraft" class="import-draft" hidden>
+          <label for="draft_text">Draft from your website. Check it carefully and fix anything that's wrong or out of date.</label>
+          <textarea id="draft_text" class="cb-textarea" maxlength="8000"></textarea>
+          <small id="draft_pages"></small>
+          <div class="actions">
+            <button class="btn-primary" id="draft_use" type="button">Use this draft</button>
+            <button class="btn-ghost" id="draft_add" type="button">Add below mine</button>
+            <button class="btn-ghost" id="draft_discard" type="button">Discard</button>
+          </div>
+        </div>
       </div>
       <div class="field"><label for="knowledge">Business information</label><textarea id="knowledge" class="cb-textarea" maxlength="8000" placeholder="What we do:&#10;Prices:&#10;Areas we cover:&#10;Opening hours:&#10;How booking works:&#10;Common questions:&#10;What we don't do:"></textarea></div>
       <div class="field"><label for="response_time">How quickly do you reply to enquiries?</label><input id="response_time" class="cb-input" maxlength="100" placeholder="e.g. within 2 hours, or by the next working day" /></div>
@@ -93,6 +111,6 @@
   </section>
 </main>
 <script src="pricing.js"></script>
-<script src="dashboard.js"></script>
+<script src="dashboard.js?v=2"></script>
 </body>
 </html>

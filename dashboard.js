@@ -37,6 +37,7 @@
     $('owner_whatsapp').value = b.owner_whatsapp;
     $('whatsapp_consent').checked = b.whatsapp_consent;
     $('allowed_origins').value = b.allowed_origins.join(', ');
+    if (!$('import_url').value && b.allowed_origins.length) $('import_url').value = b.allowed_origins[0].replace(/^https?:\/\//, '');
     $('color').value = b.color;
     $('greeting').value = b.greeting;
     $('enabled').checked = b.enabled;
@@ -168,6 +169,55 @@
       .catch(function (e) { say('testmsg', e.message, 'err'); })
       .then(function () { $('testwa').disabled = false; });
   });
+
+  var importing = false;
+  $('importbtn').addEventListener('click', function () {
+    if (importing) return;
+    var url = $('import_url').value.trim();
+    if (!url) { say('importmsg', 'Enter your website address first.', 'err'); $('import_url').focus(); return; }
+    var host = url.replace(/^https?:\/\//i, '').split(/[\/?#]/)[0].replace(/^www\./i, '').toLowerCase();
+    var listed = $('allowed_origins').value.split(/[\s,]+/).filter(Boolean).some(function (o) {
+      return o.replace(/^https?:\/\//i, '').split(/[\/?#]/)[0].replace(/^www\./i, '').toLowerCase() === host;
+    });
+    if (!listed) {
+      var cur = $('allowed_origins').value.trim();
+      $('allowed_origins').value = cur ? cur.replace(/[\s,]+$/, '') + ', ' + host : host;
+      say('importmsg', 'We added ' + host + ' to your websites in section 3. Click Save at the bottom, then press Read my website again.', 'err');
+      return;
+    }
+    if (state && state.bot.allowed_origins.map(function (o) { return o.replace(/^https?:\/\//i, '').replace(/^www\./i, '').toLowerCase(); }).indexOf(host) === -1) {
+      say('importmsg', 'Click Save at the bottom first, so this website is on your list, then press Read my website again.', 'err');
+      return;
+    }
+    importing = true;
+    $('importbtn').disabled = true;
+    $('importdraft').hidden = true;
+    say('importmsg', 'Reading your website… this can take up to a minute.');
+    api('POST', '/api/bot/import-site', { url: url })
+      .then(function (d) {
+        $('draft_text').value = d.knowledge;
+        $('draft_pages').textContent = 'Read ' + d.pages.length + ' page' + (d.pages.length === 1 ? '' : 's') + ': ' + d.pages.map(function (u) { return u.replace(/^https?:\/\/(www\.)?/, ''); }).join(', ');
+        $('importdraft').hidden = false;
+        say('importmsg', 'Draft ready. Check it below, then use it.', 'ok');
+        $('draft_text').focus({ preventScroll: true }); $('draft_text').scrollTop = 0; $('importdraft').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      })
+      .catch(function (e) { say('importmsg', e.message, 'err'); })
+      .then(function () { importing = false; $('importbtn').disabled = false; });
+  });
+  $('import_url').addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); $('importbtn').click(); } });
+
+  function applyDraft(append) {
+    var draft = $('draft_text').value.trim(), cur = $('knowledge').value.trim();
+    var next = append && cur ? cur + '\n\n' + draft : draft;
+    if (next.length > 8000) { say('importmsg', 'That would be over the 8,000 character limit. Shorten the draft or your current text first.', 'err'); return; }
+    $('knowledge').value = next;
+    $('importdraft').hidden = true;
+    say('importmsg', 'Added. Click Save at the bottom to make it live.', 'ok');
+    $('knowledge').focus();
+  }
+  $('draft_use').addEventListener('click', function () { applyDraft(false); });
+  $('draft_add').addEventListener('click', function () { applyDraft(true); });
+  $('draft_discard').addEventListener('click', function () { $('importdraft').hidden = true; say('importmsg', ''); });
 
   $('copy').addEventListener('click', function () {
     var text = $('snippet').textContent;

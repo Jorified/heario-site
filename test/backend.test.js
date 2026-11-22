@@ -37,8 +37,15 @@ globalThis.fetch = async (url, init = {}) => {
   if (String(url).includes("api.stripe.com/v1/prices/price_setup")) return setupPrice ? ok(setupPrice) : new Response("{}", { status: 500 });
   if (String(url).includes("api.stripe.com/v1/prices/")) return stripePrice ? ok(stripePrice) : new Response("{}", { status: 500 });
   if (String(url).includes("stripe.com")) return ok({ url: "https://checkout.stripe.com/c/test" });
+  const site = fakeSite[String(url)];
+  if (site) return new Response(site.body ?? "", { status: site.status ?? 200, headers: site.headers ?? { "content-type": "text/html; charset=utf-8" } });
   throw new Error("unexpected fetch " + url);
 };
+// Fake websites for the "read my website" feature, and fake DNS for them.
+let fakeSite = {};
+globalThis.__heario_pagefetch = (u) => globalThis.fetch(u.href, { redirect: "manual" });
+const fakeDns = { "murphyplumbing.ie": "93.184.216.34", "www.murphyplumbing.ie": "93.184.216.34", "sneaky.example": "169.254.169.254", "intranet.example": "10.0.0.5" };
+globalThis.__heario_lookup = async (host) => { if (!fakeDns[host]) throw new Error("ENOTFOUND"); return [{ address: fakeDns[host], family: 4 }]; };
 
 const h = {
   request: await import("../lib/handlers/auth-request.js"),
@@ -57,7 +64,9 @@ const h = {
   authRoute: await import("../api/auth.js"),
   billingRoute: await import("../api/billing.js"),
   botRoute: await import("../api/bot.js"),
+  importSite: await import("../lib/handlers/bot-import-site.js"),
 };
+const site = await import("../lib/siteimport.js");
 const { normalizeNumber } = await import("../lib/whatsapp.js");
 const { verifyStripeSignature } = await import("../lib/stripe.js");
 const { originAllowed, parseOrigins } = await import("../lib/bot.js");
@@ -89,7 +98,7 @@ const settings = (over = {}) => ({
 
 before(async () => { await db.exec(fs.readFileSync(new URL("../schema.sql", import.meta.url), "utf8")); });
 beforeEach(async () => {
-  calls = []; claudeScript = []; stripePrice = PRICE(); resetPriceCache();
+  calls = []; claudeScript = []; stripePrice = PRICE(); resetPriceCache(); fakeSite = {};
   setupPrice = { id: "price_setup", active: true, currency: "eur", unit_amount: 1999, currency_options: { gbp: { unit_amount: 1699 }, usd: { unit_amount: 2299 } } };
   delete process.env.STRIPE_SETUP_PRICE_ID;
   await db.exec("TRUNCATE accounts, login_tokens, rate_limits CASCADE");
@@ -484,4 +493,118 @@ test("Heario's own demo bot gets bigger limits than a customer plan", async () =
   } finally {
     delete process.env.HOUSE_EMBED_KEYS;
   }
+});
+
+
+test("site import: address checks block private and odd addresses", () => {
+  for (const bad of ["", "localhost", "http://127.0.0.1", "https://[::1]/", "http://10.0.0.5", "https://router.local", "ftp://x.ie", "https://user:pw@x.ie", "https://x.ie:8080"]) {
+    assert.equal(site.normalizeSiteUrl(bad), null, bad);
+  }
+  assert.equal(site.normalizeSiteUrl("murphyplumbing.ie/about#x").href, "https://murphyplumbing.ie/about");
+  for (const ip of ["10.1.2.3", "172.20.0.1", "192.168.1.1", "127.0.0.1", "169.254.169.254", "100.64.0.1", "0.0.0.0", "::1", "fd00::1", "fe80::1", "::ffff:10.0.0.1"]) {
+    assert.equal(site.isPublicAddress(ip), false, ip);
+  }
+  for (const ip of ["93.184.216.34", "8.8.8.8", "2606:4700::1111"]) assert.equal(site.isPublicAddress(ip), true, ip);
+});
+
+test("site import: text extraction and same-site links", () => {
+  const html = `<html><head><title>Murphy &amp; Sons</title><meta name="description" content="Plumbers in Cork"><style>.x{}</style></head>
+    <body><nav><a href="/about">About</a><a href="/blog/2020">Blog</a><a href="https://www.murphyplumbing.ie/prices">Prices</a>
+    <a href="https://other.ie/x">Other</a><a href="/brochure.pdf">PDF</a><a href="/wp-admin/">Admin</a><a href="#top">Top</a></nav>
+    <script>var secret=1</script><h1>Boiler repairs &rarr; Se&aacute;n &Oacute; Briain</h1><p>Call-out &euro;80</p><ul><li>Cork city</li></ul></body></html>`;
+  const t = site.htmlToText(html);
+  assert.equal(t.title, "Murphy & Sons");
+  assert.equal(t.description, "Plumbers in Cork");
+  assert.match(t.text, /Boiler repairs → Seán Ó Briain/);
+  assert.match(t.text, /Call-out €80/);
+  assert.match(t.text, /- Cork city/);
+  assert.doesNotMatch(t.text, /secret|\.x\{/);
+  const links = site.extractLinks(html, new URL("https://murphyplumbing.ie/")).map((u) => u.pathname);
+  assert.deepEqual(links, ["/about", "/prices", "/blog/2020"], "same-site pages only, useful ones first");
+});
+
+test("site import: reads the site and returns a draft without saving it", async () => {
+  const { cookie } = await login();
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings({ knowledge: "old text" }) }));
+  const page = (title, body, links = "") => `<html><head><title>${title}</title></head><body><nav>${links}</nav><main>${body}</main><footer>Murphy Plumbing, Cork. Call 021 123 4567</footer></body></html>`;
+  const nav = `<a href="/services">Services</a><a href="/contact">Contact</a><a href="http://internal.example/">x</a>`;
+  fakeSite = {
+    "https://murphyplumbing.ie/": { status: 301, headers: { location: "https://www.murphyplumbing.ie/" } },
+    "https://www.murphyplumbing.ie/": { body: page("Murphy Plumbing", "<h1>Emergency plumbers in Cork</h1><p>Open 8am to 6pm, Monday to Saturday.</p>", nav) },
+    "https://www.murphyplumbing.ie/services": { body: page("Services", "<h2>Boiler servicing</h2><p>Boiler service from €95. Call-out €80.</p>", nav) },
+    "https://www.murphyplumbing.ie/contact": { body: page("Contact", "<p>Email hello@murphyplumbing.ie for a free quote.</p>", nav) },
+  };
+  claudeScript = [{ stop_reason: "end_turn", content: [{ type: "text", text: "**What we do:**\n# Emergency plumbers in Cork.\nPrices:\n- Boiler service from €95" }] }];
+  const res = await h.importSite.POST(req("/api/bot/import-site", { cookie, body: { url: "murphyplumbing.ie" } }));
+  const d = await res.json();
+  assert.equal(res.status, 200, JSON.stringify(d));
+  assert.equal(d.knowledge, "What we do:\nEmergency plumbers in Cork.\nPrices:\n- Boiler service from €95", "markdown symbols are stripped");
+  assert.deepEqual(d.pages, ["https://www.murphyplumbing.ie/", "https://www.murphyplumbing.ie/services", "https://www.murphyplumbing.ie/contact"]);
+  const sent = calls.find((c) => c.url.includes("anthropic")).body.messages[0].content;
+  assert.match(sent, /Boiler service from €95/);
+  assert.match(sent, /hello@murphyplumbing\.ie/);
+  assert.equal(sent.match(/021 123 4567/g).length, 1, "footer repeated on every page is sent once");
+  assert.ok(!calls.some((c) => c.url.includes("internal.example")), "other sites are never fetched");
+  const bot = await db.query("SELECT knowledge FROM bots");
+  assert.equal(bot.rows[0].knowledge, "old text", "nothing is saved by the import");
+});
+
+test("site import: refuses private addresses, redirects to them, and unauthenticated or cross-site calls", async () => {
+  const { cookie } = await login();
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings({ allowed_origins: "murphyplumbing.ie, sneaky.example" }) }));
+  const post = (url, opts = {}) => h.importSite.POST(req("/api/bot/import-site", { cookie, body: { url }, ...opts }));
+  assert.equal((await post("sneaky.example")).status, 400, "host resolving to cloud metadata IP is refused");
+  fakeSite = { "https://murphyplumbing.ie/": { status: 302, headers: { location: "https://intranet.example/admin" } } };
+  assert.equal((await post("murphyplumbing.ie")).status, 400, "redirect to a private host is refused");
+  assert.ok(!calls.some((c) => c.url.includes("intranet.example")));
+  assert.equal((await post("")).status, 400);
+  assert.equal((await post("murphyplumbing.ie", { cookie: undefined })).status, 401);
+  assert.equal((await post("murphyplumbing.ie", { origin: "https://evil.com" })).status, 403);
+  assert.ok(!calls.some((c) => c.url.includes("anthropic")), "no AI call when nothing was read");
+});
+
+test("site import: rate limited per account", async () => {
+  const { cookie } = await login();
+  const codes = [];
+  for (let i = 0; i < 6; i++) codes.push((await h.importSite.POST(req("/api/bot/import-site", { cookie, body: { url: "sneaky.example" } }))).status);
+  assert.deepEqual(codes, [400, 400, 400, 400, 400, 429]);
+});
+
+test("bot route sends import-site and test-whatsapp to the right handler", async () => {
+  const { cookie } = await login();
+  const r = await h.botRoute.POST(req("/api/bot?action=import-site", { cookie, body: { url: "" } }));
+  assert.equal((await r.json()).error, "Enter your website address first.");
+  const w = await h.botRoute.POST(req("/api/bot?action=test-whatsapp", { cookie, body: {} }));
+  assert.match((await w.json()).error, /WhatsApp/);
+});
+
+test("site import: only websites listed in the account can be read", async () => {
+  const { cookie } = await login();
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings() }));
+  fakeSite = { "https://competitor.ie/": { body: "<html><body>" + "Competitor prices and secrets. ".repeat(10) + "</body></html>" } };
+  const res = await h.importSite.POST(req("/api/bot/import-site", { cookie, body: { url: "competitor.ie" } }));
+  assert.equal(res.status, 400);
+  assert.match((await res.json()).error, /isn't in your list/);
+  assert.ok(!calls.some((c) => c.url.includes("competitor.ie") || c.url.includes("anthropic")), "nothing is fetched or sent to the AI");
+  claudeScript = [{ stop_reason: "end_turn", content: [{ type: "text", text: "ok" }] }];
+  fakeSite = { "https://murphyplumbing.ie/": { body: "<html><body>" + "We fix boilers in Cork. ".repeat(10) + "</body></html>" } };
+  for (const u of ["murphyplumbing.ie", "https://www.murphyplumbing.ie/about", "http://MurphyPlumbing.ie"]) {
+    const r = await (await h.importSite.POST(req("/api/bot/import-site", { cookie, body: { url: u } }))).json();
+    assert.doesNotMatch(r.error ?? "", /isn't in your list/, u);
+  }
+});
+
+test("site import: the connection itself only goes to public addresses", async () => {
+  const lookup = (host, opts) => new Promise((resolve, reject) => site.guardedLookup(host, opts, (err, a, f) => (err ? reject(err) : resolve([a, f]))));
+  await assert.rejects(lookup("sneaky.example", {}), /blocked address/);
+  await assert.rejects(lookup("intranet.example", { all: true }), /blocked address/);
+  await assert.rejects(lookup("nope.example", {}), /ENOTFOUND/);
+  assert.deepEqual(await lookup("murphyplumbing.ie", {}), ["93.184.216.34", 4]);
+  const all = await lookup("murphyplumbing.ie", { all: true });
+  assert.equal(all[0][0].address, "93.184.216.34");
+  const real = globalThis.__heario_pagefetch;
+  delete globalThis.__heario_pagefetch;
+  try {
+    await assert.rejects(site.pinnedFetch(new URL("http://sneaky.example/")), /blocked address/);
+  } finally { globalThis.__heario_pagefetch = real; }
 });
