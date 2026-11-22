@@ -979,3 +979,12 @@ button:disabled { opacity: .55; cursor: default; }
   .hours-day:has(input:not(:checked)) { width:auto; }
 }
 #tzwrap[hidden] { display:none; }
+
+/* Homepage: "Also included" list */
+.bento-more h3 { font-size: 22px; }
+.more-list { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 28px; }
+.more-list li { display: flex; gap: 12px; align-items: flex-start; }
+.more-list svg { flex: none; width: 20px; height: 20px; margin-top: 2px; color: var(--accent2, #7fd1ff); }
+.more-list b { display: block; color: #fff; font-size: 15px; margin-bottom: 2px; }
+.more-list span { color: var(--muted); font-size: 14px; line-height: 1.55; }
+@media (max-width: 760px) { .more-list { grid-template-columns: 1fr; } }
