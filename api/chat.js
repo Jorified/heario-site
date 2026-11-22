@@ -92,7 +92,7 @@ async function handleEnquiry(bot, input, ip) {
   let status = "skipped";
   if (bot.owner_whatsapp && bot.whatsapp_consent_at) {
     try {
-      await sendEnquiryAlert({ to: bot.owner_whatsapp, business: bot.business_name, name, contact, message: enquiry });
+      await sendEnquiryAlert({ to: bot.owner_whatsapp, business: bot.business_name, name, contact, message: enquiry, leadId: lead.id });
       status = "sent";
     } catch (err) {
       console.error("whatsapp alert failed:", err.message);

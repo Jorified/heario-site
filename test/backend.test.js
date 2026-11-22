@@ -67,7 +67,7 @@ const h = {
   importSite: await import("../lib/handlers/bot-import-site.js"),
 };
 const site = await import("../lib/siteimport.js");
-const { normalizeNumber } = await import("../lib/whatsapp.js");
+const { normalizeNumber, replyNumber, replyCode, parseReplyCode } = await import("../lib/whatsapp.js");
 const { verifyStripeSignature } = await import("../lib/stripe.js");
 const { originAllowed, parseOrigins } = await import("../lib/bot.js");
 const { currencyForCountry, formatMoney, resetPriceCache } = await import("../lib/pricing.js");
@@ -164,6 +164,22 @@ test("chat: blocked from other sites, answers on the customer's site, and a real
   const wa = calls.find((c) => c.url.includes("graph.facebook"));
   assert.equal(wa.body.to, "353851234567");
   assert.deepEqual(wa.body.template.components[0].parameters.map((p) => p.text), ["Murphy Plumbing", "Ann", "0871112222", "Boiler not working"]);
+  assert.equal(wa.body.template.name, "new_enquiry_phone", "phone contact gets the reply-button template");
+  const btn = wa.body.template.components[1];
+  assert.equal(btn.sub_type, "url");
+  assert.match(btn.parameters[0].text, /^\d+\.[A-Za-z0-9_-]{16}$/, "button carries a signed code, never a wa.me link or a phone number");
+  assert.ok(!JSON.stringify(wa.body).includes("wa.me"));
+  // Tapping the button: signed code -> WhatsApp chat with the visitor, prefilled; tampering -> dashboard.
+  const tap = (code) => h.leads.GET(req(`/api/leads?r=${code}`, { method: "GET", origin: null }));
+  const ok = await tap(btn.parameters[0].text);
+  assert.equal(ok.status, 302);
+  const loc = new URL(ok.headers.get("location"));
+  assert.equal(loc.origin + loc.pathname, "https://wa.me/353871112222");
+  assert.match(loc.searchParams.get("text"), /^Hi Ann, it's Murphy Plumbing\./);
+  const bad = await tap(btn.parameters[0].text.replace(/.$/, (c) => (c === "a" ? "b" : "a")));
+  assert.match(bad.headers.get("location"), /\/dashboard\.html$/);
+  assert.match((await tap("1.AAAAAAAAAAAAAAAA")).headers.get("location"), /\/dashboard\.html$/);
+  assert.match((await tap("garbage")).headers.get("location"), /\/dashboard\.html$/);
   const leads = await (await h.leads.GET(req("/api/leads", { method: "GET", cookie, origin: null }))).json();
   assert.equal(leads.leads.length, 1);
   assert.equal(leads.leads[0].whatsapp_status, "sent");
@@ -607,4 +623,88 @@ test("site import: the connection itself only goes to public addresses", async (
   try {
     await assert.rejects(site.pinnedFetch(new URL("http://sneaky.example/")), /blocked address/);
   } finally { globalThis.__heario_pagefetch = real; }
+});
+
+test("replyNumber turns a visitor's phone into an international WhatsApp number, or gives up safely", () => {
+  assert.equal(replyNumber("087 111 2222", "353851234567"), "353871112222");
+  assert.equal(replyNumber("Call me on (087) 111-2222 after 5", "353851234567"), "353871112222");
+  assert.equal(replyNumber("+44 7700 900123", "353851234567"), "447700900123");
+  assert.equal(replyNumber("0044 7700 900123", "353851234567"), "447700900123");
+  assert.equal(replyNumber("07700 900123", "447700900000"), "447700900123");
+  assert.equal(replyNumber("(415) 555-0123", "14155550000"), "14155550123");
+  assert.equal(replyNumber("087 111 2222", "4915112345678"), null, "won't guess a country it doesn't know");
+  assert.equal(replyNumber("ann@example.com", "353851234567"), null);
+  assert.equal(replyNumber("", "353851234567"), null);
+});
+
+test("WhatsApp alert: email contact uses the plain template; a missing reply template falls back to plain", async () => {
+  const { sendEnquiryAlert } = await import("../lib/whatsapp.js");
+  const realFetch = globalThis.fetch;
+  const sent = [];
+  try {
+    globalThis.fetch = async (url, init) => { sent.push(JSON.parse(init.body)); return new Response("{}", { status: 200 }); };
+    await sendEnquiryAlert({ to: "353851234567", business: "Murphy Plumbing", name: "Ann", contact: "ann@example.com", message: "Leak" });
+    assert.equal(sent[0].template.name, "new_enquiry");
+    assert.equal(sent[0].template.components.length, 1, "no button parameters for the plain template");
+
+    sent.length = 0;
+    globalThis.fetch = async (url, init) => {
+      const b = JSON.parse(init.body); sent.push(b);
+      return b.template.name === "new_enquiry_phone" ? new Response('{"error":{"code":132001}}', { status: 404 }) : new Response("{}", { status: 200 });
+    };
+    await sendEnquiryAlert({ to: "353851234567", business: "Murphy Plumbing", name: "Ann", contact: "087 111 2222", message: "Leak", leadId: "9" });
+    assert.deepEqual(sent.map((b) => b.template.name), ["new_enquiry_phone", "new_enquiry"]);
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});
+
+test("reply links: landlines get no reply button, long enquiries are clipped, codes can't be forged", async () => {
+  assert.equal(replyNumber("01 234 5678", "353851234567"), null, "Irish landline");
+  assert.equal(replyNumber("020 7946 0958", "447700900000"), null, "UK landline");
+  assert.equal(replyNumber("+353 1 234 5678", "447700900000"), null, "international Irish landline");
+  assert.equal(replyNumber("+49 151 12345678", "353851234567"), "4915112345678", "other countries pass through");
+  assert.equal(parseReplyCode(replyCode("42")), "42");
+  assert.equal(parseReplyCode("42." + replyCode("43").split(".")[1]), null);
+  assert.equal(parseReplyCode("42"), null);
+
+  const { sendEnquiryAlert } = await import("../lib/whatsapp.js");
+  const realFetch = globalThis.fetch;
+  let sent;
+  try {
+    globalThis.fetch = async (url, init) => { sent = JSON.parse(init.body); return new Response("{}", { status: 200 }); };
+    await sendEnquiryAlert({ to: "353851234567", business: "B".repeat(200), name: "N".repeat(200), contact: "087 111 2222", message: "x ".repeat(400), leadId: "7" });
+    const vars = sent.template.components[0].parameters.map((p) => p.text);
+    assert.ok(vars[3].length <= 200 && vars[3].endsWith("\u2026"));
+    assert.ok(vars[0].length <= 60 && vars[1].length <= 50);
+    assert.ok(vars.join("").length + 150 < 550, "whole alert stays under the 550-character body limit");
+    await sendEnquiryAlert({ to: "353851234567", business: "B", name: "N", contact: "087 111 2222", message: "m" });
+    assert.equal(sent.template.name, "new_enquiry", "no lead id, no reply button");
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});
+
+test("reply links: European local mobiles are read in the owner's own country format; landlines and unclear numbers aren't", () => {
+  const DE = "4915112345678", FR = "33612345678", ES = "34612345678", IT = "393471234567", HU = "36201234567", PL = "48512345678", NL = "31612345678";
+  assert.equal(replyNumber("0151 2345 6789", DE), "4915123456789");
+  assert.equal(replyNumber("030 1234567", DE), null, "Berlin landline");
+  assert.equal(replyNumber("06 12 34 56 78", FR), "33612345678");
+  assert.equal(replyNumber("01 23 45 67 89", FR), null, "Paris landline");
+  assert.equal(replyNumber("06-12345678", NL), "31612345678");
+  assert.equal(replyNumber("612 345 678", ES), "34612345678");
+  assert.equal(replyNumber("91 123 45 67", ES), null, "Madrid landline");
+  assert.equal(replyNumber("347 123 4567", IT), "393471234567");
+  assert.equal(replyNumber("06 1234 5678", IT), null, "Rome landline");
+  assert.equal(replyNumber("06 20 123 4567", HU), "36201234567");
+  assert.equal(replyNumber("512 345 678", PL), "48512345678");
+  assert.equal(replyNumber("087 111 2222", DE), null, "an Irish-looking local number isn't forced into German");
+  assert.equal(replyNumber("+49 30 1234567", "353851234567"), null, "international German landline");
+  assert.equal(replyNumber("+33 6 12 34 56 78", "353851234567"), "33612345678");
+  assert.equal(replyNumber("12345678", "4512345678"), null, "Denmark isn't listed: local numbers get no button");
+  assert.equal(replyNumber("+45 12 34 56 78", "353851234567"), "4512345678", "unlisted countries' international numbers pass through as before");
+  // Ireland, UK and North America are unchanged.
+  assert.equal(replyNumber("087 111 2222", "353851234567"), "353871112222");
+  assert.equal(replyNumber("07700 900123", "447700900000"), "447700900123");
+  assert.equal(replyNumber("(415) 555-0123", "14155550000"), "14155550123");
 });

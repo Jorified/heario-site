@@ -32,6 +32,7 @@ The old desktop app is retired and no longer part of this site.
 | `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, `STRIPE_WEBHOOK_SECRET` | see section 3. Optional: `STRIPE_SETUP_PRICE_ID` for the setup-fee add-on |
 | `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID` | see section 4 |
 | `WHATSAPP_TEMPLATE_NAME` | `new_enquiry` (default) |
+| `WHATSAPP_TEMPLATE_PHONE_NAME` | `new_enquiry_phone` (default) |
 | `WHATSAPP_TEMPLATE_LANG` | `en` (default) |
 | `CRON_SECRET` | any random string. Vercel sends it to the daily cleanup job automatically |
 | `PLAN_MONTHLY_MESSAGES` | optional, default 3000 |
@@ -55,11 +56,33 @@ Add them in Vercel > Settings > Environment Variables, then redeploy.
 ## 4. WhatsApp Cloud API (one Heario sender for all customers)
 1. developers.facebook.com: create a Business app with the WhatsApp product, add and verify the **Heario business number** (it can't also be on the normal WhatsApp app).
 2. Create a **System User** token with `whatsapp_business_messaging` and `whatsapp_business_management` (permanent, unlike the temporary token). Put it in `WHATSAPP_TOKEN`; the number's ID goes in `WHATSAPP_PHONE_NUMBER_ID`.
-3. WhatsApp Manager > Message templates > create a **Utility** template named `new_enquiry`, language English, body exactly:
+3. WhatsApp Manager > Message templates: create **two Utility templates**, language **English** (`en`).
+   Both use the same header, body and footer:
 
-   `New website enquiry for {{1}}. Name: {{2}}. Contact: {{3}}. Message: {{4}}`
+   - Header (text): `New website enquiry`
+   - Body:
+     ```
+     New enquiry for {{1}} from your website chat.
 
-   Give each variable a realistic sample value. Wait for approval (usually minutes to a day).
+     Name: {{2}}
+     Contact: {{3}}
+     Enquiry: {{4}}
+
+     Please get back to them using the contact details above.
+     ```
+   - Footer: `Heario alerts. Turn off in your dashboard.`
+   - Samples: {{1}} `Murphy Plumbing`, {{2}} `Ann Byrne`, {{3}} `087 111 2222`, {{4}} `Boiler not heating, can someone call out this week?`
+
+   **`new_enquiry`**: one button, Visit website, static URL `https://heario.ai/dashboard.html`, text `See all enquiries`.
+
+   **`new_enquiry_phone`**: two buttons, in this order:
+   1. Visit website, **dynamic** URL `https://heario.ai/r/{{1}}`, text `Reply on WhatsApp`, sample `42.AbCdEfGhIjKlMnOp`
+      (Meta rejects direct wa.me links, so this goes via Heario, which forwards the owner to the visitor's chat)
+   2. Visit website, static URL `https://heario.ai/dashboard.html`, text `See all enquiries`
+
+   The phone version is used when the visitor leaves a **mobile** number Heario can place (international format, or a
+   local number when the owner is in Ireland, the UK or North America; Irish and UK landlines are skipped). If it isn't approved yet, alerts fall back to
+   `new_enquiry` automatically. Wait for approval (usually minutes, at most a day).
 4. To message more than a handful of numbers, complete Meta **business verification**.
 
 Customers must tick the consent box before any alert is sent; the time is stored.

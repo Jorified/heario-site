@@ -63,6 +63,10 @@
       "destination": "/api/billing?action=:action"
     },
     {
+      "source": "/r/:code",
+      "destination": "/api/leads?r=:code"
+    },
+    {
       "source": "/api/bot/:action",
       "destination": "/api/bot?action=:action"
     }
