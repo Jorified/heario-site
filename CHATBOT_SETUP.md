@@ -59,10 +59,10 @@ Add them in Vercel > Settings > Environment Variables, then redeploy.
 1. developers.facebook.com: create a Business app with the WhatsApp product, add and verify the **Heario business number** (it can't also be on the normal WhatsApp app).
 2. Create a **System User** token with `whatsapp_business_messaging` and `whatsapp_business_management` (permanent, unlike the temporary token). Put it in `WHATSAPP_TOKEN`; the number's ID goes in `WHATSAPP_PHONE_NUMBER_ID`.
 3. WhatsApp Manager > Message templates: create **two Utility templates**, language **English** (`en`).
-   Both use the same header, body and footer:
+   Both use the same header and footer, and the same body except for the last line (only the phone version has a Reply button):
 
    - Header (text): `New website enquiry`
-   - Body:
+   - Body (`new_enquiry_phone`):
      ```
      New enquiry for {{1}} from your website chat.
 
@@ -70,8 +70,9 @@ Add them in Vercel > Settings > Environment Variables, then redeploy.
      Contact: {{3}}
      Enquiry: {{4}}
 
-     Please get back to them using the contact details above.
+     Tap Reply on WhatsApp to message them, or tap their number to call.
      ```
+   - Body (`new_enquiry`): the same, but the last line is `Tap their number to call, or reply using the contact details above.`
    - Footer: `Heario alerts. Turn off in your dashboard.`
    - Samples: {{1}} `Murphy Plumbing`, {{2}} `Ann Byrne`, {{3}} `087 111 2222`, {{4}} `Boiler not heating, can someone call out this week?`
 
