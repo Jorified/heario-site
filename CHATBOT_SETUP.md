@@ -99,7 +99,7 @@ If WhatsApp delivery fails (straight away or later, via the delivery report), th
 login address instead. Customers can also tick "Also email me a copy of every enquiry" (off by default).
 
 ## 5. Test before launch
-- `npm test` runs 77 automated tests (login, settings, chat, unanswered questions, opening hours and holiday closures, booking link, WhatsApp alerts, delivery reports and fallback, Stripe webhook, website reader, widget safety). They use an in-memory database and stub every external service, so passing proves the logic, **not** that your keys and Meta template are right.
+- `npm test` runs 79 automated tests (login, settings, chat, unanswered questions, opening hours and holiday closures, booking link, WhatsApp alerts, delivery reports and fallback, Stripe webhook, website reader, widget safety). They use an in-memory database and stub every external service, so passing proves the logic, **not** that your keys and Meta template are right.
 - Use the Vercel **Preview** deployment for this branch: log in, fill in the dashboard, press **Send a test alert**, chat in the preview bubble, make a test enquiry, subscribe with a Stripe test card.
 
 ## 6. Launch checklist
@@ -110,6 +110,12 @@ login address instead. Customers can also tick "Also email me a copy of every en
 - [ ] Add your own website to a test account and send yourself a real enquiry
 - [ ] Look at the old product pages: they're excluded from the deployment via `.vercelignore` but remain in git. Delete them whenever you like
 - [x] Old desktop-app Stripe webhook switched off (done by Jack, 20 Nov 2026), so chatbot payments can't trigger old licence-key emails. If you ever re-enable it, use a separate Stripe account for the chatbot
+
+## Trial emails
+- About 3 days before a free trial ends, and again when it has ended, the customer gets a short email from "Jack at Heario" (replies go to support@heario.ai). It's sent by the daily job, once each, never to subscribers.
+- The wording depends on how far they got: used it (shows messages answered and enquiries), set up but no visitors (points them at the install guide), or not set up (checklist, offer of help).
+- The emails offer to extend the trial. To give someone 7 more days, run in Vercel's Query page (Read-only off, then back on):
+  `UPDATE accounts SET trial_ends_at = now() + interval '7 days', trial_reminder_sent_at = NULL, trial_ended_sent_at = NULL WHERE email = 'customer@example.com'`
 
 ## Monthly message limit
 - Each chatbot gets `PLAN_MONTHLY_MESSAGES` visitor messages a month (default 3,000). It resets on the 1st (UTC).

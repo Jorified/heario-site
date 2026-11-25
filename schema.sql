@@ -94,3 +94,10 @@ ALTER TABLE bots ADD COLUMN IF NOT EXISTS opening_hours text NOT NULL DEFAULT ''
 
 -- Per-customer monthly chat message allowance (NULL = the plan default, PLAN_MONTHLY_MESSAGES).
 ALTER TABLE bots ADD COLUMN IF NOT EXISTS message_limit integer;
+
+-- Trial emails already sent (each goes once).
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS trial_reminder_sent_at timestamptz;
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS trial_ended_sent_at timestamptz;
+
+-- When the chat last loaded on the customer's own website (not the dashboard preview).
+ALTER TABLE bots ADD COLUMN IF NOT EXISTS site_seen_at timestamptz;

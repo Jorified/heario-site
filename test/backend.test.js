@@ -1333,3 +1333,82 @@ test("owner alerts are skipped when ADMIN_EMAIL isn't set", async () => {
   await login("quiet@example.com");
   assert.equal(calls.filter((c) => c.url.includes("brevo")).length, 1, "only the login email itself");
 });
+
+test("trial emails: reminder ~3 days before and a note when it ends, once each, personalised, never to subscribers", async () => {
+  process.env.CRON_SECRET = "s3cret";
+  const runCron = async () => (await (await h.cron.GET(new Request(SITE + "/api/cron/cleanup", { headers: { authorization: "Bearer s3cret" } }))).json()).trial;
+  const mails = () => calls.filter((c) => c.url.includes("brevo")).map((c) => c.body);
+  const trialEnds = (email, sql) => db.query(`UPDATE accounts SET trial_ends_at = ${sql} WHERE email = $1`, [email]);
+
+  // A customer who used it, one who set up but has no visitors, one who never set up, and one who subscribed.
+  const used = await login("used@example.com");
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie: used.cookie, body: settings() }));
+  const usedBot = (await db.query("SELECT b.id FROM bots b JOIN accounts a ON a.id = b.account_id WHERE a.email = 'used@example.com'")).rows[0].id;
+  await db.query("INSERT INTO usage (bot_id, month, messages) VALUES ($1, '2026-11', 37)", [usedBot]);
+  // The chat has loaded on their real website (the widget asks for its settings from there).
+  const usedKey = (await db.query("SELECT embed_key FROM bots WHERE id = $1", [usedBot])).rows[0].embed_key;
+  assert.equal((await h.widget.GET(new Request(SITE + "/api/widget-config?key=" + usedKey, { headers: { origin: "https://murphyplumbing.ie" } }))).status, 200);
+  assert.ok((await db.query("SELECT site_seen_at FROM bots WHERE id = $1", [usedBot])).rows[0].site_seen_at, "live on their site is recorded");
+  await db.query("INSERT INTO leads (bot_id,name,contact,enquiry) VALUES ($1,'Ann','087','Boiler'), ($1,'Bob','086','Leak')", [usedBot]);
+  const ready = await login("ready@example.com");
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie: ready.cookie, body: settings({ business_name: "Ready Electrics" }) }));
+  // They only tried it in the dashboard preview: that uses messages but isn't their website.
+  const readyBot = (await db.query("SELECT b.id FROM bots b JOIN accounts a ON a.id = b.account_id WHERE a.email = 'ready@example.com'")).rows[0].id;
+  const readyKey = (await db.query("SELECT embed_key FROM bots WHERE id = $1", [readyBot])).rows[0].embed_key;
+  await h.widget.GET(new Request(SITE + "/api/widget-config?key=" + readyKey, { headers: { origin: SITE } }));
+  assert.equal((await db.query("SELECT site_seen_at FROM bots WHERE id = $1", [readyBot])).rows[0].site_seen_at, null, "the dashboard preview doesn't count");
+  await db.query("INSERT INTO usage (bot_id, month, messages) VALUES ($1, '2026-11', 6)", [readyBot]);
+  await login("setup@example.com");
+  await login("paid@example.com");
+  await db.query("UPDATE accounts SET subscription_status = 'active' WHERE email = 'paid@example.com'");
+  for (const e of ["used@example.com", "ready@example.com", "setup@example.com", "paid@example.com"]) await trialEnds(e, "now() + interval '2 days 5 hours'");
+
+  calls = [];
+  assert.deepEqual(await runCron(), { reminders: 3, ended: 0 });
+  const r = Object.fromEntries(mails().map((m) => [m.to[0].email, m]));
+  assert.equal(r["paid@example.com"], undefined, "subscribers aren't reminded");
+  assert.equal(r["used@example.com"].sender.name, "Jack at Heario");
+  assert.equal(r["used@example.com"].replyTo.email, "support@heario.ai");
+  assert.match(r["used@example.com"].subject, /^Your Heario trial ends on \w+day \d+ \w+$/);
+  assert.match(r["used@example.com"].textContent, /ends in 3 days[\s\S]*Hi Sean,[\s\S]*37 messages answered \| 2 enquiries sent to you[\s\S]*Keep my chat running: https:\/\/heario\.ai\/dashboard\.html[\s\S]*€29 a month \(£25 in the UK, \$31 in the US\)/);
+  assert.match(r["ready@example.com"].textContent, /isn't on your website yet[\s\S]*dashboard\.html#install[\s\S]*extend it/);
+  assert.match(r["setup@example.com"].textContent, /\[ \] Add a few lines about your business[\s\S]*\[ \] Add your WhatsApp number[\s\S]*set it up for you, free/);
+  assert.match(r["used@example.com"].htmlContent, /<a href="https:\/\/heario\.ai\/dashboard\.html"[^>]*>Keep my chat running<\/a>/);
+
+  calls = [];
+  assert.deepEqual(await runCron(), { reminders: 0, ended: 0 }, "nothing sent twice");
+
+  for (const e of ["used@example.com", "setup@example.com"]) await trialEnds(e, "now() - interval '1 hour'");
+  calls = [];
+  assert.deepEqual(await runCron(), { reminders: 0, ended: 2 });
+  const e = Object.fromEntries(mails().map((m) => [m.to[0].email, m]));
+  assert.equal(e["used@example.com"].subject, "Your Heario chat is paused");
+  assert.match(e["used@example.com"].textContent, /now paused[\s\S]*37 messages answered[\s\S]*Switch my chat back on/);
+  assert.equal(e["setup@example.com"].subject, "Your Heario trial has ended");
+  assert.match(e["setup@example.com"].textContent, /extend your trial[\s\S]*delete your account/);
+  calls = [];
+  assert.deepEqual(await runCron(), { reminders: 0, ended: 0 });
+
+  // Long-expired trials (before this feature) aren't emailed out of the blue.
+  await login("old@example.com");
+  await trialEnds("old@example.com", "now() - interval '30 days'");
+  calls = [];
+  assert.equal((await runCron()).ended, 0);
+});
+
+test("trial emails: a failed send is retried on the next run", async () => {
+  process.env.CRON_SECRET = "s3cret";
+  await login("retry@example.com");
+  await db.query("UPDATE accounts SET trial_ends_at = now() + interval '1 day' WHERE email = 'retry@example.com'");
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init) => (String(url).includes("brevo") ? new Response("down", { status: 500 }) : realFetch(url, init));
+  try {
+    const first = await (await h.cron.GET(new Request(SITE + "/api/cron/cleanup", { headers: { authorization: "Bearer s3cret" } }))).json();
+    assert.equal(first.trial.reminders, 0);
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+  calls = [];
+  const second = await (await h.cron.GET(new Request(SITE + "/api/cron/cleanup", { headers: { authorization: "Bearer s3cret" } }))).json();
+  assert.equal(second.trial.reminders, 1);
+});
