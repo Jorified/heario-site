@@ -1279,3 +1279,57 @@ test("a customer's own message limit overrides the plan default", async () => {
   assert.deepEqual(usageWarningAt(3000), { near: 2400, over: 3001 });
   assert.equal(resetDate(new Date("2026-12-15T10:00:00Z")).toISOString().slice(0, 10), "2027-01-01");
 });
+
+test("owner alerts: new trial once, new paying customer once, cancellation and end, all to ADMIN_EMAIL", async () => {
+  process.env.ADMIN_EMAIL = "jack@example.com";
+  const toAdmin = () => calls.filter((c) => c.url.includes("brevo") && c.body.to[0].email === "jack@example.com").map((c) => c.body);
+  try {
+    const { cookie } = await login("newcustomer@example.com");
+    const first = toAdmin();
+    assert.equal(first.length, 1, "one email for a new trial");
+    assert.match(first[0].subject, /New free trial: newcustomer@example\.com/);
+    assert.match(first[0].textContent, /14-day free trial[\s\S]*haven't filled in their business details/);
+
+    await login("newcustomer@example.com");
+    assert.equal(toAdmin().length, 0, "logging in again isn't a new trial");
+
+    await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings() }));
+    const id = (await db.query("SELECT id FROM accounts WHERE email = 'newcustomer@example.com'")).rows[0].id;
+    const sign = (raw, t = Math.floor(Date.now() / 1000)) => `t=${t},v1=${crypto.createHmac("sha256", "whsec_test").update(`${t}.${raw}`).digest("hex")}`;
+    const wh = (obj) => { const raw = JSON.stringify(obj); return h.webhook.POST(new Request(SITE + "/api/stripe/webhook", { method: "POST", headers: { "stripe-signature": sign(raw) }, body: raw })); };
+
+    const paid = { type: "checkout.session.completed", data: { object: { mode: "subscription", client_reference_id: id, customer: "cus_9", subscription: "sub_9", amount_total: 1999, currency: "eur" } } };
+    calls = [];
+    await wh(paid);
+    const p = toAdmin();
+    assert.equal(p.length, 1);
+    assert.match(p[0].subject, /New paying customer: newcustomer@example\.com \(Murphy Plumbing\)/);
+    assert.match(p[0].textContent, /€19\.99/);
+    calls = [];
+    await wh(paid);
+    assert.equal(toAdmin().length, 0, "Stripe retrying the same event doesn't email twice");
+
+    calls = [];
+    await wh({ type: "customer.subscription.updated", data: { object: { customer: "cus_9", id: "sub_9", status: "active", cancel_at_period_end: true, current_period_end: 1798761600 }, previous_attributes: { cancel_at_period_end: false } } });
+    const c = toAdmin();
+    assert.equal(c.length, 1);
+    assert.match(c[0].subject, /Cancellation/);
+    assert.match(c[0].textContent, /keep access until 1 January 2027/);
+
+    calls = [];
+    const end = { type: "customer.subscription.deleted", data: { object: { customer: "cus_9" } } };
+    await wh(end);
+    assert.match(toAdmin()[0].subject, /Subscription ended/);
+    calls = [];
+    await wh(end);
+    assert.equal(toAdmin().length, 0, "the end email is sent once");
+  } finally {
+    delete process.env.ADMIN_EMAIL;
+  }
+});
+
+test("owner alerts are skipped when ADMIN_EMAIL isn't set", async () => {
+  delete process.env.ADMIN_EMAIL;
+  await login("quiet@example.com");
+  assert.equal(calls.filter((c) => c.url.includes("brevo")).length, 1, "only the login email itself");
+});
