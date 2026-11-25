@@ -803,8 +803,6 @@ button:disabled { opacity: .55; cursor: default; }
 @keyframes lvFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
 /* keep the phone sticky bar clear of the chat button */
-.has-hw .m-cta { right: 90px; }
-.has-hw .m-cta span { display: none; }
 
 @media (max-width: 900px) {
   .live-panel { grid-template-columns: 1fr; padding: 40px 24px; gap: 10px; }
@@ -988,3 +986,23 @@ button:disabled { opacity: .55; cursor: default; }
 .more-list b { display: block; color: #fff; font-size: 15px; margin-bottom: 2px; }
 .more-list span { color: var(--muted); font-size: 14px; line-height: 1.55; }
 @media (max-width: 760px) { .more-list { grid-template-columns: 1fr; } }
+
+/* hero checklist: keep each tick with its words; stack on narrow phones */
+.home .hero-reassure .hr-item { white-space: nowrap; }
+.home .hero-reassure .hr-sep { margin: 0 10px; opacity: .7; }
+@media (max-width: 520px) {
+  .home .hero-reassure .hr-item { display: block; line-height: 1.9; }
+  .home .hero-reassure .hr-sep { display: none; }
+  .home .hero-reassure { width: max-content; max-width: 100%; margin-left: auto; margin-right: auto; text-align: left; }
+}
+.try-link .try-short { display: none; }
+@media (max-width: 520px) {
+  .try-link .try-long { display: none; }
+  .try-link .try-short { display: inline; }
+}
+/* phones: lift Heario's own chat bubble above the sticky "Start free trial" bar */
+@media (max-width: 760px) {
+  .home .hw-btn, .home .hw-teaser { transition: transform .25s, bottom .45s cubic-bezier(.2,.8,.2,1), opacity .35s; }
+  .home.mcta-up .hw-btn { bottom: calc(96px + env(safe-area-inset-bottom)) !important; }
+  .home.mcta-up .hw-teaser { bottom: calc(170px + env(safe-area-inset-bottom)) !important; }
+}

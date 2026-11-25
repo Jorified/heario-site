@@ -141,6 +141,7 @@
   function update() {
     var on = pastHero && !atEnd;
     bar.classList.toggle('show', on);
+    document.body.classList.toggle('mcta-up', on); // lifts the chat bubble above the bar
     bar.setAttribute('aria-hidden', on ? 'false' : 'true');
     bar.tabIndex = on ? 0 : -1;
   }
