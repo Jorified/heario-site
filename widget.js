@@ -95,13 +95,21 @@
       ".hw-typing i:nth-child(2){animation-delay:.15s}.hw-typing i:nth-child(3){animation-delay:.3s}" +
       "@keyframes hw-dot{0%,60%,100%{transform:none;opacity:.45}30%{transform:translateY(-4px);opacity:1}}" +
       ".hw-note{align-self:center;font-size:12px;color:" + (DARK ? "#7ee2a8" : "#16803f") + ";background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.35);padding:4px 11px;border-radius:999px}" +
+      ".hw-card{align-self:stretch;background:" + T.bot + ";border:1px solid " + T.line + ";border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;animation:hw-pop .25s ease-out}" +
+      ".hw-card label{font-size:12px;color:" + T.muted + ";display:flex;flex-direction:column;gap:3px}" +
+      ".hw-card input,.hw-card textarea{width:100%;border:1px solid " + T.line + ";border-radius:9px;padding:8px 10px;font:inherit;background:" + T.input + ";color:" + T.text + ";outline:none;box-shadow:none}" +
+      ".hw-card input:focus,.hw-card textarea:focus{border-color:" + C + "}" +
+      ".hw-card textarea{resize:vertical;min-height:64px}" +
+      ".hw-card button{border:0;border-radius:10px;padding:10px;font:inherit;font-weight:650;color:#fff;cursor:pointer;background:linear-gradient(140deg," + C + "," + C2 + ")}" +
+      ".hw-card button:disabled{opacity:.6;cursor:default}" +
+      ".hw-card .hw-err{font-size:12px;color:#d64545;min-height:0}" +
       ".hw-form{display:flex;align-items:center;gap:8px;padding:10px 10px 10px 14px;border-top:1px solid " + T.line + ";background:" + T.input + ";margin:0}" +
       ".hw-in{flex:1;min-width:0;border:0;padding:8px 0;font:inherit;outline:none;background:transparent;color:" + T.text + ";box-shadow:none}" +
       ".hw-in::placeholder{color:" + T.muted + "}" +
       ".hw-send{flex:0 0 38px;height:38px;border:0;border-radius:12px;background:linear-gradient(140deg," + C + "," + C2 + ");color:#fff;cursor:pointer;display:grid;place-items:center;padding:0}" +
       ".hw-send:disabled{opacity:.5;cursor:default}" +
       ".hw-foot{font-size:11px;text-align:center;color:" + T.muted + ";padding:6px;background:" + T.input + "}.hw-foot a{color:inherit}" +
-      "@media (max-width:480px){.hw-box{right:0;bottom:0;width:100%;max-width:none;height:100%;max-height:none;border-radius:0;border:0}.hw-btn.open{display:none}.hw-teaser{right:16px;bottom:90px}.hw-in{font-size:16px}}" +
+      "@media (max-width:480px){.hw-card input,.hw-card textarea{font-size:16px}.hw-box{right:0;bottom:0;width:100%;max-width:none;height:100%;max-height:none;border-radius:0;border:0}.hw-btn.open{display:none}.hw-teaser{right:16px;bottom:90px}.hw-in{font-size:16px}}" +
       "@media (prefers-reduced-motion:reduce){.hw-btn::before,.hw-box.open,.hw-m,.hw-typing i{animation:none}}";
 
     var btn = el("button", "hw-btn");
@@ -217,6 +225,53 @@
       setText(m, text);
       msgs.scrollTop = msgs.scrollHeight;
     }
+    // Short enquiry form, shown when AI replies are paused (monthly limit reached or the AI is down).
+    var card = null;
+    function leadCard() {
+      if (card && card.parentNode) { msgs.appendChild(card); msgs.scrollTop = msgs.scrollHeight; return; }
+      card = el("form", "hw-card");
+      card.noValidate = true;
+      function field(label, tag, type, auto) {
+        var l = el("label", "", label), f = document.createElement(tag);
+        if (type) f.type = type;
+        if (auto) f.autocomplete = auto;
+        f.maxLength = tag === "textarea" ? 600 : 120;
+        l.appendChild(f); card.appendChild(l);
+        return f;
+      }
+      var fName = field("Your name", "input", "text", "name");
+      var fContact = field("Phone or email", "input", "text", "tel");
+      var fMsg = field("What do you need?", "textarea");
+      fMsg.value = history.filter(function (m) { return m.role === "user"; }).map(function (m) { return m.content; }).join(" ").slice(-600);
+      var err = el("div", "hw-err");
+      err.setAttribute("role", "alert");
+      var go = el("button", "", "Send enquiry");
+      go.type = "submit";
+      card.appendChild(err); card.appendChild(go);
+      card.onsubmit = function (ev) {
+        ev.preventDefault();
+        var lead = { name: fName.value.trim(), contact: fContact.value.trim(), enquiry: fMsg.value.trim() };
+        if (!lead.name || !lead.contact || !lead.enquiry) { err.textContent = "Please fill in all three."; return; }
+        err.textContent = ""; go.disabled = true; go.textContent = "Sending…";
+        fetch(BASE + "/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: KEY, lead: lead }) })
+          .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+          .then(function (x) {
+            if (!x.ok) throw new Error(x.d.error || "error");
+            card.remove(); card = null;
+            msgs.appendChild(el("div", "hw-note", "✓ Enquiry sent. They'll be in touch."));
+            history.push({ role: "user", content: "[Sent an enquiry with the form]" }, { role: "assistant", content: "Thanks, I've passed that on." });
+            save();
+            msgs.scrollTop = msgs.scrollHeight;
+          })
+          .catch(function (e) {
+            err.textContent = e.message && e.message !== "error" ? e.message : "Sorry, that didn't send. Please try again.";
+            go.disabled = false; go.textContent = "Send enquiry";
+          });
+      };
+      msgs.appendChild(card);
+      msgs.scrollTop = msgs.scrollHeight;
+      fName.focus();
+    }
     function save() { try { sessionStorage.setItem(STORE, JSON.stringify(history.slice(-30))); } catch (e) {} }
     function hideTeaser(remember) {
       if (!teaser) return;
@@ -267,6 +322,7 @@
           history.push({ role: "assistant", content: x.d.reply });
           if (x.d.notified) { msgs.appendChild(el("div", "hw-note", "✓ Enquiry sent. They'll be in touch.")); msgs.scrollTop = msgs.scrollHeight; }
           save();
+          if (x.d.form) leadCard();
         })
         .catch(function (e) {
           settle(typing, String(e.message || "").indexOf("too fast") > -1 ? e.message : "Sorry, something went wrong. Please try again in a moment.");

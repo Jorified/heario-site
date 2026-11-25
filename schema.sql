@@ -91,3 +91,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS questions_open_unique ON questions (bot_id, lo
 -- Booking link and opening hours. Safe to re-run.
 ALTER TABLE bots ADD COLUMN IF NOT EXISTS booking_url text NOT NULL DEFAULT '';
 ALTER TABLE bots ADD COLUMN IF NOT EXISTS opening_hours text NOT NULL DEFAULT '';
+
+-- Per-customer monthly chat message allowance (NULL = the plan default, PLAN_MONTHLY_MESSAGES).
+ALTER TABLE bots ADD COLUMN IF NOT EXISTS message_limit integer;

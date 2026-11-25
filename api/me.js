@@ -2,7 +2,7 @@
 import { botView } from "../lib/bot.js";
 import { one } from "../lib/db.js";
 import { guard } from "../lib/guard.js";
-import { monthKey, monthlyLimit, planState } from "../lib/plan.js";
+import { monthKey, monthlyLimit, planState, resetDate } from "../lib/plan.js";
 import { json } from "../lib/util.js";
 
 export async function GET(request) {
@@ -17,7 +17,7 @@ export async function GET(request) {
   return json({
     email: account.email,
     plan: { ...planState(account), hasBilling: !!account.stripe_customer_id, billingCurrency: account.billing_currency || null },
-    usage: { messages: usage?.messages ?? 0, limit: monthlyLimit(bot.embed_key) },
+    usage: { messages: usage?.messages ?? 0, limit: monthlyLimit(bot), resets: resetDate().toISOString().slice(0, 10) },
     bot: botView(bot),
   });
 }

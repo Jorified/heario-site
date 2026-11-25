@@ -172,3 +172,33 @@ test("booking link is still clickable when the AI drops https:// or the trailing
   const links = [...d.querySelectorAll(".hw-msgs a")];
   assert.deepEqual(links.map((a) => [a.textContent, a.href]), [["calendly.com/murphy", "https://calendly.com/murphy/"], ["https://calendly.com/murphy/", "https://calendly.com/murphy/"]]);
 });
+
+test("when AI replies are paused, a short enquiry form appears, is prefilled, checks fields and sends the lead", async () => {
+  const t = boot({
+    config: { status: 200, body: { title: "T", greeting: "G", color: "#112233" } },
+    chatReply: { status: 200, body: { reply: "Thanks for your message. Leave your details below.", notified: false, form: true } },
+  });
+  await t.flush();
+  const d = t.window.document;
+  d.querySelector(".hw-in").value = "Boiler broken";
+  d.querySelector(".hw-form").dispatchEvent(new t.window.Event("submit", { cancelable: true }));
+  await t.flush();
+  const card = d.querySelector(".hw-card");
+  assert.ok(card, "form shown");
+  const [name, contact] = card.querySelectorAll("input");
+  const msg = card.querySelector("textarea");
+  assert.equal(msg.value, "Boiler broken", "prefilled with what the visitor typed");
+
+  card.dispatchEvent(new t.window.Event("submit", { cancelable: true }));
+  await t.flush();
+  assert.match(card.querySelector(".hw-err").textContent, /fill in/);
+  assert.ok(!t.sent.some((s) => s.init?.body?.includes('"lead"')), "nothing sent while incomplete");
+
+  name.value = "Ann"; contact.value = "087 111 2222";
+  card.dispatchEvent(new t.window.Event("submit", { cancelable: true }));
+  await t.flush();
+  const call = t.sent.find((s) => s.init?.body?.includes('"lead"'));
+  assert.deepEqual(JSON.parse(call.init.body).lead, { name: "Ann", contact: "087 111 2222", enquiry: "Boiler broken" });
+  assert.equal(d.querySelector(".hw-card"), null, "form removed after sending");
+  assert.match(d.querySelector(".hw-note").textContent, /Enquiry sent/);
+});

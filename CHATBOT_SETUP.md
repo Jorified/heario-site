@@ -98,7 +98,7 @@ If WhatsApp delivery fails (straight away or later, via the delivery report), th
 login address instead. Customers can also tick "Also email me a copy of every enquiry" (off by default).
 
 ## 5. Test before launch
-- `npm test` runs 70 automated tests (login, settings, chat, unanswered questions, opening hours and holiday closures, booking link, WhatsApp alerts, delivery reports and fallback, Stripe webhook, website reader, widget safety). They use an in-memory database and stub every external service, so passing proves the logic, **not** that your keys and Meta template are right.
+- `npm test` runs 75 automated tests (login, settings, chat, unanswered questions, opening hours and holiday closures, booking link, WhatsApp alerts, delivery reports and fallback, Stripe webhook, website reader, widget safety). They use an in-memory database and stub every external service, so passing proves the logic, **not** that your keys and Meta template are right.
 - Use the Vercel **Preview** deployment for this branch: log in, fill in the dashboard, press **Send a test alert**, chat in the preview bubble, make a test enquiry, subscribe with a Stripe test card.
 
 ## 6. Launch checklist
@@ -109,6 +109,14 @@ login address instead. Customers can also tick "Also email me a copy of every en
 - [ ] Add your own website to a test account and send yourself a real enquiry
 - [ ] Look at the old product pages: they're excluded from the deployment via `.vercelignore` but remain in git. Delete them whenever you like
 - [x] Old desktop-app Stripe webhook switched off (done by Jack, 20 Nov 2026), so chatbot payments can't trigger old licence-key emails. If you ever re-enable it, use a separate Stripe account for the chatbot
+
+## Monthly message limit
+- Each chatbot gets `PLAN_MONTHLY_MESSAGES` visitor messages a month (default 3,000). It resets on the 1st (UTC).
+- The owner is emailed at 80% and when the limit is reached. Replies to those emails go to support@heario.ai.
+- Past the limit (or if the AI is down or out of credit), visitors get a short enquiry form instead of AI replies. Enquiries still reach WhatsApp and the dashboard, and don't count towards the limit.
+- **To give one customer a bigger allowance**, run in Vercel's Query page (Read-only off, then back on):
+  `UPDATE bots SET message_limit = 10000 WHERE account_id = (SELECT id FROM accounts WHERE email = 'customer@example.com')`
+  Set it back to `NULL` to return them to the plan default.
 
 ## Known limits
 - Chat transcripts aren't stored; only the enquiry. The widget keeps the current conversation in the visitor's session storage.

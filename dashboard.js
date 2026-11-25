@@ -169,7 +169,17 @@
       actions.appendChild(manage);
     }
     banner.appendChild(box);
-    $('usage').textContent = me.usage.messages.toLocaleString() + ' of ' + me.usage.limit.toLocaleString() + ' chat messages used this month.';
+    var u = me.usage, resets = u.resets ? new Date(u.resets + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', timeZone: 'UTC' }) : 'the 1st of next month';
+    var line = u.messages.toLocaleString() + ' of ' + u.limit.toLocaleString() + ' chat messages used this month. Resets on ' + resets + '.';
+    $('usage').className = 'hint';
+    if (u.messages > u.limit) {
+      line += ' You\'ve reached this month\'s limit: your chat is still taking enquiries with a short form instead of AI replies until then. Need more? Email support@heario.ai and we\'ll raise your limit.';
+      $('usage').className = 'hint usage-warn';
+    } else if (u.messages >= Math.ceil(u.limit * 0.8)) {
+      line += ' You\'re close to this month\'s limit. If you reach it, your chat keeps taking enquiries with a short form. Need more? Email support@heario.ai.';
+      $('usage').className = 'hint usage-warn';
+    }
+    $('usage').textContent = line;
   }
 
   function redirectTo(path, btn, body) {

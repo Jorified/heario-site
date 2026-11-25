@@ -1186,3 +1186,96 @@ test("closures save through the dashboard API and come back", async () => {
   const res = await (await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings({ opening_hours: { tz: "Europe/Dublin", days: null, closed: [["2026-12-24", "2027-01-02"]] } }) }))).json();
   assert.deepEqual(res.bot.opening_hours, { tz: "Europe/Dublin", days: null, closed: [["2026-12-24", "2027-01-02"]] });
 });
+
+async function chatSetup(over = {}) {
+  const { cookie } = await login();
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings(over) }));
+  const key = (await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json()).bot.embed_key;
+  const chat = (body) => h.chat.POST(req("/api/chat", { body: { key, ...body }, origin: "https://murphyplumbing.ie" }));
+  return { cookie, key, chat };
+}
+const say = (text) => ({ messages: [{ role: "user", content: text }] });
+const brevoMails = () => calls.filter((c) => c.url.includes("brevo")).map((c) => c.body);
+
+test("monthly limit: owner is emailed at 80% and at the limit, then visitors get the enquiry form instead of AI", async () => {
+  process.env.PLAN_MONTHLY_MESSAGES = "5";
+  try {
+    const { chat, cookie } = await chatSetup();
+    const text = { stop_reason: "end_turn", content: [{ type: "text", text: "Hello!" }] };
+    for (let i = 1; i <= 3; i++) { claudeScript = [text]; calls = []; await chat(say("hi")); assert.equal(brevoMails().length, 0, `no email at message ${i}`); }
+
+    claudeScript = [text]; calls = [];
+    const r4 = await (await chat(say("hi"))).json();
+    assert.equal(r4.reply, "Hello!");
+    const near = brevoMails();
+    assert.equal(near.length, 1, "one 80% email");
+    assert.match(near[0].subject, /80%/);
+    assert.equal(near[0].to[0].email, "owner@example.com");
+    assert.match(near[0].textContent, /4 of its 5 chat messages[\s\S]*reply to this email/i);
+
+    claudeScript = [text]; calls = [];
+    await chat(say("hi"));
+    assert.equal(brevoMails().length, 0, "nothing at exactly the limit");
+
+    calls = [];
+    const r6 = await (await chat(say("Can someone fix my boiler?"))).json();
+    assert.equal(r6.form, true);
+    assert.match(r6.reply, /Leave your details below and Murphy Plumbing/);
+    assert.ok(!calls.some((c) => c.url.includes("anthropic")), "AI not called past the limit");
+    const over = brevoMails();
+    assert.equal(over.length, 1, "one limit-reached email");
+    assert.match(over[0].subject, /reached this month's limit/);
+    assert.match(over[0].textContent, /still taking enquiries/);
+
+    calls = [];
+    assert.equal((await (await chat(say("hello?"))).json()).form, true);
+    assert.equal(brevoMails().length, 0, "the limit email is sent once");
+
+    const me = await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json();
+    assert.equal(me.usage.messages, 7);
+    assert.equal(me.usage.limit, 5);
+    assert.match(me.usage.resets, /^\d{4}-\d{2}-01$/);
+  } finally {
+    delete process.env.PLAN_MONTHLY_MESSAGES;
+  }
+});
+
+test("enquiry form: saves the lead and alerts the owner without the AI, checks fields, and doesn't count as a message", async () => {
+  const { chat, cookie } = await chatSetup();
+  calls = [];
+  const bad = await chat({ lead: { name: "Ann", contact: "", enquiry: "Boiler" } });
+  assert.equal(bad.status, 400);
+
+  calls = [];
+  const ok = await chat({ lead: { name: "Ann Byrne", contact: "087 111 2222", enquiry: "Boiler not heating" } });
+  assert.equal(ok.status, 200);
+  assert.equal((await ok.json()).notified, true);
+  assert.ok(!calls.some((c) => c.url.includes("anthropic")));
+  assert.ok(calls.some((c) => c.url.includes("graph.facebook")), "owner alerted on WhatsApp");
+  const leads = await (await h.leads.GET(req("/api/leads", { method: "GET", cookie, origin: null }))).json();
+  assert.equal(leads.leads[0].name, "Ann Byrne");
+  const me = await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json();
+  assert.equal(me.usage.messages, 0, "form enquiries don't use the allowance");
+
+  // Same per-visitor enquiry limit as the AI route.
+  for (let i = 0; i < 4; i++) await chat({ lead: { name: "Ann", contact: "087 111 2222", enquiry: "again " + i } });
+  assert.equal((await chat({ lead: { name: "Ann", contact: "087 111 2222", enquiry: "one more" } })).status, 429);
+});
+
+test("enquiry form also appears when the AI fails, so enquiries aren't lost", async () => {
+  const { chat } = await chatSetup();
+  claudeScript = []; // the fake Anthropic returns nothing usable
+  const r = await chat(say("I need a plumber today"));
+  assert.equal(r.status, 200);
+  const d = await r.json();
+  assert.equal(d.form, true);
+  assert.equal(d.notified, false);
+});
+
+test("a customer's own message limit overrides the plan default", async () => {
+  const { monthlyLimit, usageWarningAt, resetDate } = await import("../lib/plan.js");
+  assert.equal(monthlyLimit({ embed_key: "hb_" + "c".repeat(24), message_limit: 10000 }), 10000);
+  assert.equal(monthlyLimit({ embed_key: "hb_" + "c".repeat(24), message_limit: null }), 3000);
+  assert.deepEqual(usageWarningAt(3000), { near: 2400, over: 3001 });
+  assert.equal(resetDate(new Date("2026-12-15T10:00:00Z")).toISOString().slice(0, 10), "2027-01-01");
+});

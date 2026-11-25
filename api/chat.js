@@ -6,7 +6,8 @@ import { one, query } from "../lib/db.js";
 import { confirmToVisitor, emailEnquiry, emailIn } from "../lib/enquiry-email.js";
 import { recordQuestion } from "../lib/questions.js";
 import { describeHours, hoursStatus, readHours, upcomingClosures } from "../lib/hours.js";
-import { hourlyLimit, monthKey, monthlyLimit, planState } from "../lib/plan.js";
+import { hourlyLimit, monthKey, monthlyLimit, planState, resetDate, usageWarningAt } from "../lib/plan.js";
+import { emailUsage } from "../lib/usage-email.js";
 import { clientIp, esc, isOwnOrigin, json, oneLine, rateLimit } from "../lib/util.js";
 import { sendEnquiryAlert } from "../lib/whatsapp.js";
 
@@ -225,6 +226,18 @@ export async function POST(request) {
     return json({ error: "You're sending messages too fast. Please wait a moment." }, 429, cors);
   }
 
+  // The short enquiry form the widget shows when AI replies are paused (monthly limit reached, or the AI is down).
+  // It goes through the same checks and limits as an enquiry taken by the AI, and doesn't count as a chat message.
+  if (body?.lead) {
+    const r = await handleEnquiry(bot, body.lead, ip);
+    if (!r.ok) {
+      const tooMany = /Too many/.test(r.message);
+      return json({ error: tooMany ? "Too many enquiries right now. Please contact the business directly." : "Please fill in your name, how to contact you and what you need." }, tooMany ? 429 : 400, cors);
+    }
+    return json({ ok: true, notified: true, confirmed: !!r.confirmed }, 200, cors);
+  }
+  const formReply = `Thanks for your message. Leave your details below and ${bot.business_name || "the team"} will get back to you.`;
+
   // Per-chatbot ceiling across ALL visitors. The embed key is public and the Origin header can be
   // forged by scripts, so this caps the damage if someone tries to burn a customer's quota.
   const hourlyCap = hourlyLimit(bot.embed_key);
@@ -245,11 +258,19 @@ export async function POST(request) {
      ON CONFLICT (bot_id, month) DO UPDATE SET messages = usage.messages + 1 RETURNING messages`,
     [bot.id, monthKey()]
   );
-  if (used.messages > monthlyLimit(bot.embed_key)) return json({ reply: unavailable, notified: false }, 200, cors);
+  const limit = monthlyLimit(bot);
+  const at = usageWarningAt(limit);
+  if (used.messages === at.near || used.messages === at.over) {
+    await emailUsage({
+      to: bot.account_email, business: bot.business_name, used: used.messages, limit,
+      level: used.messages === at.over ? "over" : "near", resets: resetDate(),
+    }).catch((err) => console.error("usage email failed:", err.message));
+  }
+  if (used.messages > limit) return json({ reply: formReply, notified: false, form: true }, 200, cors);
 
+  let notified = false;
   try {
     let convo = messages;
-    let notified = false;
     for (let i = 0; i < 3; i++) {
       const out = await callClaude(bot, convo);
       if (out.stop_reason !== "tool_use") {
@@ -279,6 +300,8 @@ export async function POST(request) {
     return json({ reply: notified ? "Thanks, I've passed that on." : "Sorry, I'm not sure about that. Would you like to leave your name and number so the team can get back to you?", notified }, 200, cors);
   } catch (err) {
     console.error("chat failed:", err.message);
-    return json({ error: "Something went wrong. Please try again." }, 500, cors);
+    if (notified) return json({ reply: "Thanks, I've passed that on.", notified }, 200, cors);
+    // If the AI is down (or out of credit), still take the enquiry with the short form.
+    return json({ reply: formReply, notified: false, form: true }, 200, cors);
   }
 }

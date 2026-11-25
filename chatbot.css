@@ -1034,3 +1034,5 @@ button:disabled { opacity: .55; cursor: default; }
   .inst-steps > li { padding-left: 40px; }
   .inst-pf { font-size: 13px; padding: 8px 12px; }
 }
+
+.usage-warn { color: #fbbf24 !important; }
