@@ -1006,3 +1006,31 @@ button:disabled { opacity: .55; cursor: default; }
   .home.mcta-up .hw-btn { bottom: calc(96px + env(safe-area-inset-bottom)) !important; }
   .home.mcta-up .hw-teaser { bottom: calc(170px + env(safe-area-inset-bottom)) !important; }
 }
+
+/* dashboard: install guide */
+.inst-steps { list-style: none; counter-reset: inst; padding: 0; margin: 18px 0 8px; }
+.inst-steps > li { counter-increment: inst; position: relative; padding: 0 0 22px 46px; color: #c3cbdc; line-height: 1.6; }
+.inst-steps > li::before { content: counter(inst); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 14px; color: #fff; background: linear-gradient(140deg, var(--accent), #6aa3ff); box-shadow: 0 6px 16px rgba(79,142,247,.35); }
+.inst-steps > li:not(:last-child)::after { content: ""; position: absolute; left: 14px; top: 34px; bottom: 6px; width: 2px; background: rgba(127,209,255,.15); }
+.inst-steps > li > b:first-child { display: block; color: #e4ecf7; margin-bottom: 6px; }
+.inst-steps .code { margin: 8px 0 10px; }
+.inst-note { display: block; font-size: 13.5px; color: #aab3c6; }
+.inst-warn { color: #fbbf24; }
+.inst-platforms { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px; }
+.inst-pf { padding: 9px 14px; border-radius: 999px; border: 1px solid var(--border); background: rgba(255,255,255,.03); color: #e4ecf7; font: inherit; font-size: 14px; cursor: pointer; transition: border-color .2s, background .2s; }
+.inst-pf:hover { border-color: rgba(127,209,255,.45); }
+.inst-pf[aria-pressed="true"] { border-color: var(--accent); background: rgba(79,142,247,.18); color: #fff; }
+.inst-guide { margin-top: 12px; padding: 16px 18px; border-radius: 12px; border: 1px solid rgba(127,209,255,.22); background: rgba(7,10,15,.55); }
+.inst-guide h3 { margin: 0 0 8px; font-size: 16px; color: #fff; }
+.inst-guide ol { margin: 0 0 6px; padding-left: 20px; }
+.inst-guide li { margin: 6px 0; }
+.inst-guide b { color: #e4ecf7; }
+.inst-copy { padding: 4px 10px !important; font-size: 13px !important; margin-right: 4px; vertical-align: baseline; }
+.inst-help { margin-top: 10px; }
+.inst-help summary { cursor: pointer; color: var(--accent2); }
+.inst-help ul { margin: 8px 0 0; padding-left: 20px; }
+.inst-help li { margin: 4px 0; }
+@media (max-width: 560px) {
+  .inst-steps > li { padding-left: 40px; }
+  .inst-pf { font-size: 13px; padding: 8px 12px; }
+}

@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="style.css?v=30" />
-  <link rel="stylesheet" href="chatbot.css?v=18" />
+  <link rel="stylesheet" href="chatbot.css?v=20" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -106,12 +106,40 @@
     </div>
   </form>
 
-  <section class="panel">
+  <section class="panel" id="install">
     <h2>4. Add it to your website</h2>
-    <p class="hint">Paste this just before the closing <code>&lt;/body&gt;</code> tag of your site (in WordPress, Wix, Squarespace or Shopify use the "custom code" or "header/footer scripts" setting). The chat bubble in the corner of this page is a live preview.</p>
-    <p class="hint">Dark website? Add <code>data-theme="dark"</code> inside the tag for a dark chat window.</p>
-    <div class="code" id="snippet"></div>
-    <button class="btn-ghost" id="copy" type="button">Copy snippet</button>
+    <p class="hint">It takes about 5 minutes. You copy one line of code and paste it into your website builder's settings, once, and the chat appears on every page.</p>
+
+    <ol class="inst-steps">
+      <li>
+        <b>Check your website address is in section 3.</b>
+        <span id="inst_origins" class="inst-note"></span>
+      </li>
+      <li>
+        <b>Copy your code.</b>
+        <div class="code" id="snippet"></div>
+        <div class="actions" style="margin:0"><button class="btn-primary" id="copy" type="button">Copy code</button><a class="btn-ghost" id="inst_email" href="#">Email it to my web developer</a><button class="btn-ghost" id="inst_copydev" type="button">Copy instructions</button></div>
+      </li>
+      <li>
+        <b>Paste it into your website builder.</b> Pick yours for step-by-step help:
+        <div class="inst-platforms" id="inst_platforms" role="group" aria-label="Website builders"></div>
+        <div class="inst-guide" id="inst_guide" aria-live="polite" hidden></div>
+      </li>
+      <li>
+        <b>Check it's working.</b> Open your website in a private or incognito window. The chat bubble should appear in the bottom corner within a few seconds. It won't show inside your builder's editor or preview, only on your published site.
+        <details class="inst-help"><summary>Bubble not showing?</summary>
+          <ul>
+            <li>Make sure you <b>published</b> or <b>saved</b> the change in your builder.</li>
+            <li>Check the exact address you're visiting (for example <code>yoursite.webflow.io</code> or <code>yourshop.myshopify.com</code>) is listed in section 3, then click Save.</li>
+            <li>Check "Chatbot is switched on" is ticked in section 3.</li>
+            <li>Paste the code only once. If you've also added it to a page block, remove that copy.</li>
+            <li>Still stuck? Email <a href="mailto:support@heario.ai">support@heario.ai</a> with your website address and we'll help.</li>
+          </ul>
+        </details>
+      </li>
+    </ol>
+
+    <p class="hint">Dark website? Add <code>data-theme="dark"</code> inside the tag for a dark chat window. The chat bubble in the corner of this page is a live preview.</p>
     <p class="hint" style="margin:14px 0 0">Tell your visitors about the chat in your own privacy notice. Our <a href="/dpa.html" style="color:var(--accent2)">data processing agreement</a> applies automatically.</p>
   </section>
 
@@ -137,6 +165,6 @@
   </section>
 </main>
 <script src="pricing.js"></script>
-<script src="dashboard.js?v=10"></script>
+<script src="dashboard.js?v=12"></script>
 </body>
 </html>

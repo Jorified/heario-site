@@ -8,7 +8,8 @@
  * Fires a "heario:ready" event on window when the chat is ready.
  */
 (function () {
-  var s = document.currentScript;
+  // Some site builders and optimisers load scripts in ways that hide currentScript, so fall back to finding our tag.
+  var s = document.currentScript || document.querySelector('script[src*="/widget.js"][data-key]');
   if (!s || !s.dataset.key || window.HearioWidget) return;
   var KEY = s.dataset.key;
   var DARK = s.dataset.theme === "dark";

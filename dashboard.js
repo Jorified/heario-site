@@ -19,6 +19,8 @@
 
   function say(id, text, cls) { var e = $(id); e.textContent = text; e.className = 'cb-msg ' + (cls || ''); e.style.margin = '0'; }
 
+  function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
   function el(tag, text, cls) {
     var e = document.createElement(tag);
     if (text !== undefined) e.textContent = text;
@@ -46,6 +48,7 @@
     $('greeting').value = b.greeting;
     $('enabled').checked = b.enabled;
     $('snippet').textContent = '<script src="' + location.origin + '/widget.js" data-key="' + b.embed_key + '" defer></script>';
+    renderInstall(b);
     renderPlan(me);
     loadPreview(b.embed_key);
   }
@@ -440,12 +443,128 @@
   $('draft_add').addEventListener('click', function () { applyDraft(true); });
   $('draft_discard').addEventListener('click', function () { $('importdraft').hidden = true; say('importmsg', ''); });
 
-  $('copy').addEventListener('click', function () {
-    var text = $('snippet').textContent;
+  // ---- Install guide ----
+  function copyCode(btn) {
+    var text = $('snippet').textContent, label = btn.textContent;
     (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject())
-      .then(function () { $('copy').textContent = 'Copied'; setTimeout(function () { $('copy').textContent = 'Copy snippet'; }, 2000); })
-      .catch(function () { var r = document.createRange(); r.selectNodeContents($('snippet')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); });
+      .then(function () { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = label; }, 2000); })
+      .catch(function () { var r = document.createRange(); r.selectNodeContents($('snippet')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Press Ctrl+C to copy'; setTimeout(function () { btn.textContent = label; }, 3000); });
+  }
+  $('copy').addEventListener('click', function () { copyCode($('copy')); });
+
+  // Each step is plain text; {copy} becomes a "Copy code" button, **x** is bold.
+  var PLATFORMS = [
+    { id: 'wordpress', name: 'WordPress', steps: [
+      'In your WordPress admin, go to **Plugins → Add New Plugin**, search for **WPCode** and install and activate **WPCode – Insert Headers and Footers**.',
+      'Go to **Code Snippets → Header & Footer**.',
+      '{copy} Paste the code into the **Footer** box.',
+      'Click **Save Changes**.'
+    ], note: 'On WordPress.com, installing plugins needs the Business plan or higher. If you can\'t add plugins, ask your web developer to paste the code just before the closing </body> tag of your theme.' },
+    { id: 'wix', name: 'Wix', steps: [
+      'Open your site\'s dashboard and click **Settings**.',
+      'Click **Custom Code** (under Development & integrations or Advanced).',
+      'Click **+ Add Custom Code**.',
+      '{copy} Paste the code, name it **Heario chat**, choose **All pages** and **Load code once**.',
+      'Under **Place Code in**, choose **Body – end**, then click **Apply**.'
+    ], note: 'Wix only allows custom code on a paid (Premium) plan with your own domain connected.' },
+    { id: 'squarespace', name: 'Squarespace', steps: [
+      'Go to **Settings → Advanced → Code Injection** (on newer sites: **Settings → Developer Tools → Code Injection**).',
+      '{copy} Paste the code into the **Footer** box.',
+      'Click **Save**.'
+    ], note: 'Code Injection is on the Core, Plus and Advanced plans (and the older Business and Commerce plans), not Basic or Personal.' },
+    { id: 'shopify', name: 'Shopify', steps: [
+      'In Shopify admin, go to **Online Store → Themes**.',
+      'Next to your live theme, click the **⋯** button, then **Edit code**.',
+      'Open **layout → theme.liquid**.',
+      'Find the closing **</body>** tag near the bottom (press Ctrl+F or Cmd+F and search for </body>).',
+      '{copy} Paste the code on the line just above **</body>**.',
+      'Click **Save**.'
+    ], note: 'If you change theme later, paste the code into the new theme too.' },
+    { id: 'webflow', name: 'Webflow', steps: [
+      'Open **Site settings → Custom code**.',
+      '{copy} Paste the code into **Footer code**.',
+      'Click **Save**, then **Publish** your site.'
+    ], note: 'Custom code needs a paid Webflow site plan. If visitors also use your yoursite.webflow.io address, add it in section 3 too.' },
+    { id: 'framer', name: 'Framer', steps: [
+      'Click the **gear icon** to open **Site Settings**, then the **General** tab.',
+      'Scroll down to **Custom Code**.',
+      '{copy} Paste the code into **End of <body> tag**.',
+      'Click **Save**, then **Publish**.'
+    ], note: 'Custom code needs a paid Framer site plan.' },
+    { id: 'square', name: 'Square Online', steps: [
+      'In your Square Dashboard, open **Online** (or **Channels → Square Online**).',
+      'Go to **Settings → Tracking Tools** and click **Add new code**.',
+      '{copy} Name it **Heario chat** and paste the code.',
+      'Choose **End of body**, then **Save**.',
+      'Publish your site from the site editor.'
+    ], note: 'Custom code is on the Square Online Plus and Premium plans.' },
+    { id: 'jimdo', name: 'Jimdo', steps: [
+      'In the Jimdo Creator editor, go to **Settings → Edit Head**.',
+      '{copy} Paste the code into the box.',
+      'Click **Save**.'
+    ], note: 'This needs a paid Jimdo Creator plan. Jimdo\'s simpler "Dolphin" editor doesn\'t allow site-wide code, so the chat can\'t be added there.' },
+    { id: 'gtm', name: 'Google Tag Manager', steps: [
+      'In Tag Manager, go to **Tags → New**.',
+      'Click **Tag Configuration** and choose **Custom HTML**.',
+      '{copy} Paste the code.',
+      'Click **Triggering** and choose **All Pages**, then **Save**.',
+      'Click **Submit**, then **Publish**.'
+    ], note: 'Use this if your website already loads Google Tag Manager. It works with any builder that supports it.' },
+    { id: 'godaddy', name: 'GoDaddy', steps: [
+      'GoDaddy\'s Websites + Marketing builder doesn\'t currently let you add code to every page, so the floating chat bubble can\'t be added there.',
+      'If your GoDaddy site runs on **WordPress**, use the WordPress steps instead.'
+    ], note: 'Email support@heario.ai if you\'re on GoDaddy and we\'ll look at the options with you.' },
+    { id: 'html', name: 'My own code / other', steps: [
+      '{copy} Paste the code just before the closing **</body>** tag on every page.',
+      'If your site has a shared footer or layout file, paste it there once and it covers every page.',
+      'Upload or publish the changed files.'
+    ], note: 'Most builders have a setting called "custom code", "code injection", "footer scripts" or "tracking code". Choose the one for the end of the body or the footer, for all pages. Avoid "HTML block" or "embed" sections: they place the code inside a box on one page and the chat bubble won\'t work properly.' },
+    { id: 'dev', name: 'I have a web developer', steps: [
+      'Click **Email it to my web developer** above. It opens an email with your code and instructions, ready to send. If no email opens, click **Copy instructions** and paste them into an email or message.',
+      'They just need to add your one line of code before the closing </body> tag on every page.'
+    ] }
+  ];
+
+  function stepHtml(t) {
+    var h = esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+    return h.replace('{copy}', '<button type="button" class="btn-ghost inst-copy">Copy code</button> ');
+  }
+  function showPlatform(id) {
+    var p = PLATFORMS.filter(function (x) { return x.id === id; })[0];
+    Array.prototype.forEach.call($('inst_platforms').children, function (b) { b.setAttribute('aria-pressed', b.dataset.id === id ? 'true' : 'false'); });
+    var g = $('inst_guide');
+    g.innerHTML = '<h3>' + esc(p.name) + '</h3><ol>' + p.steps.map(function (t) { return '<li>' + stepHtml(t) + '</li>'; }).join('') + '</ol>' +
+      (p.note ? '<p class="inst-note">' + esc(p.note) + '</p>' : '');
+    Array.prototype.forEach.call(g.querySelectorAll('.inst-copy'), function (b) { b.addEventListener('click', function () { copyCode(b); }); });
+    g.hidden = false;
+    try { localStorage.setItem('heario_platform', id); } catch (e) {}
+  }
+  PLATFORMS.forEach(function (p) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'inst-pf'; b.dataset.id = p.id; b.textContent = p.name; b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', function () { showPlatform(p.id); });
+    $('inst_platforms').appendChild(b);
   });
+  try { var lastPf = localStorage.getItem('heario_platform'); if (lastPf && PLATFORMS.some(function (p) { return p.id === lastPf; })) showPlatform(lastPf); } catch (e) {}
+
+  var devText = '';
+  $('inst_copydev').addEventListener('click', function () {
+    var btn = $('inst_copydev');
+    (navigator.clipboard ? navigator.clipboard.writeText(devText) : Promise.reject())
+      .then(function () { btn.textContent = 'Copied. Paste it into an email or message'; setTimeout(function () { btn.textContent = 'Copy instructions'; }, 3000); })
+      .catch(function () { window.prompt('Copy these instructions:', devText); });
+  });
+  function renderInstall(b) {
+    var sites = b.allowed_origins.map(function (o) { return o.replace(/^https?:\/\//i, ''); });
+    $('inst_origins').innerHTML = sites.length
+      ? 'The chat will work on: <b>' + esc(sites.join(', ')) + '</b>. If your site also uses a free address from your builder (like yoursite.webflow.io), add that too.'
+      : '<span class="inst-warn">No website added yet. Add your address in section 3 (for example yourbusiness.ie) and click Save, or the chat won\'t appear on your site.</span>';
+    var body = 'Hi,\n\nPlease add our website chat (Heario) to every page of ' + (sites[0] || 'our website') + '.\n\n' +
+      'Paste this one line just before the closing </body> tag, on all pages (or in the shared footer/layout):\n\n' + $('snippet').textContent + '\n\n' +
+      'Notes:\n- It loads after the page, so it won\'t slow the site down.\n- It only runs on the website addresses we have listed in Heario' + (sites.length ? ' (' + sites.join(', ') + ')' : '') + '. If you test on a staging or preview address, tell me and I\'ll add it.\n- Please don\'t put it inside an HTML/embed block: the chat bubble needs to be on the page itself.\n\nThanks!';
+    $('inst_email').href = 'mailto:?subject=' + encodeURIComponent('Please add our website chat (one line of code)') + '&body=' + encodeURIComponent(body);
+    devText = body;
+  }
 
   $('logout').addEventListener('click', function () {
     api('POST', '/api/auth/logout', {}).then(function () { location.replace('/'); });
