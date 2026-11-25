@@ -142,14 +142,19 @@
         buy.appendChild(el('span', priceInfo.prices[cur].display + ' / month', 'hint'));
         var codes = Object.keys(priceInfo.prices);
         if (!p.billingCurrency && codes.length > 1) {
-          var sel = el('select', undefined, 'cb-select');
-          sel.setAttribute('aria-label', 'Currency');
+          var SYM = { eur: '€ EUR', gbp: '£ GBP', usd: '$ USD' };
+          var pick = el('div', undefined, 'cur-pick');
+          pick.setAttribute('role', 'group');
+          pick.setAttribute('aria-label', 'Currency to pay in');
+          pick.appendChild(el('span', 'Pay in', 'cur-label'));
           codes.forEach(function (c) {
-            var o = el('option', HearioPricing.labels[c] || c.toUpperCase());
-            o.value = c; o.selected = c === cur; sel.appendChild(o);
+            var b = el('button', SYM[c] || c.toUpperCase(), 'cur-btn');
+            b.type = 'button';
+            b.setAttribute('aria-pressed', c === cur ? 'true' : 'false');
+            b.onclick = function () { if (c === cur) return; HearioPricing.remember(c); renderPlan(me); };
+            pick.appendChild(b);
           });
-          sel.onchange = function () { HearioPricing.remember(sel.value); renderPlan(me); };
-          buy.appendChild(sel);
+          buy.appendChild(pick);
         }
       }
       if (priceInfo && priceInfo.setup && priceInfo.setup[cur] && !p.hasBilling) {

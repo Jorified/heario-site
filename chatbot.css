@@ -1036,3 +1036,14 @@ button:disabled { opacity: .55; cursor: default; }
 }
 
 .usage-warn { color: #fbbf24 !important; }
+
+/* dashboard: currency choice before subscribing */
+.cur-pick { display: inline-flex; align-items: center; gap: 4px; padding: 4px; border-radius: 12px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.03); }
+.cur-label { font-size: 13px; color: #aab3c6; padding: 0 8px 0 6px; }
+.cur-btn { border: 0; border-radius: 9px; padding: 7px 12px; font: inherit; font-size: 14px; font-weight: 600; color: #c3cbdc; background: transparent; cursor: pointer; transition: background .2s, color .2s; }
+.cur-btn:hover { color: #fff; background: rgba(255,255,255,.06); }
+.cur-btn[aria-pressed="true"] { color: #fff; background: linear-gradient(120deg, var(--accent), #6aa3ff); box-shadow: 0 4px 12px rgba(79,142,247,.35); }
+.cur-btn:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
+/* native dropdown lists: keep option text readable on dark pages */
+.cb-select, .lead-stage { color-scheme: dark; }
+.cb-select option, .lead-stage option { background: #0f141d; color: #e4ecf7; }
