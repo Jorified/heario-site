@@ -1072,3 +1072,8 @@ button:disabled { opacity: .55; cursor: default; }
 .greet-own { margin-top: 10px; }
 .greet-own summary { cursor: pointer; color: var(--accent2); font-size: 14px; padding: 4px 0; }
 .greet-own .field[hidden] { display: none !important; }
+
+/* dashboard: pop-up preview sits under its tick box */
+#gp_popwrap { margin-top: 12px; }
+#gp_popwrap .gp-pop { margin-left: 28px; }
+#gp_popwrap .greet-own { margin-left: 28px; }

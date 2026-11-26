@@ -47,7 +47,8 @@
     $('color').value = b.color;
     $('greeting').value = b.greeting;
     Array.prototype.forEach.call(document.querySelectorAll('input[name=greeting_style]'), function (r) { r.checked = r.value === (b.greeting_style === 'business' ? 'business' : 'personal'); });
-    $('greet_own').open = !!(b.greeting || b.teaser_title || b.teaser_text);
+    $('greet_own').open = !!b.greeting;
+    $('teaser_own').open = !!(b.teaser_title || b.teaser_text);
     $('teaser_on').checked = !!b.teaser_on;
     $('teaser_title').value = b.teaser_title || '';
     $('teaser_text').value = b.teaser_text || '';
@@ -483,18 +484,15 @@
       "Ask me anything. If I can't help, I'll automatically pass on your message and we'll be in touch."];
   }
   function syncGreeting() {
-    var style = chosenStyle(), g = greetingExample(style), t = teaserExample(), on = $('teaser_on').checked;
+    var style = chosenStyle(), t = teaserExample(), on = $('teaser_on').checked;
     $('greet_personal').textContent = '"' + greetingExample('personal') + '"';
     $('greet_business').textContent = '"' + greetingExample('business') + '"';
-    $('greeting').placeholder = g;
+    $('greeting').placeholder = greetingExample(style);
     $('teaser_title').placeholder = t[0];
     $('teaser_text').placeholder = t[1];
-    $('gp_msg').textContent = $('greeting').value.trim() || g;
     $('gp_title').textContent = $('teaser_title').value.trim() || t[0];
     $('gp_line').textContent = $('teaser_text').value.trim() || t[1];
     $('gp_popwrap').hidden = !on;
-    $('gp_chatlabel').style.marginTop = on ? '12px' : '0';
-    $('teaser_own').hidden = $('teaser_own2').hidden = !on;
     $('greet_hint').hidden = !(style === 'personal' && !firstName());
   }
   ['business_name', 'owner_name', 'greeting', 'teaser_title', 'teaser_text'].forEach(function (id) { $(id).addEventListener('input', syncGreeting); });
