@@ -46,9 +46,9 @@
     if (!$('import_url').value && b.allowed_origins.length) $('import_url').value = b.allowed_origins[0].replace(/^https?:\/\//, '');
     $('color').value = b.color;
     $('greeting').value = b.greeting;
-    Array.prototype.forEach.call(document.querySelectorAll('input[name=greeting_style]'), function (r) { r.checked = r.value === (b.greeting_style || 'personal'); });
+    Array.prototype.forEach.call(document.querySelectorAll('input[name=greeting_style]'), function (r) { r.checked = r.value === (b.greeting_style === 'business' ? 'business' : 'personal'); });
+    $('greet_own').open = !!(b.greeting || b.teaser_title || b.teaser_text);
     $('teaser_on').checked = !!b.teaser_on;
-    Array.prototype.forEach.call(document.querySelectorAll('input[name=teaser_style]'), function (r) { r.checked = r.value === (b.teaser_style || 'personal'); });
     $('teaser_title').value = b.teaser_title || '';
     $('teaser_text').value = b.teaser_text || '';
     syncGreeting();
@@ -399,7 +399,6 @@
       greeting: $('greeting').value,
       greeting_style: (document.querySelector('input[name=greeting_style]:checked') || {}).value || 'personal',
       teaser_on: $('teaser_on').checked,
-      teaser_style: (document.querySelector('input[name=teaser_style]:checked') || {}).value || 'personal',
       teaser_title: $('teaser_title').value,
       teaser_text: $('teaser_text').value,
       enabled: $('enabled').checked
@@ -469,8 +468,9 @@
   $('draft_add').addEventListener('click', function () { applyDraft(true); });
   $('draft_discard').addEventListener('click', function () { $('importdraft').hidden = true; say('importmsg', ''); });
 
-  // ---- Greeting style and pop-up (examples match lib/bot.js) ----
+  // ---- Greeting and pop-up (wording matches lib/bot.js) ----
   function firstName() { return ($('owner_name').value.trim().split(/\s+/)[0]) || ''; }
+  function chosenStyle() { return ((document.querySelector('input[name=greeting_style]:checked') || {}).value) === 'business' ? 'business' : 'personal'; }
   function greetingExample(style) {
     var biz = $('business_name').value.trim(), first = style === 'business' ? '' : firstName();
     if (first && biz) return "Hi! I'm " + first + "'s AI assistant at " + biz + ". Ask me anything, or leave your details and " + first + " will get back to you.";
@@ -478,29 +478,27 @@
     return "Hi! I'm the AI assistant for " + (biz || 'this business') + ". Ask me anything, or leave your details and we'll get back to you.";
   }
   function teaserExample(style) {
-    var biz = $('business_name').value.trim(), first = style === 'personal' ? firstName() : '';
+    var biz = $('business_name').value.trim(), first = style === 'business' ? '' : firstName();
     return [biz ? 'Hi 👋 Got a question for ' + biz + '?' : 'Hi 👋 Got a question?',
       first ? "Ask me anything. If I can't help, I'll pass your message on to " + first + " and we'll be in touch."
             : "Ask me anything. If I can't help, I'll automatically pass on your message and we'll be in touch."];
   }
   function syncGreeting() {
-    var style = (document.querySelector('input[name=greeting_style]:checked') || {}).value || 'personal';
-    $('greet_personal').textContent = '"' + greetingExample('personal') + '"';
-    $('greet_business').textContent = '"' + greetingExample('business') + '"';
-    $('greeting_wrap').hidden = style !== 'custom';
+    var style = chosenStyle(), g = greetingExample(style), t = teaserExample(style), on = $('teaser_on').checked;
+    $('greeting').placeholder = g;
+    $('teaser_title').placeholder = t[0];
+    $('teaser_text').placeholder = t[1];
+    $('gp_msg').textContent = $('greeting').value.trim() || g;
+    $('gp_title').textContent = $('teaser_title').value.trim() || t[0];
+    $('gp_line').textContent = $('teaser_text').value.trim() || t[1];
+    $('gp_popwrap').hidden = !on;
+    $('gp_chatlabel').style.marginTop = on ? '12px' : '0';
+    $('teaser_own').hidden = $('teaser_own2').hidden = !on;
     $('greet_hint').hidden = !(style === 'personal' && !firstName());
-    var tp = teaserExample('personal'), ts = teaserExample('simple');
-    $('teaser_personal').textContent = '"' + tp[0] + '" / "' + tp[1] + '"';
-    $('teaser_simple').textContent = '"' + ts[0] + '" / "' + ts[1] + '"';
-    $('teaser_title').placeholder = ts[0];
-    $('teaser_text').placeholder = ts[1];
-    $('teaser_fields').hidden = !$('teaser_on').checked;
-    $('teaser_custom').hidden = ((document.querySelector('input[name=teaser_style]:checked') || {}).value) !== 'custom';
   }
-  ['business_name', 'owner_name'].forEach(function (id) { $(id).addEventListener('input', syncGreeting); });
-  Array.prototype.forEach.call(document.querySelectorAll('input[name=greeting_style]'), function (r) { r.addEventListener('change', function () { syncGreeting(); if (r.value === 'custom' && r.checked) $('greeting').focus(); }); });
+  ['business_name', 'owner_name', 'greeting', 'teaser_title', 'teaser_text'].forEach(function (id) { $(id).addEventListener('input', syncGreeting); });
+  Array.prototype.forEach.call(document.querySelectorAll('input[name=greeting_style]'), function (r) { r.addEventListener('change', syncGreeting); });
   $('teaser_on').addEventListener('change', syncGreeting);
-  Array.prototype.forEach.call(document.querySelectorAll('input[name=teaser_style]'), function (r) { r.addEventListener('change', function () { syncGreeting(); if (r.value === 'custom' && r.checked) $('teaser_title').focus(); }); });
 
   // ---- Install guide ----
   function copyCode(btn) {

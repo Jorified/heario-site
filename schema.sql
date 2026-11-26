@@ -107,4 +107,4 @@ ALTER TABLE bots ADD COLUMN IF NOT EXISTS greeting_style text;
 ALTER TABLE bots ADD COLUMN IF NOT EXISTS teaser_on boolean NOT NULL DEFAULT false;
 ALTER TABLE bots ADD COLUMN IF NOT EXISTS teaser_title text NOT NULL DEFAULT '';
 ALTER TABLE bots ADD COLUMN IF NOT EXISTS teaser_text text NOT NULL DEFAULT '';
-ALTER TABLE bots ADD COLUMN IF NOT EXISTS teaser_style text;
+ALTER TABLE bots ADD COLUMN IF NOT EXISTS teaser_style text; -- no longer used (the greeting style now sets the pop-up wording)

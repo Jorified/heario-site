@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="style.css?v=30" />
-  <link rel="stylesheet" href="chatbot.css?v=24" />
+  <link rel="stylesheet" href="chatbot.css?v=25" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -96,27 +96,26 @@
       <div class="field"><label for="color">Chat colour</label><input id="color" class="cb-input" type="color" style="height:46px;padding:4px;max-width:160px" /></div>
 
       <fieldset class="greet">
-        <legend>How the chat greets visitors</legend>
-        <label class="greet-opt"><input type="radio" name="greeting_style" value="personal" /><span><b>Personal</b><em id="greet_personal"></em></span></label>
-        <label class="greet-opt"><input type="radio" name="greeting_style" value="business" /><span><b>Business</b><em id="greet_business"></em></span></label>
-        <label class="greet-opt"><input type="radio" name="greeting_style" value="custom" /><span><b>Write my own</b><em>Your own words, up to 200 characters.</em></span></label>
-        <div class="field" id="greeting_wrap" hidden><label for="greeting">Your opening message</label><input id="greeting" class="cb-input" maxlength="200" placeholder="e.g. Hi! Ask me anything about our services, or leave your details and we'll call you back." /></div>
-        <small id="greet_hint" class="hint" hidden>Add your first name in section 1 to make the personal greeting use it.</small>
-      </fieldset>
+        <legend>Greeting</legend>
+        <label class="greet-opt"><input type="radio" name="greeting_style" value="personal" /><span><b>Personal</b><em>Uses your first name, so visitors know their message reaches a real person.</em></span></label>
+        <label class="greet-opt"><input type="radio" name="greeting_style" value="business" /><span><b>Business</b><em>Uses your business name only.</em></span></label>
+        <small id="greet_hint" class="hint" hidden>Add your first name in section 1 to use the personal greeting.</small>
+        <label class="check" style="margin:10px 0 4px"><input type="checkbox" id="teaser_on" /><span>Also show a pop-up next to the chat bubble a few seconds after someone arrives (it hides itself after 12 seconds).</span></label>
 
-      <fieldset class="greet">
-        <legend>Pop-up greeting</legend>
-        <label class="check" style="margin:0 0 8px"><input type="checkbox" id="teaser_on" /><span>Show a short pop-up next to the chat bubble a few seconds after someone arrives. It tucks itself away after 12 seconds, and only shows once per visit.</span></label>
-        <div id="teaser_fields" hidden>
-          <label class="greet-opt"><input type="radio" name="teaser_style" value="personal" /><span><b>Personal</b><em id="teaser_personal"></em></span></label>
-          <label class="greet-opt"><input type="radio" name="teaser_style" value="simple" /><span><b>Simple, like heario.ai</b><em id="teaser_simple"></em></span></label>
-          <label class="greet-opt"><input type="radio" name="teaser_style" value="custom" /><span><b>Write my own</b><em>Your own headline and second line.</em></span></label>
-          <div id="teaser_custom" hidden>
-            <div class="field"><label for="teaser_title">Headline</label><input id="teaser_title" class="cb-input" maxlength="60" /></div>
-            <div class="field"><label for="teaser_text">Second line</label><input id="teaser_text" class="cb-input" maxlength="120" /></div>
-            <small class="hint">Leave a box blank to use the suggestion shown in grey.</small>
-          </div>
+        <div class="greet-preview" aria-live="polite">
+          <div id="gp_popwrap"><div class="gp-label">Pop-up next to the chat bubble</div>
+          <div class="gp-pop" id="gp_pop"><b id="gp_title"></b><span id="gp_line"></span></div></div>
+          <div class="gp-label" id="gp_chatlabel">When they open the chat</div>
+          <div class="gp-msg" id="gp_msg"></div>
         </div>
+
+        <details class="greet-own" id="greet_own">
+          <summary>Change the wording</summary>
+          <div class="field"><label for="greeting">Chat opening message</label><input id="greeting" class="cb-input" maxlength="200" /></div>
+          <div class="field" id="teaser_own"><label for="teaser_title">Pop-up headline</label><input id="teaser_title" class="cb-input" maxlength="60" /></div>
+          <div class="field" id="teaser_own2"><label for="teaser_text">Pop-up second line</label><input id="teaser_text" class="cb-input" maxlength="120" /></div>
+          <small class="hint">Leave a box blank to use the suggested wording shown in grey.</small>
+        </details>
       </fieldset>
       <label class="check"><input type="checkbox" id="enabled" /><span>Chatbot is switched on</span></label>
     </section>
@@ -186,6 +185,6 @@
   </section>
 </main>
 <script src="pricing.js"></script>
-<script src="dashboard.js?v=18"></script>
+<script src="dashboard.js?v=19"></script>
 </body>
 </html>

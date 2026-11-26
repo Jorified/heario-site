@@ -1060,3 +1060,15 @@ button:disabled { opacity: .55; cursor: default; }
 .greet [hidden], #teaser_fields[hidden] { display: none !important; }
 #teaser_custom[hidden] { display: none !important; }
 #teaser_fields .greet-opt { padding: 6px 4px; }
+
+/* dashboard: greeting preview */
+.greet-preview { margin: 12px 0 6px; padding: 14px; border-radius: 12px; background: rgba(7,10,15,.55); border: 1px dashed rgba(127,209,255,.25); }
+.gp-label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #8b96a9; margin-bottom: 6px; }
+.gp-pop { max-width: 300px; padding: 10px 12px; border-radius: 14px 14px 4px 14px; background: #131924; border: 1px solid #242c3c; }
+.gp-pop b { display: block; font-size: 14px; color: #e6ebf3; }
+.gp-pop span { display: block; font-size: 13px; color: #8b96a9; margin-top: 2px; }
+#gp_popwrap[hidden] { display: none !important; }
+.gp-msg { max-width: 420px; padding: 9px 12px; border-radius: 5px 16px 16px 16px; background: #1b2231; border: 1px solid #242c3c; color: #e6ebf3; font-size: 14px; line-height: 1.45; }
+.greet-own { margin-top: 10px; }
+.greet-own summary { cursor: pointer; color: var(--accent2); font-size: 14px; padding: 4px 0; }
+.greet-own .field[hidden] { display: none !important; }

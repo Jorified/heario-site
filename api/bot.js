@@ -32,14 +32,14 @@ export async function PUT(request) {
                                   WHEN $12::boolean THEN NULL
                                   ELSE whatsapp_consent_at END,
        email_copy = $13, confirm_visitor = $14, booking_url = $15, opening_hours = $16,
-       greeting_style = $17, teaser_on = $18, teaser_title = $19, teaser_text = $20, teaser_style = $21,
+       greeting_style = $17, teaser_on = $18, teaser_title = $19, teaser_text = $20,
        updated_at = now()
      WHERE id = $1 RETURNING *`,
     [
       current.id, v.business_name, v.owner_name, v.knowledge, v.response_time, v.greeting,
       v.color, v.allowed_origins, v.owner_whatsapp, v.enabled, v.consent_now, v.consent_clear,
       v.email_copy, v.confirm_visitor, v.booking_url, v.opening_hours,
-      v.greeting_style, v.teaser_on, v.teaser_title, v.teaser_text, v.teaser_style,
+      v.greeting_style, v.teaser_on, v.teaser_title, v.teaser_text,
     ]
   );
   return json({ ok: true, bot: botView(saved) });
