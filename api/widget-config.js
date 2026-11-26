@@ -1,6 +1,6 @@
 // GET /api/widget-config?key=hb_...  -> look and feel for the embedded widget (public, origin-checked).
 import { defaultGreeting, originAllowed } from "../lib/bot.js";
-import { one } from "../lib/db.js";
+import { one, query } from "../lib/db.js";
 import { isOwnOrigin, json } from "../lib/util.js";
 
 export async function GET(request) {
@@ -14,6 +14,11 @@ export async function GET(request) {
 
   const allowed = origin && (isOwnOrigin(origin, request) || originAllowed(bot.allowed_origins, origin));
   if (!allowed) return json({ error: "Not allowed." }, 403);
+
+  // Note that the chat is live on the customer's own website (not just our dashboard preview). At most once an hour.
+  if (!isOwnOrigin(origin, request) && (!bot.site_seen_at || Date.now() - new Date(bot.site_seen_at) > 3600_000)) {
+    await query("UPDATE bots SET site_seen_at = now() WHERE id = $1", [bot.id]).catch((err) => console.error("site_seen_at failed:", err.message));
+  }
 
   return json(
     {

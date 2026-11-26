@@ -217,6 +217,7 @@ export async function POST(request) {
   const allowed = origin && (isOwnOrigin(origin, request) || originAllowed(bot.allowed_origins, origin));
   if (!allowed) return json({ error: "This website isn't allowed to use this chatbot." }, 403);
   const cors = corsHeaders(origin);
+  const formReply = `Thanks for your message. Leave your details below and ${bot.business_name || "the team"} will get back to you.`;
 
   const unavailable = "Sorry, this assistant isn't available right now. Please contact the business directly.";
   if (!bot.enabled || !planState(bot).active) return json({ reply: unavailable, notified: false }, 200, cors);
@@ -236,13 +237,12 @@ export async function POST(request) {
     }
     return json({ ok: true, notified: true, confirmed: !!r.confirmed }, 200, cors);
   }
-  const formReply = `Thanks for your message. Leave your details below and ${bot.business_name || "the team"} will get back to you.`;
 
   // Per-chatbot ceiling across ALL visitors. The embed key is public and the Origin header can be
   // forged by scripts, so this caps the damage if someone tries to burn a customer's quota.
   const hourlyCap = hourlyLimit(bot.embed_key);
   if (!(await rateLimit(`bot-hour:${bot.id}`, hourlyCap, 3600))) {
-    return json({ reply: "This assistant is very busy right now. Please try again shortly, or contact the business directly.", notified: false }, 200, cors);
+    return json({ reply: formReply, notified: false, form: true }, 200, cors);
   }
 
   const messages = (Array.isArray(body?.messages) ? body.messages : [])

@@ -43,6 +43,7 @@ async function sendTrialEmails() {
        ORDER BY a.trial_ends_at LIMIT 200`),
   };
   const col = { reminder: "trial_reminder_sent_at", ended: "trial_ended_sent_at" };
+  if (!due.reminder.length && !due.ended.length) return { reminders: 0, ended: 0 };
   const prices = await getPrices();
   const sent = { reminders: 0, ended: 0 };
   for (const kind of ["reminder", "ended"]) {

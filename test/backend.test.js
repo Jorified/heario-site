@@ -258,7 +258,7 @@ test("chat: per-chatbot hourly caps hold even when requests come from many diffe
 
     claudeScript = [done, done, done];
     const busy = await (await from("3.3.3.3")).json();
-    assert.match(busy.reply, /very busy/);
+    assert.equal(busy.form, true, "visitors can still leave their details with the form");
     assert.equal(claudeScript.length, 3, "Claude was not called once the cap was hit");
   } finally {
     delete process.env.BOT_HOURLY_MESSAGES;
@@ -1315,6 +1315,14 @@ test("owner alerts: new trial once, new paying customer once, cancellation and e
     assert.equal(c.length, 1);
     assert.match(c[0].subject, /Cancellation/);
     assert.match(c[0].textContent, /keep access until 1 January 2027/);
+
+    // Newer Stripe API versions set a cancel_at date instead of cancel_at_period_end.
+    calls = [];
+    await wh({ type: "customer.subscription.updated", data: { object: { customer: "cus_9", id: "sub_9", status: "active", cancel_at_period_end: false, cancel_at: 1801440000 }, previous_attributes: { cancel_at: null } } });
+    assert.match(toAdmin()[0].textContent, /keep access until 1 February 2027/);
+    calls = [];
+    await wh({ type: "customer.subscription.updated", data: { object: { customer: "cus_9", id: "sub_9", status: "active", cancel_at: 1801440000 }, previous_attributes: { metadata: {} } } });
+    assert.equal(toAdmin().length, 0, "other changes to a cancelling subscription don't re-send");
 
     calls = [];
     const end = { type: "customer.subscription.deleted", data: { object: { customer: "cus_9" } } };

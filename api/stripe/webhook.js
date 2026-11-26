@@ -36,10 +36,15 @@ export async function POST(request) {
       [obj.customer, obj.status, obj.id]
     );
     // Cancelled in the billing portal: the plan runs to the end of the paid month, then Stripe ends it.
-    const prevAttrs = event.data?.previous_attributes ?? {};
-    if (event.type === "customer.subscription.updated" && obj.cancel_at_period_end === true && prevAttrs.cancel_at_period_end === false) {
+    // Older Stripe API versions flag this with cancel_at_period_end; newer ones set a cancel_at date. Handle both,
+    // and only when this event is the one that switched cancellation on (so retries and other edits don't re-send).
+    const prev = event.data?.previous_attributes ?? {};
+    const nowCancelling = obj.cancel_at_period_end === true || !!obj.cancel_at;
+    const justCancelled = ("cancel_at_period_end" in prev && !prev.cancel_at_period_end) || ("cancel_at" in prev && !prev.cancel_at);
+    if (event.type === "customer.subscription.updated" && nowCancelling && justCancelled) {
       const rows = await query(`SELECT email, ${who} FROM accounts WHERE stripe_customer_id = $1`, [obj.customer]);
-      if (rows[0]) await notifyAdmin("cancelling", { email: rows[0].email, business: rows[0].business, endsAt: obj.current_period_end ?? obj.cancel_at });
+      const endsAt = (typeof obj.cancel_at === "number" && obj.cancel_at) || obj.items?.data?.[0]?.current_period_end || obj.current_period_end;
+      if (rows[0]) await notifyAdmin("cancelling", { email: rows[0].email, business: rows[0].business, endsAt });
     }
   } else if (event.type === "customer.subscription.deleted") {
     const rows = await query(
