@@ -1449,7 +1449,7 @@ test("greeting style and pop-up: saved from the dashboard and sent to the chat",
   await put({ greeting_style: "business", teaser_on: true });
   c = await cfg();
   assert.match(c.greeting, /^Hi! I'm the AI assistant for Murphy Plumbing/);
-  assert.equal(c.teaser, "Hi 👋 Got a question for Murphy Plumbing?|Ask me anything. If I can't help, I'll pass your message on and we'll be in touch.");
+  assert.equal(c.teaser, "Hi 👋 Got a question for Murphy Plumbing?|Ask me anything. If I can't help, I'll automatically pass on your message and we'll be in touch.", "business pop-up uses heario.ai's wording");
 
   await put({ greeting_style: "personal", teaser_on: true });
   assert.match((await cfg()).teaser, /pass your message on to Sean and/);

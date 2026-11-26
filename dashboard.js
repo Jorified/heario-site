@@ -479,7 +479,8 @@
     var biz = $('business_name').value.trim(), style = (document.querySelector('input[name=greeting_style]:checked') || {}).value;
     var first = style === 'business' ? '' : firstName();
     return [biz ? 'Hi 👋 Got a question for ' + biz + '?' : 'Hi 👋 Got a question?',
-      "Ask me anything. If I can't help, I'll pass your message on" + (first ? ' to ' + first : '') + " and we'll be in touch."];
+      first ? "Ask me anything. If I can't help, I'll pass your message on to " + first + " and we'll be in touch."
+            : "Ask me anything. If I can't help, I'll automatically pass on your message and we'll be in touch."];
   }
   function syncGreeting() {
     var style = (document.querySelector('input[name=greeting_style]:checked') || {}).value || 'personal';
