@@ -48,3 +48,26 @@
   .guide-steps li { padding-left: 52px; }
   .guide-steps li::before { left: 12px; }
 }
+
+/* FAQ page */
+.faq-toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 6px; }
+.faq-toc a { padding: 6px 12px; border-radius: 99px; border: 1px solid rgba(255,255,255,.1); font-size: .9rem; color: #cdd6e4; }
+.faq-toc a:hover { border-color: var(--accent); color: var(--accent2); }
+.guide h2[id] { scroll-margin-top: 20px; }
+.faq-list details { border: 1px solid rgba(255,255,255,.07); background: rgba(255,255,255,.03); border-radius: 12px; margin: 0 0 8px; }
+.faq-list summary { cursor: pointer; list-style: none; padding: 14px 44px 14px 16px; position: relative; color: #e4ecf7; font-weight: 600; text-align: left; }
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list summary::after { content: "+"; position: absolute; right: 16px; top: 11px; font-size: 20px; color: var(--accent2); font-weight: 400; }
+.faq-list details[open] summary::after { content: "–"; }
+.faq-list details p { margin: 0; padding: 0 16px 16px; }
+
+/* Industry pages */
+.ind-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin: 22px 0 0; }
+.ind-actions .guide-cta { padding: 11px 22px; font-size: 15px; }
+.ind-actions span { color: #8b96a9; font-size: .9rem; }
+.ind-qs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.ind-qs span { background: rgba(79,142,247,.12); border: 1px solid rgba(79,142,247,.25); color: #dbe6f7; padding: 8px 14px; border-radius: 16px 16px 16px 4px; font-size: .93rem; }
+.wa-demo { max-width: 380px; background: #0b141a; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 14px 16px 12px; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+.wa-demo .wa-head { color: #fff; font-weight: 700; margin-bottom: 8px; }
+.wa-demo p { color: #d6dde5 !important; font-size: .93rem !important; line-height: 1.55 !important; margin: 0 0 10px; }
+.wa-demo .wa-foot { color: #8696a0; font-size: .8rem; }

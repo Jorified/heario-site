@@ -523,7 +523,7 @@
           '<span class="gs-text"><b>' + esc(x[1]) + '</b><small>' + esc(x[2]) + '</small></span>' +
           (x[0] ? '<span class="gs-done">Done</span>' : '<a class="btn-ghost gs-go" href="#' + x[3] + '">Do this</a>') + '</li>';
       }).join('') + '</ol>' +
-      '<p class="gs-foot">Short on time? Email <a href="mailto:support@heario.ai">support@heario.ai</a> and we\'ll set it up for you, free. <button type="button" class="gs-hide">Hide this</button></p>';
+      '<p class="gs-foot">Short on time? Email <a href="mailto:support@heario.ai">support@heario.ai</a> and we\'ll help you get it set up, free. <button type="button" class="gs-hide">Hide this</button></p>';
     box.querySelector('.gs-hide').onclick = function () { try { localStorage.setItem(hideKey, '1'); } catch (e) {} box.hidden = true; };
   }
 

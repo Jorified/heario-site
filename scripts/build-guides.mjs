@@ -1,10 +1,12 @@
-// Builds the public install guides (install/*.html) from the same
-// step-by-step instructions the dashboard uses (PLATFORMS in dashboard.js),
-// so the two never drift apart. Run: npm run build-guides
+// Builds the public SEO pages: the install guides (install/*.html, from the same
+// step-by-step instructions the dashboard uses, PLATFORMS in dashboard.js, so the
+// two never drift apart), the FAQ (faq.html) and the industry pages (for/*.html,
+// words in seo-content.mjs). Run: npm run build-guides
 import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
 import { fileURLToPath } from "node:url";
+import { FAQ, INDUSTRIES } from "./seo-content.mjs";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SITE = "https://heario.ai";
@@ -45,6 +47,9 @@ const PAGES = {
 
 const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const rich = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+// **bold** and [text](url) for the FAQ and industry pages.
+const md = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>');
+const mdPlain = (t) => String(t).replace(/\*\*(.+?)\*\*/g, "$1").replace(/\[(.+?)\]\((.+?)\)/g, "$1");
 const plain = (t) => String(t).replace(/\*\*(.+?)\*\*/g, "$1");
 // The dashboard's {copy} marker is a "Copy code" button; on the public page
 // the code was copied in step 1, so the marker is just dropped.
@@ -90,7 +95,7 @@ function foot() {
   return `</main>
 <footer class="guide-foot">
   <span>&copy; 2026 Heario</span>
-  <a href="/">Home</a><a href="/install/">Install guides</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="mailto:support@heario.ai">Contact</a>
+  <a href="/">Home</a><a href="/for/">Who it's for</a><a href="/install/">Install guides</a><a href="/faq.html">FAQ</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="mailto:support@heario.ai">Contact</a>
 </footer>
 <script src="/widget.js?v=9" data-key="hb_f307f807bdebb7339ec7ca27" data-theme="dark" data-avatar="/favicon.svg" data-teaser="Hi &#128075; Got a question for Heario?|Ask me anything. If I can&rsquo;t help, I&rsquo;ll automatically pass on your message and we&rsquo;ll be in touch." defer></script>
 </body>
@@ -162,7 +167,7 @@ ${steps.map((s) => `    <li>${rich(s)}</li>`).join("\n")}
     <li>Check "Chatbot is switched on" is ticked in your dashboard.</li>
     <li>Paste the code only once. If you've also added it to a page block, remove that copy.</li>
   </ul>`}
-  ${unsupported ? "" : `<p>Still stuck? Email <a href="mailto:support@heario.ai">support@heario.ai</a> with your website address and we'll set it up with you, free.</p>`}
+  ${unsupported ? "" : `<p>Still stuck? Email <a href="mailto:support@heario.ai">support@heario.ai</a> with your website address and we'll help you get it working, free.</p>`}
 
   ${CTA}
 
@@ -189,8 +194,113 @@ function hubPage(all) {
   <div class="guide-grid">
 ${listed.map((p) => `    <a href="/install/${PAGES[p.id].slug}.html"><b>${esc(PAGES[p.id].short || PAGES[p.id].title)}</b><span>${esc(p.id === "godaddy" ? "What works on GoDaddy" : p.id === "html" ? "Paste before </body>" : p.steps.length + 1 + " steps")}</span></a>`).join("\n")}
   </div>
-  <h2>Prefer us to do it?</h2>
-  <p>Not technical, or short on time? Email <a href="mailto:support@heario.ai">support@heario.ai</a> with your website address and we'll set it up for you, free. You can also send your code and instructions straight to your web developer from your dashboard.</p>
+  <h2>Want a hand?</h2>
+  <p>Not technical, or short on time? Email <a href="mailto:support@heario.ai">support@heario.ai</a> with your website address and we'll help you get it set up, free. If you'd rather we did it with you, add the optional one-off setup service when you subscribe. You can also send your code and instructions straight to your web developer from your dashboard.</p>
+  ${CTA}
+` + foot();
+}
+
+
+const slugify = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+function faqPage() {
+  const url = `${SITE}/faq.html`;
+  const all = FAQ.flatMap((g) => g.items);
+  const jsonld = [{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: all.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: mdPlain(a) } })),
+  }];
+  return head({ title: "Heario FAQ: AI website chat with WhatsApp enquiry alerts", desc: "Answers to common questions about Heario: setup, which websites it works on, how the AI answers, WhatsApp enquiry alerts, pricing, the free trial and GDPR.", url, jsonld }) + `
+  <nav class="guide-crumbs" aria-label="Breadcrumb"><a href="/">Heario</a> › FAQ</nav>
+  <h1>Frequently asked questions</h1>
+  <p class="guide-lead">Everything you need to know about adding Heario to your website. Can't find your answer? Ask the chat in the corner, or email <a href="mailto:support@heario.ai">support@heario.ai</a>.</p>
+  <nav class="faq-toc" aria-label="Topics">${FAQ.map((g) => `<a href="#${slugify(g.group)}">${esc(g.group)}</a>`).join("")}</nav>
+${FAQ.map((g) => `  <h2 id="${slugify(g.group)}">${esc(g.group)}</h2>
+  <div class="faq-list">
+${g.items.map(([q, a]) => `    <details><summary>${esc(q)}</summary><p>${md(a)}</p></details>`).join("\n")}
+  </div>`).join("\n")}
+  ${CTA}
+` + foot();
+}
+
+function industryPage(ind) {
+  const url = `${SITE}/for/${ind.slug}.html`;
+  const h1 = `AI website chatbot for ${ind.name}`;
+  const picks = ["How much does it cost?", "Do I need WhatsApp Business?", "Will it make things up?"];
+  const faqs = FAQ.flatMap((g) => g.items).filter(([q]) => picks.includes(q));
+  const jsonld = [{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Heario", item: SITE + "/" },
+      { "@type": "ListItem", position: 2, name: "Who it's for", item: SITE + "/for/" },
+      { "@type": "ListItem", position: 3, name: ind.short, item: url },
+    ],
+  }];
+  const s = ind.sample;
+  const others = INDUSTRIES.filter((x) => x.slug !== ind.slug).map((x) => `<a href="/for/${x.slug}.html">${esc(x.short)}</a>`).join("");
+  return head({ title: `${h1} | Heario`, desc: `Heario answers your website visitors 24/7 and sends every ${ind.trade} enquiry straight to your WhatsApp. Set up in 10 minutes. 14-day free trial, no card needed.`, url, jsonld }) + `
+  <nav class="guide-crumbs" aria-label="Breadcrumb"><a href="/">Heario</a> › <a href="/for/">Who it's for</a> › ${esc(ind.short)}</nav>
+  <h1>${esc(h1)}</h1>
+  <p class="guide-lead">${esc(ind.lead)}</p>
+  <p class="ind-actions"><a href="/login.html" class="guide-cta">Start your free trial</a><span>14 days free · No card needed</span></p>
+
+  <h2>Questions it answers for you</h2>
+  <p>These are the kinds of questions visitors ask. Heario answers them from the information you give it about your business, and offers to pass anything it can't answer to you.</p>
+  <div class="ind-qs">${ind.questions.map((q) => `<span>${esc(q)}</span>`).join("")}</div>
+
+  <h2>What an enquiry looks like on your phone</h2>
+  <div class="wa-demo" aria-label="Example WhatsApp enquiry alert">
+    <div class="wa-head">New website enquiry</div>
+    <p>New enquiry for <b>your business</b> from your website chat.</p>
+    <p>Name: ${esc(s.name)}<br>Contact: ${esc(s.contact)}<br>Enquiry: ${s.urgent ? "&#128680; URGENT: " : ""}${esc(s.msg)}</p>
+    <div class="wa-foot">Heario alerts. Turn off in your dashboard.</div>
+  </div>
+  <p class="guide-meta">Example only. Every enquiry is also saved in your dashboard, and emailed to you if WhatsApp can't deliver it.</p>
+
+  <h2>How it helps ${esc(ind.name)}</h2>
+  <ul>
+${ind.points.map((x) => `    <li>${esc(x)}</li>`).join("\n")}
+  </ul>
+
+  <h2>How it works</h2>
+  <ol class="guide-steps">
+    <li><b>Tell it about your business.</b> Enter your website address and Heario writes a draft of your services, prices and opening hours for you to check, or type it in yourself.</li>
+    <li><b>Add your WhatsApp number.</b> Enquiries arrive in your normal WhatsApp. You don't need WhatsApp Business.</li>
+    <li><b>Paste one line of code onto your website.</b> Our <a href="/install/">install guides</a> cover WordPress, Wix, Squarespace and more. It takes about 10 minutes in total.</li>
+  </ol>
+
+  <h2>Common questions</h2>
+  <div class="faq-list">
+${faqs.map(([q, a]) => `    <details><summary>${esc(q)}</summary><p>${md(a)}</p></details>`).join("\n")}
+  </div>
+  <p><a href="/faq.html">See all questions</a></p>
+
+  ${CTA}
+
+  <h2>Heario for other businesses</h2>
+  <div class="guide-others">${others}</div>
+` + foot();
+}
+
+function industryHub() {
+  const url = `${SITE}/for/`;
+  const jsonld = [{
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "AI website chat for small businesses",
+    url,
+    hasPart: INDUSTRIES.map((x) => ({ "@type": "WebPage", name: `AI website chatbot for ${x.name}`, url: `${SITE}/for/${x.slug}.html` })),
+  }];
+  return head({ title: "AI website chat for small businesses and trades | Heario", desc: "Heario answers your website visitors 24/7 and sends every enquiry to your WhatsApp. Built for plumbers, electricians, builders, salons, cleaners, gardeners and other small businesses.", url, jsonld }) + `
+  <nav class="guide-crumbs" aria-label="Breadcrumb"><a href="/">Heario</a> › Who it's for</nav>
+  <h1>AI website chat for small businesses</h1>
+  <p class="guide-lead">Heario is built for businesses where the owner is busy doing the work: on a job, with a client, or out on site. It answers your website visitors any time and sends every enquiry straight to your WhatsApp, so you never miss one.</p>
+  <div class="guide-grid">
+${INDUSTRIES.map((x) => `    <a href="/for/${x.slug}.html"><b>${esc(x.short)}</b><span>${esc(x.questions[0])}</span></a>`).join("\n")}
+  </div>
+  <p>Don't see your business? Heario works for any business that gets enquiries through its website. It answers from the information you give it, so it fits your services, prices and opening hours.</p>
   ${CTA}
 ` + foot();
 }
@@ -199,11 +309,14 @@ export function buildGuides() {
   const all = loadPlatforms();
   const out = { "install/index.html": hubPage(all) };
   for (const p of all) if (PAGES[p.id]) out[`install/${PAGES[p.id].slug}.html`] = pageFor(p, PAGES[p.id], all);
+  out["faq.html"] = faqPage();
+  out["for/index.html"] = industryHub();
+  for (const ind of INDUSTRIES) out[`for/${ind.slug}.html`] = industryPage(ind);
   return out;
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
-  fs.mkdirSync(path.join(root, "install"), { recursive: true });
+  for (const d of ["install", "for"]) fs.mkdirSync(path.join(root, d), { recursive: true });
   for (const [f, html] of Object.entries(buildGuides())) fs.writeFileSync(path.join(root, f), html);
   console.log("Wrote", Object.keys(buildGuides()).join(", "));
 }

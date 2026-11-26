@@ -112,12 +112,13 @@ login address instead. Customers can also tick "Also email me a copy of every en
 - [x] Old desktop-app Stripe webhook switched off (done by Jack, 20 Nov 2026), so chatbot payments can't trigger old licence-key emails. If you ever re-enable it, use a separate Stripe account for the chatbot
 
 ## New signups
-- The moment someone starts a trial they get a welcome email from "Jack at Heario" with the three setup steps and an offer to set it up for them (replies go to support@heario.ai). You get the "New free trial" alert at ADMIN_EMAIL.
+- The moment someone starts a trial they get a welcome email from "Jack at Heario" with the three setup steps and an offer of free setup help (replies go to support@heario.ai). You get the "New free trial" alert at ADMIN_EMAIL.
 - New accounts see a "Get started" checklist at the top of the dashboard (business details, WhatsApp, website address, chat live on their site). It ticks off as they go and disappears when all four are done, or if they hide it.
 
-## Install guides (SEO pages)
-- Public guides live at heario.ai/install/ (one page per website builder). They're generated from the same instructions the dashboard shows (PLATFORMS in dashboard.js).
-- If you change those instructions, run `npm run build-guides` and push the changed install/ pages too. A test fails if the pages are out of date.
+## SEO pages (install guides, FAQ, industry pages)
+- Install guides at heario.ai/install/ (one page per website builder) are generated from the same instructions the dashboard shows (PLATFORMS in dashboard.js).
+- The FAQ (heario.ai/faq.html) and industry pages (heario.ai/for/, e.g. plumbers, salons) are generated from scripts/seo-content.mjs. Edit the words there, not in the HTML.
+- After changing either, run `npm run build-guides` and push the changed pages (install/, for/, faq.html). A test fails if the pages are out of date or missing from sitemap.xml.
 
 ## Trial emails
 - About 3 days before a free trial ends, and again when it has ended, the customer gets a short email from "Jack at Heario" (replies go to support@heario.ai). It's sent by the daily job, once each, never to subscribers.

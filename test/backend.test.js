@@ -1381,7 +1381,7 @@ test("trial emails: reminder ~3 days before and a note when it ends, once each, 
   assert.match(r["used@example.com"].subject, /^Your Heario trial ends on \w+day \d+ \w+$/);
   assert.match(r["used@example.com"].textContent, /ends in 3 days[\s\S]*Hi Sean,[\s\S]*37 messages answered \| 2 enquiries sent to you[\s\S]*Keep my chat running: https:\/\/heario\.ai\/dashboard\.html[\s\S]*€29 a month \(£25 in the UK, \$31 in the US\)/);
   assert.match(r["ready@example.com"].textContent, /isn't on your website yet[\s\S]*dashboard\.html#install[\s\S]*extend it/);
-  assert.match(r["setup@example.com"].textContent, /\[ \] Add a few lines about your business[\s\S]*\[ \] Add your WhatsApp number[\s\S]*set it up for you, free/);
+  assert.match(r["setup@example.com"].textContent, /\[ \] Add a few lines about your business[\s\S]*\[ \] Add your WhatsApp number[\s\S]*help you get it set up, free/);
   assert.match(r["used@example.com"].htmlContent, /<a href="https:\/\/heario\.ai\/dashboard\.html"[^>]*>Keep my chat running<\/a>/);
 
   calls = [];
@@ -1473,7 +1473,7 @@ test("welcome email: sent once when someone starts a trial, from Jack, with the 
   assert.equal(w[0].to[0].email, "newbie@example.com");
   assert.equal(w[0].sender.name, "Jack at Heario");
   assert.equal(w[0].replyTo.email, "support@heario.ai");
-  assert.match(w[0].textContent, /14-day free trial\. It runs until \w+day \d+ \w+[\s\S]*1\. Tell it about your business[\s\S]*2\. Add your WhatsApp number[\s\S]*3\. Paste one line of code[\s\S]*Open my dashboard: https:\/\/heario\.ai\/dashboard\.html[\s\S]*set it up for you, free/);
+  assert.match(w[0].textContent, /14-day free trial\. It runs until \w+day \d+ \w+[\s\S]*1\. Tell it about your business[\s\S]*2\. Add your WhatsApp number[\s\S]*3\. Paste one line of code[\s\S]*Open my dashboard: https:\/\/heario\.ai\/dashboard\.html[\s\S]*help you get it set up, free/);
   await login("newbie@example.com");
   assert.equal(welcome().length, 0, "not sent again on later logins");
 });
