@@ -55,6 +55,7 @@
     $('enabled').checked = b.enabled;
     $('snippet').textContent = '<script src="' + location.origin + '/widget.js" data-key="' + b.embed_key + '" defer></script>';
     renderInstall(b);
+    renderGetStarted(b);
     renderPlan(me);
     loadPreview(b.embed_key);
   }
@@ -500,6 +501,31 @@
   }
   ['business_name', 'owner_name', 'teaser_title', 'teaser_text'].forEach(function (id) { $(id).addEventListener('input', syncGreeting); });
   Array.prototype.forEach.call(document.querySelectorAll('input[name=greeting_choice]'), function (r) { r.addEventListener('change', syncGreeting); });
+
+  // ---- Get started checklist (new accounts) ----
+  function renderGetStarted(b) {
+    var box = $('getstarted'), hideKey = 'heario_getstarted_hidden_' + b.embed_key;
+    var steps = [
+      [!!(b.business_name && (b.knowledge || '').trim().length >= 20), 'Tell it about your business', 'Add your business name and a few lines about what you do, or let us read your website.', 'sec-business'],
+      [!!(b.owner_whatsapp && b.whatsapp_consent), 'Add your WhatsApp number', 'So every enquiry comes straight to your phone.', 'sec-whatsapp'],
+      [b.allowed_origins.length > 0, 'Add your website address', 'The chat only runs on the websites you list.', 'sec-website'],
+      [!!b.live, 'Put the chat on your website', 'Paste one line of code. We have step-by-step help for every website builder.', 'install'],
+    ];
+    var done = steps.filter(function (x) { return x[0]; }).length, hidden = false;
+    try { hidden = localStorage.getItem(hideKey) === '1'; } catch (e) {}
+    box.hidden = done === steps.length || hidden;
+    if (box.hidden) return;
+    box.className = 'panel getstarted';
+    box.innerHTML = '<div class="gs-head"><h2>Get started</h2><span class="gs-count">' + done + ' of ' + steps.length + ' done</span></div>' +
+      '<div class="gs-bar"><span style="width:' + Math.round(done / steps.length * 100) + '%"></span></div>' +
+      '<ol class="gs-list">' + steps.map(function (x) {
+        return '<li class="' + (x[0] ? 'done' : '') + '"><span class="gs-tick" aria-hidden="true">' + (x[0] ? '&#10003;' : '') + '</span>' +
+          '<span class="gs-text"><b>' + esc(x[1]) + '</b><small>' + esc(x[2]) + '</small></span>' +
+          (x[0] ? '<span class="gs-done">Done</span>' : '<a class="btn-ghost gs-go" href="#' + x[3] + '">Do this</a>') + '</li>';
+      }).join('') + '</ol>' +
+      '<p class="gs-foot">Short on time? Email <a href="mailto:support@heario.ai">support@heario.ai</a> and we\'ll set it up for you, free. <button type="button" class="gs-hide">Hide this</button></p>';
+    box.querySelector('.gs-hide').onclick = function () { try { localStorage.setItem(hideKey, '1'); } catch (e) {} box.hidden = true; };
+  }
 
   // ---- Install guide ----
   function copyCode(btn) {

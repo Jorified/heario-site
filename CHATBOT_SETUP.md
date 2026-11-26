@@ -99,7 +99,7 @@ If WhatsApp delivery fails (straight away or later, via the delivery report), th
 login address instead. Customers can also tick "Also email me a copy of every enquiry" (off by default).
 
 ## 5. Test before launch
-- `npm test` runs 82 automated tests (login, settings, chat, unanswered questions, opening hours and holiday closures, booking link, WhatsApp alerts, delivery reports and fallback, Stripe webhook, website reader, widget safety). They use an in-memory database and stub every external service, so passing proves the logic, **not** that your keys and Meta template are right.
+- `npm test` runs 83 automated tests (login, settings, chat, unanswered questions, opening hours and holiday closures, booking link, WhatsApp alerts, delivery reports and fallback, Stripe webhook, website reader, widget safety). They use an in-memory database and stub every external service, so passing proves the logic, **not** that your keys and Meta template are right.
 - Use the Vercel **Preview** deployment for this branch: log in, fill in the dashboard, press **Send a test alert**, chat in the preview bubble, make a test enquiry, subscribe with a Stripe test card.
 
 ## 6. Launch checklist
@@ -110,6 +110,10 @@ login address instead. Customers can also tick "Also email me a copy of every en
 - [ ] Add your own website to a test account and send yourself a real enquiry
 - [ ] Look at the old product pages: they're excluded from the deployment via `.vercelignore` but remain in git. Delete them whenever you like
 - [x] Old desktop-app Stripe webhook switched off (done by Jack, 20 Nov 2026), so chatbot payments can't trigger old licence-key emails. If you ever re-enable it, use a separate Stripe account for the chatbot
+
+## New signups
+- The moment someone starts a trial they get a welcome email from "Jack at Heario" with the three setup steps and an offer to set it up for them (replies go to support@heario.ai). You get the "New free trial" alert at ADMIN_EMAIL.
+- New accounts see a "Get started" checklist at the top of the dashboard (business details, WhatsApp, website address, chat live on their site). It ticks off as they go and disappears when all four are done, or if they hide it.
 
 ## Trial emails
 - About 3 days before a free trial ends, and again when it has ended, the customer gets a short email from "Jack at Heario" (replies go to support@heario.ai). It's sent by the daily job, once each, never to subscribers.

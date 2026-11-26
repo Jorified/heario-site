@@ -1339,7 +1339,8 @@ test("owner alerts: new trial once, new paying customer once, cancellation and e
 test("owner alerts are skipped when ADMIN_EMAIL isn't set", async () => {
   delete process.env.ADMIN_EMAIL;
   await login("quiet@example.com");
-  assert.equal(calls.filter((c) => c.url.includes("brevo")).length, 1, "only the login email itself");
+  const sent = calls.filter((c) => c.url.includes("brevo")).map((c) => c.body.to[0].email);
+  assert.deepEqual(sent, ["quiet@example.com", "quiet@example.com"], "only the login and welcome emails, nothing to the owner");
 });
 
 test("trial emails: reminder ~3 days before and a note when it ends, once each, personalised, never to subscribers", async () => {
@@ -1462,4 +1463,17 @@ test("greeting: one choice (personal or business) sets both the chat greeting an
   r = await put({ greeting_style: "custom", teaser_title: "x".repeat(200) });
   assert.equal(r.bot.greeting_style, "personal", "older or unknown values count as personal");
   assert.equal(r.bot.teaser_title.length, 60);
+});
+
+test("welcome email: sent once when someone starts a trial, from Jack, with the three steps", async () => {
+  const welcome = () => calls.filter((c) => c.url.includes("brevo") && /Welcome to Heario/.test(c.body.subject)).map((c) => c.body);
+  await login("newbie@example.com");
+  const w = welcome();
+  assert.equal(w.length, 1);
+  assert.equal(w[0].to[0].email, "newbie@example.com");
+  assert.equal(w[0].sender.name, "Jack at Heario");
+  assert.equal(w[0].replyTo.email, "support@heario.ai");
+  assert.match(w[0].textContent, /14-day free trial\. It runs until \w+day \d+ \w+[\s\S]*1\. Tell it about your business[\s\S]*2\. Add your WhatsApp number[\s\S]*3\. Paste one line of code[\s\S]*Open my dashboard: https:\/\/heario\.ai\/dashboard\.html[\s\S]*set it up for you, free/);
+  await login("newbie@example.com");
+  assert.equal(welcome().length, 0, "not sent again on later logins");
 });

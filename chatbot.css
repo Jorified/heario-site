@@ -1082,3 +1082,34 @@ button:disabled { opacity: .55; cursor: default; }
 .greet-opt .gp-pop { display: block; margin-top: 8px; }
 .greet-opt .gp-pop b { display: block; }
 .greet-own .field[hidden] { display: none !important; }
+
+/* dashboard: get started checklist */
+.getstarted { border-color: rgba(127,209,255,.3) !important; }
+.getstarted[hidden] { display: none !important; }
+.gs-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.gs-head h2 { margin: 0; text-align: left; }
+.gs-count { font-size: 14px; color: #aab3c6; white-space: nowrap; }
+.gs-bar { height: 6px; border-radius: 99px; background: rgba(255,255,255,.08); margin: 12px 0 14px; overflow: hidden; }
+.gs-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #7fd1ff); border-radius: 99px; transition: width .4s; }
+.gs-list { list-style: none; margin: 0; padding: 0; }
+.gs-list li { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid rgba(255,255,255,.06); }
+.gs-tick { flex: 0 0 26px; height: 26px; border-radius: 50%; border: 2px solid rgba(255,255,255,.2); display: grid; place-items: center; font-size: 14px; color: #fff; }
+.gs-list li.done .gs-tick { background: #16a34a; border-color: #16a34a; }
+.gs-text { flex: 1; min-width: 0; }
+.gs-text b { display: block; color: #e4ecf7; font-weight: 600; }
+.gs-list li.done .gs-text b { color: #aab3c6; text-decoration: line-through; text-decoration-color: rgba(170,179,198,.5); }
+.gs-text small { display: block; color: #aab3c6; font-size: 13px; line-height: 1.4; }
+.gs-list li.done .gs-text small { display: none; }
+.gs-go { padding: 7px 14px !important; font-size: 14px !important; white-space: nowrap; }
+.gs-done { font-size: 13px; color: #4ade80; }
+.gs-foot { margin: 12px 0 0; font-size: 13.5px; color: #aab3c6; }
+.gs-foot a { color: var(--accent2); }
+.gs-hide { background: none; border: 0; padding: 0; margin-left: 8px; color: #8b96a9; font: inherit; text-decoration: underline; cursor: pointer; }
+@media (max-width: 560px) {
+  .gs-list li { flex-wrap: wrap; align-items: flex-start; row-gap: 8px; }
+  .gs-tick { margin-top: 1px; }
+  .gs-text { flex-basis: calc(100% - 38px); }
+  .gs-go { margin-left: 38px; }
+  .gs-done { display: none; }
+  .gs-foot { padding-right: 64px; }
+}
