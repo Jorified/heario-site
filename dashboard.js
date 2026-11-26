@@ -485,6 +485,8 @@
   }
   function syncGreeting() {
     var style = chosenStyle(), g = greetingExample(style), t = teaserExample(style), on = $('teaser_on').checked;
+    $('greet_personal').textContent = '"' + greetingExample('personal') + '"';
+    $('greet_business').textContent = '"' + greetingExample('business') + '"';
     $('greeting').placeholder = g;
     $('teaser_title').placeholder = t[0];
     $('teaser_text').placeholder = t[1];
