@@ -1420,3 +1420,15 @@ test("trial emails: a failed send is retried on the next run", async () => {
   const second = await (await h.cron.GET(new Request(SITE + "/api/cron/cleanup", { headers: { authorization: "Bearer s3cret" } }))).json();
   assert.equal(second.trial.reminders, 1);
 });
+
+test("default chat greeting uses the owner's first name so visitors know a person gets their message", async () => {
+  const { defaultGreeting } = await import("../lib/bot.js");
+  assert.equal(defaultGreeting("Murphy Plumbing", "Sean Murphy"), "Hi! I'm Sean's AI assistant at Murphy Plumbing. Ask me anything, or leave your details and Sean will get back to you.");
+  assert.equal(defaultGreeting("", "Sean"), "Hi! I'm Sean's AI assistant. Ask me anything, or leave your details and Sean will get back to you.");
+  assert.equal(defaultGreeting("Murphy Plumbing", ""), "Hi! I'm the AI assistant for Murphy Plumbing. Ask me anything, or leave your details and we'll get back to you.");
+  const { cookie } = await login();
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings() }));
+  const key = (await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json()).bot.embed_key;
+  const cfg = await (await h.widget.GET(new Request(SITE + "/api/widget-config?key=" + key, { headers: { origin: "https://murphyplumbing.ie" } }))).json();
+  assert.match(cfg.greeting, /^Hi! I'm Sean's AI assistant at Murphy Plumbing\./);
+});

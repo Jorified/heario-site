@@ -23,7 +23,7 @@ export async function GET(request) {
   return json(
     {
       title: bot.business_name ? `Chat with ${bot.business_name}` : "Chat with us",
-      greeting: bot.greeting || defaultGreeting(bot.business_name),
+      greeting: bot.greeting || defaultGreeting(bot.business_name, bot.owner_name),
       color: bot.color,
       booking_url: bot.booking_url || "",
     },

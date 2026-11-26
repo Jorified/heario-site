@@ -297,7 +297,12 @@
       teaser.onkeydown = function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(true); } };
       var seen = false;
       try { seen = !!sessionStorage.getItem(SEEN); } catch (e) {}
-      if (!seen && !history.length) setTimeout(function () { if (!box.classList.contains("open")) teaser.classList.add("show"); }, 3500);
+      if (!seen && !history.length) setTimeout(function () {
+        if (box.classList.contains("open")) return;
+        teaser.classList.add("show");
+        // Don't leave it covering the page: tuck it away after a while (the bubble stays).
+        setTimeout(function () { hideTeaser(true); }, 12000);
+      }, 3500);
     }
 
     form.onsubmit = function (ev) {
