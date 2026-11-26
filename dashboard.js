@@ -46,6 +46,11 @@
     if (!$('import_url').value && b.allowed_origins.length) $('import_url').value = b.allowed_origins[0].replace(/^https?:\/\//, '');
     $('color').value = b.color;
     $('greeting').value = b.greeting;
+    Array.prototype.forEach.call(document.querySelectorAll('input[name=greeting_style]'), function (r) { r.checked = r.value === (b.greeting_style || 'personal'); });
+    $('teaser_on').checked = !!b.teaser_on;
+    $('teaser_title').value = b.teaser_title || '';
+    $('teaser_text').value = b.teaser_text || '';
+    syncGreeting();
     $('enabled').checked = b.enabled;
     $('snippet').textContent = '<script src="' + location.origin + '/widget.js" data-key="' + b.embed_key + '" defer></script>';
     renderInstall(b);
@@ -391,6 +396,10 @@
       allowed_origins: $('allowed_origins').value,
       color: $('color').value,
       greeting: $('greeting').value,
+      greeting_style: (document.querySelector('input[name=greeting_style]:checked') || {}).value || 'personal',
+      teaser_on: $('teaser_on').checked,
+      teaser_title: $('teaser_title').value,
+      teaser_text: $('teaser_text').value,
       enabled: $('enabled').checked
     }).then(function (d) {
       state.bot = d.bot;
@@ -457,6 +466,35 @@
   $('draft_use').addEventListener('click', function () { applyDraft(false); });
   $('draft_add').addEventListener('click', function () { applyDraft(true); });
   $('draft_discard').addEventListener('click', function () { $('importdraft').hidden = true; say('importmsg', ''); });
+
+  // ---- Greeting style and pop-up (examples match lib/bot.js) ----
+  function firstName() { return ($('owner_name').value.trim().split(/\s+/)[0]) || ''; }
+  function greetingExample(style) {
+    var biz = $('business_name').value.trim(), first = style === 'business' ? '' : firstName();
+    if (first && biz) return "Hi! I'm " + first + "'s AI assistant at " + biz + ". Ask me anything, or leave your details and " + first + " will get back to you.";
+    if (first) return "Hi! I'm " + first + "'s AI assistant. Ask me anything, or leave your details and " + first + " will get back to you.";
+    return "Hi! I'm the AI assistant for " + (biz || 'this business') + ". Ask me anything, or leave your details and we'll get back to you.";
+  }
+  function teaserExample() {
+    var biz = $('business_name').value.trim(), style = (document.querySelector('input[name=greeting_style]:checked') || {}).value;
+    var first = style === 'business' ? '' : firstName();
+    return [biz ? 'Hi 👋 Got a question for ' + biz + '?' : 'Hi 👋 Got a question?',
+      "Ask me anything. If I can't help, I'll pass your message on" + (first ? ' to ' + first : '') + " and we'll be in touch."];
+  }
+  function syncGreeting() {
+    var style = (document.querySelector('input[name=greeting_style]:checked') || {}).value || 'personal';
+    $('greet_personal').textContent = '"' + greetingExample('personal') + '"';
+    $('greet_business').textContent = '"' + greetingExample('business') + '"';
+    $('greeting_wrap').hidden = style !== 'custom';
+    $('greet_hint').hidden = !(style === 'personal' && !firstName());
+    var t = teaserExample();
+    $('teaser_title').placeholder = t[0];
+    $('teaser_text').placeholder = t[1];
+    $('teaser_fields').hidden = !$('teaser_on').checked;
+  }
+  ['business_name', 'owner_name'].forEach(function (id) { $(id).addEventListener('input', syncGreeting); });
+  Array.prototype.forEach.call(document.querySelectorAll('input[name=greeting_style]'), function (r) { r.addEventListener('change', function () { syncGreeting(); if (r.value === 'custom' && r.checked) $('greeting').focus(); }); });
+  $('teaser_on').addEventListener('change', syncGreeting);
 
   // ---- Install guide ----
   function copyCode(btn) {

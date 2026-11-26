@@ -13,7 +13,7 @@
   if (!s || !s.dataset.key || window.HearioWidget) return;
   var KEY = s.dataset.key;
   var DARK = s.dataset.theme === "dark";
-  var TEASER = String(s.dataset.teaser || "").slice(0, 160);
+  var TEASER = String(s.dataset.teaser || "").slice(0, 200); // the page can set its own pop-up; otherwise the owner's dashboard setting is used
   var AVATAR = String(s.dataset.avatar || "");
   var BASE = new URL(s.src).origin;
   var STORE = "heario_chat_" + KEY;
@@ -165,6 +165,7 @@
     box.appendChild(head); box.appendChild(msgs); box.appendChild(form); box.appendChild(foot);
 
     var teaser = null, tx = null;
+    if (!TEASER && typeof cfg.teaser === "string") TEASER = cfg.teaser.slice(0, 200);
     if (TEASER) {
       teaser = el("div", "hw-teaser");
       teaser.setAttribute("role", "button");

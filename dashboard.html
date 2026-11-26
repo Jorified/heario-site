@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="style.css?v=30" />
-  <link rel="stylesheet" href="chatbot.css?v=22" />
+  <link rel="stylesheet" href="chatbot.css?v=23" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -93,10 +93,26 @@
       <h2>3. Your website</h2>
       <p class="hint">Browsers will only run the chatbot on the websites you list here. Usage limits also protect you from misuse.</p>
       <div class="field"><label for="allowed_origins">Website addresses</label><input id="allowed_origins" class="cb-input" placeholder="yourbusiness.ie" /><small>Separate several with commas. Both with and without www are covered.</small></div>
-      <div class="row2">
-        <div class="field"><label for="color">Chat colour</label><input id="color" class="cb-input" type="color" style="height:46px;padding:4px" /></div>
-        <div class="field"><label for="greeting">Opening message (optional)</label><input id="greeting" class="cb-input" maxlength="200" placeholder="Leave blank for the default" /></div>
-      </div>
+      <div class="field"><label for="color">Chat colour</label><input id="color" class="cb-input" type="color" style="height:46px;padding:4px;max-width:160px" /></div>
+
+      <fieldset class="greet">
+        <legend>How the chat greets visitors</legend>
+        <label class="greet-opt"><input type="radio" name="greeting_style" value="personal" /><span><b>Personal</b><em id="greet_personal"></em></span></label>
+        <label class="greet-opt"><input type="radio" name="greeting_style" value="business" /><span><b>Business</b><em id="greet_business"></em></span></label>
+        <label class="greet-opt"><input type="radio" name="greeting_style" value="custom" /><span><b>Write my own</b><em>Your own words, up to 200 characters.</em></span></label>
+        <div class="field" id="greeting_wrap" hidden><label for="greeting">Your opening message</label><input id="greeting" class="cb-input" maxlength="200" placeholder="e.g. Hi! Ask me anything about our services, or leave your details and we'll call you back." /></div>
+        <small id="greet_hint" class="hint" hidden>Add your first name in section 1 to make the personal greeting use it.</small>
+      </fieldset>
+
+      <fieldset class="greet">
+        <legend>Pop-up greeting</legend>
+        <label class="check" style="margin:0 0 8px"><input type="checkbox" id="teaser_on" /><span>Show a short pop-up next to the chat bubble a few seconds after someone arrives. It tucks itself away after 12 seconds, and only shows once per visit.</span></label>
+        <div id="teaser_fields" hidden>
+          <div class="field"><label for="teaser_title">Headline</label><input id="teaser_title" class="cb-input" maxlength="60" /></div>
+          <div class="field"><label for="teaser_text">Second line</label><input id="teaser_text" class="cb-input" maxlength="120" /></div>
+          <small class="hint">Leave blank to use the suggestion shown in grey.</small>
+        </div>
+      </fieldset>
       <label class="check"><input type="checkbox" id="enabled" /><span>Chatbot is switched on</span></label>
     </section>
 
@@ -165,6 +181,6 @@
   </section>
 </main>
 <script src="pricing.js"></script>
-<script src="dashboard.js?v=14"></script>
+<script src="dashboard.js?v=15"></script>
 </body>
 </html>

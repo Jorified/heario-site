@@ -101,3 +101,9 @@ ALTER TABLE accounts ADD COLUMN IF NOT EXISTS trial_ended_sent_at timestamptz;
 
 -- When the chat last loaded on the customer's own website (not the dashboard preview).
 ALTER TABLE bots ADD COLUMN IF NOT EXISTS site_seen_at timestamptz;
+
+-- Greeting style and the optional pop-up next to the chat bubble.
+ALTER TABLE bots ADD COLUMN IF NOT EXISTS greeting_style text;
+ALTER TABLE bots ADD COLUMN IF NOT EXISTS teaser_on boolean NOT NULL DEFAULT false;
+ALTER TABLE bots ADD COLUMN IF NOT EXISTS teaser_title text NOT NULL DEFAULT '';
+ALTER TABLE bots ADD COLUMN IF NOT EXISTS teaser_text text NOT NULL DEFAULT '';

@@ -1047,3 +1047,14 @@ button:disabled { opacity: .55; cursor: default; }
 /* native dropdown lists: keep option text readable on dark pages */
 .cb-select, .lead-stage { color-scheme: dark; }
 .cb-select option, .lead-stage option { background: #0f141d; color: #e4ecf7; }
+
+/* dashboard: greeting style and pop-up */
+.greet { border: 1px solid rgba(255,255,255,.1); border-radius: 12px; padding: 14px 16px 10px; margin: 0 0 18px; }
+.greet legend { padding: 0 6px; font-weight: 600; color: #e4ecf7; font-size: 15px; }
+.greet-opt { display: flex; gap: 10px; align-items: flex-start; padding: 8px 4px; cursor: pointer; }
+.greet-opt input { margin-top: 4px; accent-color: var(--accent); flex: 0 0 auto; }
+.greet-opt b { display: block; color: #e4ecf7; font-weight: 600; }
+.greet-opt em { display: block; font-style: normal; font-size: 13.5px; color: #aab3c6; line-height: 1.45; }
+.greet .field { margin-top: 6px; }
+#teaser_fields .hint { display: block; margin-bottom: 6px; }
+.greet [hidden], #teaser_fields[hidden] { display: none !important; }

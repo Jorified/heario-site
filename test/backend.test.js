@@ -1432,3 +1432,34 @@ test("default chat greeting uses the owner's first name so visitors know a perso
   const cfg = await (await h.widget.GET(new Request(SITE + "/api/widget-config?key=" + key, { headers: { origin: "https://murphyplumbing.ie" } }))).json();
   assert.match(cfg.greeting, /^Hi! I'm Sean's AI assistant at Murphy Plumbing\./);
 });
+
+test("greeting style and pop-up: saved from the dashboard and sent to the chat", async () => {
+  const { cookie } = await login();
+  const put = async (over) => (await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings(over) }))).json();
+  const key = (await (await h.me.GET(req("/api/me", { method: "GET", cookie, origin: null }))).json()).bot.embed_key;
+  const cfg = async () => (await h.widget.GET(new Request(SITE + "/api/widget-config?key=" + key, { headers: { origin: "https://murphyplumbing.ie" } }))).json();
+
+  let r = await put({});
+  assert.equal(r.bot.greeting_style, "personal");
+  assert.equal(r.bot.teaser_on, false);
+  let c = await cfg();
+  assert.match(c.greeting, /^Hi! I'm Sean's AI assistant at Murphy Plumbing/);
+  assert.equal(c.teaser, "", "no pop-up unless switched on");
+
+  await put({ greeting_style: "business", teaser_on: true });
+  c = await cfg();
+  assert.match(c.greeting, /^Hi! I'm the AI assistant for Murphy Plumbing/);
+  assert.equal(c.teaser, "Hi 👋 Got a question for Murphy Plumbing?|Ask me anything. If I can't help, I'll pass your message on and we'll be in touch.");
+
+  await put({ greeting_style: "personal", teaser_on: true });
+  assert.match((await cfg()).teaser, /pass your message on to Sean and/);
+
+  await put({ greeting_style: "custom", greeting: "Hello from Sean's van!", teaser_on: true, teaser_title: "Need a plumber? | today", teaser_text: "Chat now" });
+  c = await cfg();
+  assert.equal(c.greeting, "Hello from Sean's van!");
+  assert.equal(c.teaser, "Need a plumber? / today|Chat now", "a | in the owner's text can't break the two lines");
+
+  r = await put({ greeting_style: "nonsense", teaser_title: "x".repeat(200) });
+  assert.equal(r.bot.greeting_style, "personal");
+  assert.equal(r.bot.teaser_title.length, 60);
+});

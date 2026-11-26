@@ -1,5 +1,5 @@
 // GET /api/widget-config?key=hb_...  -> look and feel for the embedded widget (public, origin-checked).
-import { defaultGreeting, originAllowed } from "../lib/bot.js";
+import { greetingFor, originAllowed, teaserFor } from "../lib/bot.js";
 import { one, query } from "../lib/db.js";
 import { isOwnOrigin, json } from "../lib/util.js";
 
@@ -23,7 +23,8 @@ export async function GET(request) {
   return json(
     {
       title: bot.business_name ? `Chat with ${bot.business_name}` : "Chat with us",
-      greeting: bot.greeting || defaultGreeting(bot.business_name, bot.owner_name),
+      greeting: greetingFor(bot),
+      teaser: teaserFor(bot),
       color: bot.color,
       booking_url: bot.booking_url || "",
     },

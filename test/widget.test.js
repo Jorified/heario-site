@@ -202,3 +202,15 @@ test("when AI replies are paused, a short enquiry form appears, is prefilled, ch
   assert.equal(d.querySelector(".hw-card"), null, "form removed after sending");
   assert.match(d.querySelector(".hw-note").textContent, /Enquiry sent/);
 });
+
+test("the pop-up can come from the owner's dashboard setting", async () => {
+  const t = boot({
+    config: { status: 200, body: { title: "T", greeting: "G", color: "#112233", teaser: "Hi 👋 Got a question?|Ask me anything." } },
+    chatReply: { status: 200, body: {} },
+  });
+  await t.flush();
+  const teaser = t.window.document.querySelector(".hw-teaser");
+  assert.ok(teaser, "pop-up built from config");
+  assert.equal(teaser.querySelector("b").textContent, "Hi 👋 Got a question?");
+  assert.equal(teaser.querySelector("span").textContent, "Ask me anything.");
+});
