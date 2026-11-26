@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="style.css?v=30" />
-  <link rel="stylesheet" href="chatbot.css?v=26" />
+  <link rel="stylesheet" href="chatbot.css?v=27" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -96,29 +96,19 @@
       <div class="field"><label for="color">Chat colour</label><input id="color" class="cb-input" type="color" style="height:46px;padding:4px;max-width:160px" /></div>
 
       <fieldset class="greet">
-        <legend>Chat greeting</legend>
-        <label class="greet-opt"><input type="radio" name="greeting_style" value="personal" /><span><b>Personal</b><em id="greet_personal"></em></span></label>
-        <label class="greet-opt"><input type="radio" name="greeting_style" value="business" /><span><b>Business</b><em id="greet_business"></em></span></label>
+        <legend>How the chat says hello</legend>
+        <label class="greet-opt"><input type="radio" name="greeting_choice" value="personal" /><span><b>Personal greeting</b><em id="greet_personal"></em></span></label>
+        <label class="greet-opt"><input type="radio" name="greeting_choice" value="business" /><span><b>Business greeting</b><em id="greet_business"></em></span></label>
+        <label class="greet-opt"><input type="radio" name="greeting_choice" value="popup" /><span><b>Business greeting + pop-up</b><em>A pop-up appears next to the chat bubble a few seconds after someone arrives (it hides after 12 seconds):</em>
+          <span class="gp-pop"><b id="gp_title"></b><span id="gp_line"></span></span></span></label>
         <small id="greet_hint" class="hint" hidden>Add your first name in section 1 to use the personal greeting.</small>
         <details class="greet-own" id="greet_own">
-          <summary>Write my own</summary>
-          <div class="field"><input id="greeting" class="cb-input" maxlength="200" aria-label="Your own opening message" /></div>
-          <small class="hint">Used instead of the greeting above. Leave blank to use the one you picked.</small>
+          <summary>Write my own wording</summary>
+          <div class="field"><label for="greeting">Chat greeting</label><input id="greeting" class="cb-input" maxlength="200" /></div>
+          <div class="field" id="teaser_own"><label for="teaser_title">Pop-up headline</label><input id="teaser_title" class="cb-input" maxlength="60" /></div>
+          <div class="field" id="teaser_own2"><label for="teaser_text">Pop-up second line</label><input id="teaser_text" class="cb-input" maxlength="120" /></div>
+          <small class="hint">Leave a box blank to use the wording shown in grey.</small>
         </details>
-      </fieldset>
-
-      <fieldset class="greet">
-        <legend>Pop-up</legend>
-        <label class="check" style="margin:0"><input type="checkbox" id="teaser_on" /><span>Show a pop-up next to the chat bubble a few seconds after someone arrives. It hides itself after 12 seconds.</span></label>
-        <div id="gp_popwrap" hidden>
-          <div class="gp-pop" id="gp_pop"><b id="gp_title"></b><span id="gp_line"></span></div>
-          <details class="greet-own" id="teaser_own">
-            <summary>Change the wording</summary>
-            <div class="field"><label for="teaser_title">Headline</label><input id="teaser_title" class="cb-input" maxlength="60" /></div>
-            <div class="field"><label for="teaser_text">Second line</label><input id="teaser_text" class="cb-input" maxlength="120" /></div>
-            <small class="hint">Leave a box blank to use the wording shown in grey.</small>
-          </details>
-        </div>
       </fieldset>
       <label class="check"><input type="checkbox" id="enabled" /><span>Chatbot is switched on</span></label>
     </section>
@@ -188,6 +178,6 @@
   </section>
 </main>
 <script src="pricing.js"></script>
-<script src="dashboard.js?v=22"></script>
+<script src="dashboard.js?v=23"></script>
 </body>
 </html>

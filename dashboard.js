@@ -46,10 +46,9 @@
     if (!$('import_url').value && b.allowed_origins.length) $('import_url').value = b.allowed_origins[0].replace(/^https?:\/\//, '');
     $('color').value = b.color;
     $('greeting').value = b.greeting;
-    Array.prototype.forEach.call(document.querySelectorAll('input[name=greeting_style]'), function (r) { r.checked = r.value === (b.greeting_style === 'business' ? 'business' : 'personal'); });
-    $('greet_own').open = !!b.greeting;
-    $('teaser_own').open = !!(b.teaser_title || b.teaser_text);
-    $('teaser_on').checked = !!b.teaser_on;
+    var choice = b.teaser_on ? 'popup' : b.greeting_style === 'business' ? 'business' : 'personal';
+    Array.prototype.forEach.call(document.querySelectorAll('input[name=greeting_choice]'), function (r) { r.checked = r.value === choice; });
+    $('greet_own').open = !!(b.greeting || b.teaser_title || b.teaser_text);
     $('teaser_title').value = b.teaser_title || '';
     $('teaser_text').value = b.teaser_text || '';
     syncGreeting();
@@ -398,8 +397,8 @@
       allowed_origins: $('allowed_origins').value,
       color: $('color').value,
       greeting: $('greeting').value,
-      greeting_style: (document.querySelector('input[name=greeting_style]:checked') || {}).value || 'personal',
-      teaser_on: $('teaser_on').checked,
+      greeting_style: chosen() === 'personal' ? 'personal' : 'business',
+      teaser_on: chosen() === 'popup',
       teaser_title: $('teaser_title').value,
       teaser_text: $('teaser_text').value,
       enabled: $('enabled').checked
@@ -469,35 +468,36 @@
   $('draft_add').addEventListener('click', function () { applyDraft(true); });
   $('draft_discard').addEventListener('click', function () { $('importdraft').hidden = true; say('importmsg', ''); });
 
-  // ---- Greeting and pop-up (wording matches lib/bot.js) ----
+  // ---- Greeting: one choice of three (wording matches lib/bot.js) ----
   function firstName() { return ($('owner_name').value.trim().split(/\s+/)[0]) || ''; }
-  function chosenStyle() { return ((document.querySelector('input[name=greeting_style]:checked') || {}).value) === 'business' ? 'business' : 'personal'; }
-  function greetingExample(style) {
-    var biz = $('business_name').value.trim(), first = style === 'business' ? '' : firstName();
+  function chosen() { return (document.querySelector('input[name=greeting_choice]:checked') || {}).value || 'personal'; }
+  // Examples use the real names; "[your name]" / "[your business]" until they're filled in, so the options never look alike.
+  function greetingExample(style, forPreview) {
+    var biz = $('business_name').value.trim() || (forPreview ? '[your business]' : ''), first = firstName() || (forPreview ? '[your name]' : '');
+    if (style === 'business') first = '';
     if (first && biz) return "Hi! I'm " + first + "'s AI assistant at " + biz + ". Ask me anything, or leave your details and " + first + " will get back to you.";
     if (first) return "Hi! I'm " + first + "'s AI assistant. Ask me anything, or leave your details and " + first + " will get back to you.";
     return "Hi! I'm the AI assistant for " + (biz || 'this business') + ". Ask me anything, or leave your details and we'll get back to you.";
   }
-  function teaserExample() {
-    var biz = $('business_name').value.trim();
+  function teaserExample(forPreview) {
+    var biz = $('business_name').value.trim() || (forPreview ? '[your business]' : '');
     return [biz ? 'Hi 👋 Got a question for ' + biz + '?' : 'Hi 👋 Got a question?',
       "Ask me anything. If I can't help, I'll automatically pass on your message and we'll be in touch."];
   }
   function syncGreeting() {
-    var style = chosenStyle(), t = teaserExample(), on = $('teaser_on').checked;
-    $('greet_personal').textContent = '"' + greetingExample('personal') + '"';
-    $('greet_business').textContent = '"' + greetingExample('business') + '"';
-    $('greeting').placeholder = greetingExample(style);
-    $('teaser_title').placeholder = t[0];
-    $('teaser_text').placeholder = t[1];
+    var c = chosen(), t = teaserExample(true), pop = c === 'popup';
+    $('greet_personal').textContent = '"' + greetingExample('personal', true) + '"';
+    $('greet_business').textContent = '"' + greetingExample('business', true) + '"';
     $('gp_title').textContent = $('teaser_title').value.trim() || t[0];
     $('gp_line').textContent = $('teaser_text').value.trim() || t[1];
-    $('gp_popwrap').hidden = !on;
-    $('greet_hint').hidden = !(style === 'personal' && !firstName());
+    $('greeting').placeholder = greetingExample(c === 'personal' ? 'personal' : 'business');
+    $('teaser_title').placeholder = teaserExample()[0];
+    $('teaser_text').placeholder = teaserExample()[1];
+    $('teaser_own').hidden = $('teaser_own2').hidden = !pop;
+    $('greet_hint').hidden = !(c === 'personal' && !firstName());
   }
-  ['business_name', 'owner_name', 'greeting', 'teaser_title', 'teaser_text'].forEach(function (id) { $(id).addEventListener('input', syncGreeting); });
-  Array.prototype.forEach.call(document.querySelectorAll('input[name=greeting_style]'), function (r) { r.addEventListener('change', syncGreeting); });
-  $('teaser_on').addEventListener('change', syncGreeting);
+  ['business_name', 'owner_name', 'teaser_title', 'teaser_text'].forEach(function (id) { $(id).addEventListener('input', syncGreeting); });
+  Array.prototype.forEach.call(document.querySelectorAll('input[name=greeting_choice]'), function (r) { r.addEventListener('change', syncGreeting); });
 
   // ---- Install guide ----
   function copyCode(btn) {

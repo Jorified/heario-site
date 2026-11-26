@@ -1077,3 +1077,8 @@ button:disabled { opacity: .55; cursor: default; }
 #gp_popwrap { margin-top: 12px; }
 #gp_popwrap .gp-pop { margin-left: 28px; }
 #gp_popwrap .greet-own { margin-left: 28px; }
+
+/* dashboard: pop-up example inside the third choice */
+.greet-opt .gp-pop { display: block; margin-top: 8px; }
+.greet-opt .gp-pop b { display: block; }
+.greet-own .field[hidden] { display: none !important; }
