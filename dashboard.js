@@ -201,6 +201,8 @@
 
   function loadPreview(key) {
     if (window.HearioWidget) window.HearioWidget.destroy();
+    // The pop-up normally shows once per visit. In the dashboard, show it again after every save so the owner sees their changes.
+    try { sessionStorage.removeItem('heario_teaser_' + key); } catch (e) {}
     var s = document.createElement('script');
     s.src = '/widget.js';
     s.dataset.key = key;
