@@ -1451,15 +1451,36 @@ test("greeting style and pop-up: saved from the dashboard and sent to the chat",
   assert.match(c.greeting, /^Hi! I'm the AI assistant for Murphy Plumbing/);
   assert.equal(c.teaser, "Hi 👋 Got a question for Murphy Plumbing?|Ask me anything. If I can't help, I'll automatically pass on your message and we'll be in touch.", "business pop-up uses heario.ai's wording");
 
-  await put({ greeting_style: "personal", teaser_on: true });
+  await put({ greeting_style: "personal", teaser_on: true, teaser_style: "personal" });
   assert.match((await cfg()).teaser, /pass your message on to Sean and/);
 
-  await put({ greeting_style: "custom", greeting: "Hello from Sean's van!", teaser_on: true, teaser_title: "Need a plumber? | today", teaser_text: "Chat now" });
+  // The pop-up style is its own choice: a personal greeting can have heario.ai's simple pop-up.
+  await put({ greeting_style: "personal", teaser_on: true, teaser_style: "simple" });
+  c = await cfg();
+  assert.match(c.greeting, /^Hi! I'm Sean's AI assistant/);
+  assert.equal(c.teaser, "Hi 👋 Got a question for Murphy Plumbing?|Ask me anything. If I can't help, I'll automatically pass on your message and we'll be in touch.");
+
+  // Own text is only used when "Write my own" is chosen.
+  await put({ teaser_on: true, teaser_style: "simple", teaser_title: "Ignored", teaser_text: "Ignored too" });
+  assert.match((await cfg()).teaser, /^Hi 👋 Got a question for Murphy Plumbing\?/);
+  await put({ teaser_on: true, teaser_style: "custom", teaser_title: "Need a plumber?", teaser_text: "" });
+  assert.equal((await cfg()).teaser, "Need a plumber?|Ask me anything. If I can't help, I'll automatically pass on your message and we'll be in touch.", "blank line uses the suggestion");
+
+  await put({ greeting_style: "custom", greeting: "Hello from Sean's van!", teaser_on: true, teaser_style: "custom", teaser_title: "Need a plumber? | today", teaser_text: "Chat now" });
   c = await cfg();
   assert.equal(c.greeting, "Hello from Sean's van!");
   assert.equal(c.teaser, "Need a plumber? / today|Chat now", "a | in the owner's text can't break the two lines");
 
-  r = await put({ greeting_style: "nonsense", teaser_title: "x".repeat(200) });
+  r = await put({ greeting_style: "nonsense", teaser_style: "nonsense", teaser_title: "x".repeat(200) });
   assert.equal(r.bot.greeting_style, "personal");
+  assert.equal(r.bot.teaser_style, "personal");
   assert.equal(r.bot.teaser_title.length, 60);
+});
+
+test("pop-up style for older settings: own text means custom, otherwise it follows the greeting style", async () => {
+  const { teaserStyle } = await import("../lib/bot.js");
+  assert.equal(teaserStyle({ teaser_title: "Hi there" }), "custom");
+  assert.equal(teaserStyle({ greeting_style: "business" }), "simple");
+  assert.equal(teaserStyle({}), "personal");
+  assert.equal(teaserStyle({ teaser_style: "simple", teaser_title: "x" }), "simple");
 });

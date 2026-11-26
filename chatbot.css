@@ -1058,3 +1058,5 @@ button:disabled { opacity: .55; cursor: default; }
 .greet .field { margin-top: 6px; }
 #teaser_fields .hint { display: block; margin-bottom: 6px; }
 .greet [hidden], #teaser_fields[hidden] { display: none !important; }
+#teaser_custom[hidden] { display: none !important; }
+#teaser_fields .greet-opt { padding: 6px 4px; }

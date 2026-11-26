@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="style.css?v=30" />
-  <link rel="stylesheet" href="chatbot.css?v=23" />
+  <link rel="stylesheet" href="chatbot.css?v=24" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -108,9 +108,14 @@
         <legend>Pop-up greeting</legend>
         <label class="check" style="margin:0 0 8px"><input type="checkbox" id="teaser_on" /><span>Show a short pop-up next to the chat bubble a few seconds after someone arrives. It tucks itself away after 12 seconds, and only shows once per visit.</span></label>
         <div id="teaser_fields" hidden>
-          <div class="field"><label for="teaser_title">Headline</label><input id="teaser_title" class="cb-input" maxlength="60" /></div>
-          <div class="field"><label for="teaser_text">Second line</label><input id="teaser_text" class="cb-input" maxlength="120" /></div>
-          <small class="hint">Leave blank to use the suggestion shown in grey.</small>
+          <label class="greet-opt"><input type="radio" name="teaser_style" value="personal" /><span><b>Personal</b><em id="teaser_personal"></em></span></label>
+          <label class="greet-opt"><input type="radio" name="teaser_style" value="simple" /><span><b>Simple, like heario.ai</b><em id="teaser_simple"></em></span></label>
+          <label class="greet-opt"><input type="radio" name="teaser_style" value="custom" /><span><b>Write my own</b><em>Your own headline and second line.</em></span></label>
+          <div id="teaser_custom" hidden>
+            <div class="field"><label for="teaser_title">Headline</label><input id="teaser_title" class="cb-input" maxlength="60" /></div>
+            <div class="field"><label for="teaser_text">Second line</label><input id="teaser_text" class="cb-input" maxlength="120" /></div>
+            <small class="hint">Leave a box blank to use the suggestion shown in grey.</small>
+          </div>
         </div>
       </fieldset>
       <label class="check"><input type="checkbox" id="enabled" /><span>Chatbot is switched on</span></label>
@@ -181,6 +186,6 @@
   </section>
 </main>
 <script src="pricing.js"></script>
-<script src="dashboard.js?v=17"></script>
+<script src="dashboard.js?v=18"></script>
 </body>
 </html>

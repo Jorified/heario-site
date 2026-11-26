@@ -48,6 +48,7 @@
     $('greeting').value = b.greeting;
     Array.prototype.forEach.call(document.querySelectorAll('input[name=greeting_style]'), function (r) { r.checked = r.value === (b.greeting_style || 'personal'); });
     $('teaser_on').checked = !!b.teaser_on;
+    Array.prototype.forEach.call(document.querySelectorAll('input[name=teaser_style]'), function (r) { r.checked = r.value === (b.teaser_style || 'personal'); });
     $('teaser_title').value = b.teaser_title || '';
     $('teaser_text').value = b.teaser_text || '';
     syncGreeting();
@@ -398,6 +399,7 @@
       greeting: $('greeting').value,
       greeting_style: (document.querySelector('input[name=greeting_style]:checked') || {}).value || 'personal',
       teaser_on: $('teaser_on').checked,
+      teaser_style: (document.querySelector('input[name=teaser_style]:checked') || {}).value || 'personal',
       teaser_title: $('teaser_title').value,
       teaser_text: $('teaser_text').value,
       enabled: $('enabled').checked
@@ -475,9 +477,8 @@
     if (first) return "Hi! I'm " + first + "'s AI assistant. Ask me anything, or leave your details and " + first + " will get back to you.";
     return "Hi! I'm the AI assistant for " + (biz || 'this business') + ". Ask me anything, or leave your details and we'll get back to you.";
   }
-  function teaserExample() {
-    var biz = $('business_name').value.trim(), style = (document.querySelector('input[name=greeting_style]:checked') || {}).value;
-    var first = style === 'business' ? '' : firstName();
+  function teaserExample(style) {
+    var biz = $('business_name').value.trim(), first = style === 'personal' ? firstName() : '';
     return [biz ? 'Hi 👋 Got a question for ' + biz + '?' : 'Hi 👋 Got a question?',
       first ? "Ask me anything. If I can't help, I'll pass your message on to " + first + " and we'll be in touch."
             : "Ask me anything. If I can't help, I'll automatically pass on your message and we'll be in touch."];
@@ -488,14 +489,18 @@
     $('greet_business').textContent = '"' + greetingExample('business') + '"';
     $('greeting_wrap').hidden = style !== 'custom';
     $('greet_hint').hidden = !(style === 'personal' && !firstName());
-    var t = teaserExample();
-    $('teaser_title').placeholder = t[0];
-    $('teaser_text').placeholder = t[1];
+    var tp = teaserExample('personal'), ts = teaserExample('simple');
+    $('teaser_personal').textContent = '"' + tp[0] + '" / "' + tp[1] + '"';
+    $('teaser_simple').textContent = '"' + ts[0] + '" / "' + ts[1] + '"';
+    $('teaser_title').placeholder = ts[0];
+    $('teaser_text').placeholder = ts[1];
     $('teaser_fields').hidden = !$('teaser_on').checked;
+    $('teaser_custom').hidden = ((document.querySelector('input[name=teaser_style]:checked') || {}).value) !== 'custom';
   }
   ['business_name', 'owner_name'].forEach(function (id) { $(id).addEventListener('input', syncGreeting); });
   Array.prototype.forEach.call(document.querySelectorAll('input[name=greeting_style]'), function (r) { r.addEventListener('change', function () { syncGreeting(); if (r.value === 'custom' && r.checked) $('greeting').focus(); }); });
   $('teaser_on').addEventListener('change', syncGreeting);
+  Array.prototype.forEach.call(document.querySelectorAll('input[name=teaser_style]'), function (r) { r.addEventListener('change', function () { syncGreeting(); if (r.value === 'custom' && r.checked) $('teaser_title').focus(); }); });
 
   // ---- Install guide ----
   function copyCode(btn) {
