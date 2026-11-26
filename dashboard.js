@@ -477,14 +477,13 @@
     if (first) return "Hi! I'm " + first + "'s AI assistant. Ask me anything, or leave your details and " + first + " will get back to you.";
     return "Hi! I'm the AI assistant for " + (biz || 'this business') + ". Ask me anything, or leave your details and we'll get back to you.";
   }
-  function teaserExample(style) {
-    var biz = $('business_name').value.trim(), first = style === 'business' ? '' : firstName();
+  function teaserExample() {
+    var biz = $('business_name').value.trim();
     return [biz ? 'Hi 👋 Got a question for ' + biz + '?' : 'Hi 👋 Got a question?',
-      first ? "Ask me anything. If I can't help, I'll pass your message on to " + first + " and we'll be in touch."
-            : "Ask me anything. If I can't help, I'll automatically pass on your message and we'll be in touch."];
+      "Ask me anything. If I can't help, I'll automatically pass on your message and we'll be in touch."];
   }
   function syncGreeting() {
-    var style = chosenStyle(), g = greetingExample(style), t = teaserExample(style), on = $('teaser_on').checked;
+    var style = chosenStyle(), g = greetingExample(style), t = teaserExample(), on = $('teaser_on').checked;
     $('greet_personal').textContent = '"' + greetingExample('personal') + '"';
     $('greet_business').textContent = '"' + greetingExample('business') + '"';
     $('greeting').placeholder = g;

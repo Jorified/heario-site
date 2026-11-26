@@ -1447,7 +1447,7 @@ test("greeting: one choice (personal or business) sets both the chat greeting an
   assert.equal(c.teaser, "");
 
   await put({ teaser_on: true });
-  assert.equal((await cfg()).teaser, "Hi 👋 Got a question for Murphy Plumbing?|Ask me anything. If I can't help, I'll pass your message on to Sean and we'll be in touch.");
+  assert.equal((await cfg()).teaser, "Hi 👋 Got a question for Murphy Plumbing?|Ask me anything. If I can't help, I'll automatically pass on your message and we'll be in touch.", "pop-up always uses heario.ai's wording");
 
   await put({ greeting_style: "business", teaser_on: true });
   c = await cfg();
@@ -1457,7 +1457,7 @@ test("greeting: one choice (personal or business) sets both the chat greeting an
   await put({ greeting: "Hello from Sean's van!", teaser_on: true, teaser_title: "Need a plumber? | today", teaser_text: "" });
   c = await cfg();
   assert.equal(c.greeting, "Hello from Sean's van!");
-  assert.equal(c.teaser, "Need a plumber? / today|Ask me anything. If I can't help, I'll pass your message on to Sean and we'll be in touch.", "a blank box keeps the suggestion; | can't break the two lines");
+  assert.equal(c.teaser, "Need a plumber? / today|Ask me anything. If I can't help, I'll automatically pass on your message and we'll be in touch.", "a blank box keeps the suggestion; | can't break the two lines");
 
   r = await put({ greeting_style: "custom", teaser_title: "x".repeat(200) });
   assert.equal(r.bot.greeting_style, "personal", "older or unknown values count as personal");
