@@ -4,6 +4,8 @@
  *   data-theme="dark"            dark panel for dark websites (default: light)
  *   data-teaser="Title|Line"     a small speech bubble beside the button, shown once per visit
  *   data-avatar="/logo.png"      your logo in the chat header (https:// or a path on your site)
+ * The chat lives in its own sealed-off box (shadow DOM), so your site's styles can't change how it looks.
+ * To lift the chat button (e.g. above a cookie bar):  heario-chat { --heario-bottom: 90px; }
  * Page API (once loaded): HearioWidget.open(), .close(), .ask("question"), .destroy().
  * Fires a "heario:ready" event on window when the chat is ready.
  */
@@ -62,18 +64,18 @@
     css.textContent =
       ".hw-btn,.hw-box,.hw-teaser{font:14px/1.45 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;box-sizing:border-box;letter-spacing:normal;text-align:left}" +
       ".hw-box *,.hw-teaser *{box-sizing:border-box}" +
-      ".hw-btn{position:fixed;right:20px;bottom:20px;width:60px;height:60px;border-radius:50%;border:0;padding:0;display:grid;place-items:center;background:linear-gradient(140deg," + C + "," + C2 + ");color:#fff;cursor:pointer;box-shadow:0 10px 28px " + C + "66,0 2px 6px rgba(0,0,0,.25);z-index:2147483000;transition:transform .25s}" +
+      ".hw-btn{position:fixed;right:20px;bottom:var(--heario-bottom,20px);width:60px;height:60px;border-radius:50%;border:0;padding:0;display:grid;place-items:center;background:linear-gradient(140deg," + C + "," + C2 + ");color:#fff;cursor:pointer;box-shadow:0 10px 28px " + C + "66,0 2px 6px rgba(0,0,0,.25);z-index:2147483000;transition:transform .25s,bottom .45s cubic-bezier(.2,.8,.2,1)}" +
       ".hw-btn:hover{transform:scale(1.06)}.hw-btn:focus-visible{outline:3px solid " + shade(C, 0.5) + ";outline-offset:3px}" +
       ".hw-btn::before{content:'';position:absolute;inset:0;border-radius:50%;animation:hw-ring 2.6s ease-out infinite}" +
       ".hw-btn.open::before{animation:none}" +
       ".hw-btn span{display:grid;place-items:center;transition:transform .3s,opacity .2s}" +
       ".hw-btn .hw-x{position:absolute;opacity:0;transform:rotate(-90deg)}.hw-btn.open .hw-x{opacity:1;transform:none}.hw-btn.open .hw-chat{opacity:0;transform:rotate(90deg)}" +
       "@keyframes hw-ring{0%{box-shadow:0 0 0 0 " + C + "77}70%{box-shadow:0 0 0 16px " + C + "00}100%{box-shadow:0 0 0 0 " + C + "00}}" +
-      ".hw-teaser{position:fixed;right:20px;bottom:94px;max-width:260px;padding:12px 34px 12px 14px;border-radius:16px 16px 4px 16px;background:" + T.bg + ";color:" + T.text + ";border:1px solid " + T.line + ";box-shadow:0 14px 36px rgba(0,0,0,.3);z-index:2147483000;cursor:pointer;opacity:0;transform:translateY(10px) scale(.96);transition:opacity .35s,transform .35s;pointer-events:none}" +
+      ".hw-teaser{position:fixed;right:20px;bottom:calc(var(--heario-bottom,20px) + 74px);max-width:260px;padding:12px 34px 12px 14px;border-radius:16px 16px 4px 16px;background:" + T.bg + ";color:" + T.text + ";border:1px solid " + T.line + ";box-shadow:0 14px 36px rgba(0,0,0,.3);z-index:2147483000;cursor:pointer;opacity:0;transform:translateY(10px) scale(.96);transition:opacity .35s,transform .35s,bottom .45s cubic-bezier(.2,.8,.2,1);pointer-events:none}" +
       ".hw-teaser.show{opacity:1;transform:none;pointer-events:auto}" +
       ".hw-teaser b{display:block;font-size:13.5px;font-weight:650}.hw-teaser span{display:block;margin-top:2px;font-size:12.5px;color:" + T.muted + "}" +
       ".hw-tx{position:absolute;top:6px;right:6px;width:22px;height:22px;border:0;border-radius:50%;background:transparent;color:" + T.muted + ";cursor:pointer;font-size:16px;line-height:1;padding:0}" +
-      ".hw-box{position:fixed;right:20px;bottom:92px;width:370px;max-width:calc(100vw - 24px);height:540px;max-height:calc(100vh - 112px);background:" + T.bg + ";color:" + T.text + ";border-radius:18px;border:1px solid " + T.line + ";box-shadow:0 24px 60px rgba(0,0,0,.35);display:none;flex-direction:column;overflow:hidden;z-index:2147483000}" +
+      ".hw-box{position:fixed;right:20px;bottom:calc(var(--heario-bottom,20px) + 72px);width:370px;max-width:calc(100vw - 24px);height:540px;max-height:calc(100vh - 112px);background:" + T.bg + ";color:" + T.text + ";border-radius:18px;border:1px solid " + T.line + ";box-shadow:0 24px 60px rgba(0,0,0,.35);display:none;flex-direction:column;overflow:hidden;z-index:2147483000}" +
       ".hw-box.open{display:flex;animation:hw-in .28s cubic-bezier(.2,.8,.2,1)}" +
       "@keyframes hw-in{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}" +
       ".hw-head{display:flex;align-items:center;gap:11px;background:linear-gradient(120deg," + C + "," + C2 + ");color:#fff;padding:13px 12px 13px 14px}" +
@@ -109,7 +111,7 @@
       ".hw-send{flex:0 0 38px;height:38px;border:0;border-radius:12px;background:linear-gradient(140deg," + C + "," + C2 + ");color:#fff;cursor:pointer;display:grid;place-items:center;padding:0}" +
       ".hw-send:disabled{opacity:.5;cursor:default}" +
       ".hw-foot{font-size:11px;text-align:center;color:" + T.muted + ";padding:6px;background:" + T.input + "}.hw-foot a{color:inherit}" +
-      "@media (max-width:480px){.hw-card input,.hw-card textarea{font-size:16px}.hw-box{right:0;bottom:0;width:100%;max-width:none;height:100%;max-height:none;border-radius:0;border:0}.hw-btn.open{display:none}.hw-teaser{right:16px;bottom:90px}.hw-in{font-size:16px}}" +
+      "@media (max-width:480px){.hw-card input,.hw-card textarea{font-size:16px}.hw-box{right:0;bottom:0;width:100%;max-width:none;height:100%;max-height:none;border-radius:0;border:0}.hw-btn.open{display:none}.hw-teaser{right:16px;bottom:calc(var(--heario-bottom,20px) + 70px)}.hw-in{font-size:16px}}" +
       "@media (prefers-reduced-motion:reduce){.hw-btn::before,.hw-box.open,.hw-m,.hw-typing i{animation:none}}";
 
     var btn = el("button", "hw-btn");
@@ -137,7 +139,7 @@
     who.appendChild(el("div", "hw-title", cfg.title));
     var meta = el("div", "hw-meta");
     meta.appendChild(el("span", "hw-sub", "AI assistant"));
-    meta.appendChild(el("span", "hw-live", "· Online now"));
+    meta.appendChild(el("span", "hw-live", "\u00b7 Online now"));
     who.appendChild(meta);
     var close = el("button", "hw-close");
     close.type = "button";
@@ -149,7 +151,7 @@
     msgs.setAttribute("aria-live", "polite");
     var form = el("form", "hw-form");
     var input = el("input", "hw-in");
-    input.placeholder = "Type your message…";
+    input.placeholder = "Type your message\u2026";
     input.maxLength = 1000;
     input.setAttribute("aria-label", "Message");
     var send = el("button", "hw-send");
@@ -173,17 +175,23 @@
       var parts = TEASER.split("|");
       teaser.appendChild(el("b", "", parts[0]));
       if (parts[1]) teaser.appendChild(el("span", "", parts[1]));
-      tx = el("button", "hw-tx", "×");
+      tx = el("button", "hw-tx", "\u00d7");
       tx.type = "button";
       tx.setAttribute("aria-label", "Dismiss");
       teaser.appendChild(tx);
     }
 
-    document.head.appendChild(css);
-    document.body.appendChild(btn);
-    document.body.appendChild(box);
-    nodes = [css, btn, box];
-    if (teaser) { document.body.appendChild(teaser); nodes.push(teaser); }
+    // Everything goes inside a shadow root on our own <heario-chat> element, so the website's CSS
+    // (button, input and font rules, resets, transforms on divs) can't reach or restyle the chat.
+    var host = document.createElement("heario-chat");
+    var root = host.attachShadow ? host.attachShadow({ mode: "open" }) : host;
+    css.textContent = ":host{all:initial}" + css.textContent;
+    root.appendChild(css);
+    root.appendChild(btn);
+    root.appendChild(box);
+    if (teaser) root.appendChild(teaser);
+    document.body.appendChild(host);
+    nodes = [host];
 
     // The owner's booking link (and only that) becomes clickable in the assistant's replies.
     var BOOK = typeof cfg.booking_url === "string" && /^https:\/\//.test(cfg.booking_url) ? cfg.booking_url : "";
@@ -253,13 +261,13 @@
         ev.preventDefault();
         var lead = { name: fName.value.trim(), contact: fContact.value.trim(), enquiry: fMsg.value.trim() };
         if (!lead.name || !lead.contact || !lead.enquiry) { err.textContent = "Please fill in all three."; return; }
-        err.textContent = ""; go.disabled = true; go.textContent = "Sending…";
+        err.textContent = ""; go.disabled = true; go.textContent = "Sending\u2026";
         fetch(BASE + "/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: KEY, lead: lead }) })
           .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
           .then(function (x) {
             if (!x.ok) throw new Error(x.d.error || "error");
             card.remove(); card = null;
-            msgs.appendChild(el("div", "hw-note", "✓ Enquiry sent. They'll be in touch."));
+            msgs.appendChild(el("div", "hw-note", "\u2713 Enquiry sent. They'll be in touch."));
             history.push({ role: "user", content: "[Sent an enquiry with the form]" }, { role: "assistant", content: "Thanks, I've passed that on." });
             save();
             msgs.scrollTop = msgs.scrollHeight;
@@ -326,7 +334,7 @@
           if (!x.ok) throw new Error(x.d.error || "error");
           settle(typing, x.d.reply);
           history.push({ role: "assistant", content: x.d.reply });
-          if (x.d.notified) { msgs.appendChild(el("div", "hw-note", "✓ Enquiry sent. They'll be in touch.")); msgs.scrollTop = msgs.scrollHeight; }
+          if (x.d.notified) { msgs.appendChild(el("div", "hw-note", "\u2713 Enquiry sent. They'll be in touch.")); msgs.scrollTop = msgs.scrollHeight; }
           save();
           if (x.d.form) leadCard();
         })

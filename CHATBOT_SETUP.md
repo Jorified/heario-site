@@ -99,7 +99,7 @@ If WhatsApp delivery fails (straight away or later, via the delivery report), th
 login address instead. Customers can also tick "Also email me a copy of every enquiry" (off by default).
 
 ## 5. Test before launch
-- `npm test` runs 84 automated tests (login, settings, chat, unanswered questions, opening hours and holiday closures, booking link, WhatsApp alerts, delivery reports and fallback, Stripe webhook, website reader, widget safety). They use an in-memory database and stub every external service, so passing proves the logic, **not** that your keys and Meta template are right.
+- `npm test` runs 86 automated tests (login, settings, chat, unanswered questions, opening hours and holiday closures, booking link, WhatsApp alerts, delivery reports and fallback, Stripe webhook, website reader, widget safety). They use an in-memory database and stub every external service, so passing proves the logic, **not** that your keys and Meta template are right.
 - Use the Vercel **Preview** deployment for this branch: log in, fill in the dashboard, press **Send a test alert**, chat in the preview bubble, make a test enquiry, subscribe with a Stripe test card.
 
 ## 6. Launch checklist
@@ -114,6 +114,13 @@ login address instead. Customers can also tick "Also email me a copy of every en
 ## New signups
 - The moment someone starts a trial they get a welcome email from "Jack at Heario" with the three setup steps and an offer of free setup help (replies go to support@heario.ai). You get the "New free trial" alert at ADMIN_EMAIL.
 - New accounts see a "Get started" checklist at the top of the dashboard (business details, WhatsApp, website address, chat live on their site). It ticks off as they go and disappears when all four are done, or if they hide it.
+
+## How the chat sits on customers' websites
+- widget.js puts the whole chat inside a sealed-off box (shadow DOM on a `<heario-chat>` element), so a website's own styles can't change how it looks.
+- widget.js must stay plain ASCII (symbols written as \uXXXX), so it reads correctly on pages that don't declare UTF-8. A test checks this.
+- Website addresses match with or without www, and over http or https.
+- A site can lift the chat button (e.g. above its own cookie bar) with CSS: `heario-chat { --heario-bottom: 90px; }`. The homepage uses this for its sticky "Start free trial" bar on phones.
+- When you change widget.js, bump `?v=` on its script tags (index.html, scripts/build-guides.mjs, dashboard.js preview) so browsers fetch the new version.
 
 ## SEO pages (install guides, FAQ, industry pages)
 - Install guides at heario.ai/install/ (one page per website builder) are generated from the same instructions the dashboard shows (PLATFORMS in dashboard.js).

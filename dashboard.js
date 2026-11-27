@@ -205,7 +205,7 @@
     // The pop-up normally shows once per visit. In the dashboard, show it again after every save so the owner sees their changes.
     try { sessionStorage.removeItem('heario_teaser_' + key); } catch (e) {}
     var s = document.createElement('script');
-    s.src = '/widget.js';
+    s.src = '/widget.js?v=10';
     s.dataset.key = key;
     document.body.appendChild(s);
   }
@@ -543,7 +543,7 @@
       'Go to **Code Snippets → Header & Footer**.',
       '{copy} Paste the code into the **Footer** box.',
       'Click **Save Changes**.'
-    ], note: 'On WordPress.com, installing plugins needs the Business plan or higher. If you can\'t add plugins, ask your web developer to paste the code just before the closing </body> tag of your theme.' },
+    ], note: 'On WordPress.com, installing plugins needs the Business plan or higher. If you can\'t add plugins, ask your web developer to paste the code just before the closing </body> tag of your theme. If you use a speed plugin with a "delay JavaScript" setting (such as WP Rocket, LiteSpeed Cache or Perfmatters), add widget.js to its exclusions, or the chat only appears once a visitor scrolls or taps. If a cookie banner plugin blocks scripts until visitors accept, allow heario.ai in its settings too.' },
     { id: 'wix', name: 'Wix', steps: [
       'Open your site\'s dashboard and click **Settings**.',
       'Click **Custom Code** (under Development & integrations or Advanced).',
@@ -563,7 +563,7 @@
       'Find the closing **</body>** tag near the bottom (press Ctrl+F or Cmd+F and search for </body>).',
       '{copy} Paste the code on the line just above **</body>**.',
       'Click **Save**.'
-    ], note: 'If you change theme later, paste the code into the new theme too.' },
+    ], note: 'Under 3. Your website, add both your own domain and your .myshopify.com address, so the chat works on both. If you change theme later, paste the code into the new theme too.' },
     { id: 'webflow', name: 'Webflow', steps: [
       'Open **Site settings → Custom code**.',
       '{copy} Paste the code into **Footer code**.',

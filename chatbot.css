@@ -1002,9 +1002,7 @@ button:disabled { opacity: .55; cursor: default; }
 }
 /* phones: lift Heario's own chat bubble above the sticky "Start free trial" bar */
 @media (max-width: 760px) {
-  .home .hw-btn, .home .hw-teaser { transition: transform .25s, bottom .45s cubic-bezier(.2,.8,.2,1), opacity .35s; }
-  .home.mcta-up .hw-btn { bottom: calc(96px + env(safe-area-inset-bottom)) !important; }
-  .home.mcta-up .hw-teaser { bottom: calc(170px + env(safe-area-inset-bottom)) !important; }
+  .home.mcta-up heario-chat { --heario-bottom: calc(96px + env(safe-area-inset-bottom)); }
 }
 
 /* dashboard: install guide */

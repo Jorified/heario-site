@@ -20,7 +20,9 @@ function boot({ config, chatReply, data = {} }) {
     get: (t, p) => (p === "currentScript" ? script : typeof t[p] === "function" ? t[p].bind(t) : t[p]),
   });
   new Function("document", "window", "fetch", "URL", "sessionStorage", code)(doc, window, fetchStub, URL, window.sessionStorage);
-  return { window, sent, flush: () => new Promise((r) => setTimeout(r, 30)) };
+  // The chat renders inside a shadow root on <heario-chat>; tests look inside it.
+  const root = () => window.document.querySelector("heario-chat")?.shadowRoot ?? window.document.createElement("div");
+  return { window, sent, root, flush: () => new Promise((r) => setTimeout(r, 30)) };
 }
 
 test("renders from config, sends the key, and shows replies as text (never HTML)", async () => {
@@ -29,11 +31,11 @@ test("renders from config, sends the key, and shows replies as text (never HTML)
     chatReply: { status: 200, body: { reply: '<img src=x onerror="alert(1)"> hello', notified: false } },
   });
   await t.flush();
-  const d = t.window.document;
+  const d = t.root();
   assert.equal(d.querySelector(".hw-title").textContent, "Chat with Murphy");
   assert.equal(d.querySelector(".hw-sub").textContent, "AI assistant");
   assert.equal(d.querySelector(".hw-m.bot").textContent, "Hi there");
-  assert.match(d.head.querySelector("style").textContent, /#112233/);
+  assert.match(d.querySelector("style").textContent, /#112233/);
 
   d.querySelector(".hw-in").value = "hello?";
   d.querySelector(".hw-form").dispatchEvent(new t.window.Event("submit", { cancelable: true }));
@@ -51,7 +53,7 @@ test("renders from config, sends the key, and shows replies as text (never HTML)
 test("renders nothing when the site isn't allowed", async () => {
   const t = boot({ config: { status: 403, body: { error: "Not allowed." } }, chatReply: { status: 200, body: {} } });
   await t.flush();
-  assert.equal(t.window.document.querySelector(".hw-btn"), null);
+  assert.equal(t.root().querySelector(".hw-btn"), null);
 });
 
 test("failed chat call shows a friendly error and keeps message order valid", async () => {
@@ -60,7 +62,7 @@ test("failed chat call shows a friendly error and keeps message order valid", as
     chatReply: { status: 500, body: { error: "Something went wrong. Please try again." } },
   });
   await t.flush();
-  const d = t.window.document;
+  const d = t.root();
   d.querySelector(".hw-in").value = "hi";
   d.querySelector(".hw-form").dispatchEvent(new t.window.Event("submit", { cancelable: true }));
   await t.flush();
@@ -80,7 +82,7 @@ test("page API: open() shows the chat, ask() sends a question, and ready fires",
   });
   t.window.addEventListener("heario:ready", () => (ready = true));
   await t.flush();
-  const d = t.window.document;
+  const d = t.root();
   assert.equal(ready || !!d.querySelector(".hw-btn"), true);
   assert.equal(d.querySelector(".hw-box").classList.contains("open"), false);
   t.window.HearioWidget.open();
@@ -105,14 +107,14 @@ test("shows a confirmation when the owner was notified", async () => {
   await t.flush();
   t.window.HearioWidget.ask("Ann, 087 111 2222, boiler");
   await t.flush();
-  assert.match(t.window.document.querySelector(".hw-note").textContent, /Enquiry sent/);
+  assert.match(t.root().querySelector(".hw-note").textContent, /Enquiry sent/);
 });
 
 test("dark theme and teaser are opt-in via data attributes", async () => {
   const plain = boot({ config: { status: 200, body: { title: "T", greeting: "G", color: "#112233" } }, chatReply: { status: 200, body: {} } });
   await plain.flush();
-  assert.equal(plain.window.document.querySelector(".hw-teaser"), null);
-  assert.match(plain.window.document.head.querySelector("style").textContent, /#ffffff/);
+  assert.equal(plain.root().querySelector(".hw-teaser"), null);
+  assert.match(plain.root().querySelector("style").textContent, /#ffffff/);
 
   const t = boot({
     config: { status: 200, body: { title: "T", greeting: "G", color: "#112233" } },
@@ -120,8 +122,8 @@ test("dark theme and teaser are opt-in via data attributes", async () => {
     data: { theme: "dark", teaser: "Hi there|Ask me anything" },
   });
   await t.flush();
-  const d = t.window.document;
-  assert.match(d.head.querySelector("style").textContent, /#0f141d/);
+  const d = t.root();
+  assert.match(d.querySelector("style").textContent, /#0f141d/);
   assert.equal(d.querySelector(".hw-teaser b").textContent, "Hi there");
   assert.equal(d.querySelector(".hw-teaser span").textContent, "Ask me anything");
   d.querySelector(".hw-teaser").click();
@@ -131,12 +133,12 @@ test("dark theme and teaser are opt-in via data attributes", async () => {
 test("data-avatar shows a logo in the header, and ignores unsafe values", async () => {
   const ok = boot({ config: { status: 200, body: { title: "Chat with Heario", greeting: "G", color: "#4f8ef7" } }, chatReply: { status: 200, body: {} }, data: { avatar: "/favicon.svg" } });
   await ok.flush();
-  assert.equal(ok.window.document.querySelector(".hw-av img").getAttribute("src"), "/favicon.svg");
+  assert.equal(ok.root().querySelector(".hw-av img").getAttribute("src"), "/favicon.svg");
 
   for (const bad of ["javascript:alert(1)", "//evil.example/x.png", "http://insecure.example/x.png", 'x" onerror="alert(1)']) {
     const t = boot({ config: { status: 200, body: { title: "T", greeting: "G", color: "#4f8ef7" } }, chatReply: { status: 200, body: {} }, data: { avatar: bad } });
     await t.flush();
-    assert.equal(t.window.document.querySelector(".hw-av img"), null, bad);
+    assert.equal(t.root().querySelector(".hw-av img"), null, bad);
   }
 });
 
@@ -146,7 +148,7 @@ test("only the owner's booking link is clickable in replies; other links and the
     chatReply: { status: 200, body: { reply: "Book at https://calendly.com/murphy. Or see https://evil.example now.", notified: false } },
   });
   await t.flush();
-  const d = t.window.document;
+  const d = t.root();
   d.querySelector(".hw-in").value = "see https://calendly.com/murphy/";
   d.querySelector(".hw-form").dispatchEvent(new t.window.Event("submit", { cancelable: true }));
   await t.flush();
@@ -165,7 +167,7 @@ test("booking link is still clickable when the AI drops https:// or the trailing
     chatReply: { status: 200, body: { reply: "Book at calendly.com/murphy or https://calendly.com/murphy/ thanks", notified: false } },
   });
   await t.flush();
-  const d = t.window.document;
+  const d = t.root();
   d.querySelector(".hw-in").value = "book";
   d.querySelector(".hw-form").dispatchEvent(new t.window.Event("submit", { cancelable: true }));
   await t.flush();
@@ -179,7 +181,7 @@ test("when AI replies are paused, a short enquiry form appears, is prefilled, ch
     chatReply: { status: 200, body: { reply: "Thanks for your message. Leave your details below.", notified: false, form: true } },
   });
   await t.flush();
-  const d = t.window.document;
+  const d = t.root();
   d.querySelector(".hw-in").value = "Boiler broken";
   d.querySelector(".hw-form").dispatchEvent(new t.window.Event("submit", { cancelable: true }));
   await t.flush();
@@ -209,8 +211,28 @@ test("the pop-up can come from the owner's dashboard setting", async () => {
     chatReply: { status: 200, body: {} },
   });
   await t.flush();
-  const teaser = t.window.document.querySelector(".hw-teaser");
+  const teaser = t.root().querySelector(".hw-teaser");
   assert.ok(teaser, "pop-up built from config");
   assert.equal(teaser.querySelector("b").textContent, "Hi 👋 Got a question?");
   assert.equal(teaser.querySelector("span").textContent, "Ask me anything.");
+});
+
+test("the chat lives in its own shadow root, out of reach of the site's CSS, and destroy removes it", async () => {
+  const t = boot({
+    config: { status: 200, body: { title: "Chat", greeting: "Hi", color: "#112233" } },
+    chatReply: { status: 200, body: { reply: "ok" } },
+  });
+  await t.flush();
+  const doc = t.window.document;
+  assert.equal(doc.querySelector(".hw-btn"), null, "nothing in the page's own DOM for site CSS to match");
+  assert.equal(doc.head.querySelector("style"), null, "no styles added to the site's <head>");
+  assert.ok(t.root().querySelector(".hw-btn"), "button inside the shadow root");
+  assert.match(t.root().querySelector("style").textContent, /^:host\{all:initial\}/);
+  assert.match(t.root().querySelector("style").textContent, /var\(--heario-bottom,20px\)/, "sites can lift the button");
+  t.window.HearioWidget.destroy();
+  assert.equal(doc.querySelector("heario-chat"), null);
+});
+
+test("widget.js is pure ASCII, so it reads correctly on pages with any text encoding", () => {
+  assert.ok(/^[\x00-\x7F]*$/.test(code), "use \\uXXXX escapes for symbols like · … ✓ ×");
 });

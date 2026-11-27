@@ -330,7 +330,13 @@ test("helpers: phone numbers, origins, Stripe signature", () => {
   assert.equal(normalizeNumber(""), "");
   assert.deepEqual(parseOrigins("Example.com, https://www.foo.ie/page nonsense"), ["https://example.com", "https://www.foo.ie"]);
   assert.equal(originAllowed("https://foo.ie", "https://www.foo.ie"), true);
-  assert.equal(originAllowed("https://foo.ie", "http://foo.ie"), false);
+  assert.equal(originAllowed("https://foo.ie", "http://foo.ie"), true, "sites without SSL still work");
+  assert.equal(originAllowed("foo.ie", "http://www.foo.ie"), true);
+  assert.equal(originAllowed("https://foo.ie", "https://evilfoo.ie"), false);
+  assert.equal(originAllowed("https://foo.ie", "https://foo.ie.evil.com"), false);
+  assert.equal(originAllowed("https://foo.ie", "https://foo.ie:8443"), false, "a different port is a different site");
+  assert.equal(originAllowed("https://foo.ie", "null"), false);
+  assert.equal(originAllowed("https://foo.ie", "chrome-extension://foo.ie"), false);
   assert.equal(originAllowed("", "https://foo.ie"), false);
   assert.equal(verifyStripeSignature("{}", null, "s"), false);
 });
