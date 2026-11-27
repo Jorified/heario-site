@@ -1,6 +1,7 @@
 (function () {
   var $ = function (id) { return document.getElementById(id); };
   var state = null;
+  var dirty = false; // unsaved changes in the settings form
   var priceInfo = null;
 
   function api(method, path, body) {
@@ -78,7 +79,7 @@
     a.setAttribute('aria-label', 'Closed from'); b.setAttribute('aria-label', 'Closed until (last closed day)');
     a.onchange = function () { if (!b.value || b.value < a.value) b.value = a.value; };
     var rm = el('button', 'Remove', 'danger-link closure-rm'); rm.type = 'button';
-    rm.onclick = function () { row.remove(); syncTz(); };
+    rm.onclick = function () { row.remove(); syncTz(); dirty = true; };
     row.appendChild(a); row.appendChild(el('span', 'to', 'hours-to')); row.appendChild(b); row.appendChild(rm);
     $('closures').appendChild(row);
     syncTz();
@@ -123,7 +124,7 @@
     return { tz: $('hours_tz').value, days: days, closed: closed };
   }
   $('hours_on').addEventListener('change', function () { $('hours').hidden = !$('hours_on').checked; syncTz(); });
-  $('addclosure').addEventListener('click', function () { addClosure(); });
+  $('addclosure').addEventListener('click', function () { addClosure(); dirty = true; });
 
   function renderPlan(me) {
     var p = me.plan, banner = $('banner'), actions = $('planactions');
@@ -138,7 +139,9 @@
       if (p.subscriptionStatus === 'past_due') box.className = 'banner warn';
     } else {
       box.className = 'banner warn';
-      text.textContent = 'Your free trial has ended, so the chatbot is paused. Subscribe to switch it back on.';
+      text.textContent = p.subscriptionStatus && p.subscriptionStatus !== 'none'
+        ? 'Your subscription has ended, so the chatbot is paused. Subscribe again to switch it back on.'
+        : 'Your free trial has ended, so the chatbot is paused. Subscribe to switch it back on.';
     }
     box.appendChild(text);
     if (!p.paid) {
@@ -172,7 +175,7 @@
       sub.onclick = function () { redirectTo('/api/billing/checkout', sub, cur ? { currency: cur } : {}); };
       buy.appendChild(sub);
       box.appendChild(buy);
-      actions.appendChild(el('span', 'Subscribe any time to keep the chatbot running after your trial.', 'hint'));
+      actions.appendChild(el('span', p.status === 'trial' ? 'Subscribe any time to keep the chatbot running after your trial.' : 'Subscribe to switch your chatbot back on. Your settings and enquiries are kept.', 'hint'));
     }
     if (p.hasBilling) {
       var manage = el('button', 'Manage billing', 'btn-ghost');
@@ -382,6 +385,11 @@
   }
 
 
+  // Warn before leaving the page (Subscribe, Manage billing, Log out, closing the tab) with unsaved changes.
+  $('form').addEventListener('input', function (ev) { if (ev.target.id !== 'import_url' && ev.target.id !== 'draft_text') dirty = true; });
+  $('form').addEventListener('change', function (ev) { if (ev.target.id !== 'import_url' && ev.target.id !== 'draft_text') dirty = true; });
+  window.addEventListener('beforeunload', function (ev) { if (dirty) { ev.preventDefault(); ev.returnValue = ''; } });
+
   $('form').addEventListener('submit', function (ev) {
     ev.preventDefault();
     say('savemsg', '');
@@ -408,12 +416,19 @@
     }).then(function (d) {
       state.bot = d.bot;
       fill(state);
+      dirty = false;
       say('savemsg', 'Saved.', 'ok');
     }).catch(function (e) { say('savemsg', e.message, 'err'); })
       .then(function () { $('save').disabled = false; });
   });
 
   $('testwa').addEventListener('click', function () {
+    // The test goes to the saved number, so make sure what's on screen is what's saved.
+    var digits = function (v) { return String(v || '').replace(/\D/g, '').replace(/^00/, ''); };
+    if (digits($('owner_whatsapp').value) !== digits(state && state.bot.owner_whatsapp) || $('whatsapp_consent').checked !== !!(state && state.bot.whatsapp_consent)) {
+      say('testmsg', 'Click Save changes at the bottom first, then send the test.', 'err');
+      return;
+    }
     say('testmsg', 'Sending…');
     $('testwa').disabled = true;
     api('POST', '/api/bot/test-whatsapp', {})
@@ -434,6 +449,7 @@
     if (!listed) {
       var cur = $('allowed_origins').value.trim();
       $('allowed_origins').value = cur ? cur.replace(/[\s,]+$/, '') + ', ' + host : host;
+      dirty = true;
       say('importmsg', 'We added ' + host + ' to your websites in section 3. Click Save at the bottom, then press Read my website again.', 'err');
       return;
     }
@@ -463,6 +479,7 @@
     var next = append && cur ? cur + '\n\n' + draft : draft;
     if (next.length > 8000) { say('importmsg', 'That would be over the 8,000 character limit. Shorten the draft or your current text first.', 'err'); return; }
     $('knowledge').value = next;
+    dirty = true;
     $('importdraft').hidden = true;
     say('importmsg', 'Added. Click Save at the bottom to make it live.', 'ok');
     $('knowledge').focus();
@@ -668,6 +685,11 @@
     fill(me);
     loadLeads();
     loadQuestions();
-    if (q && q[1] === 'success') say('savemsg', 'Thanks! Your subscription is being activated. Refresh in a moment if it still shows as a trial.', 'ok');
+    if (q) {
+      var note = el('p', q[1] === 'success' ? 'Thanks for subscribing! Your subscription is being activated. Refresh in a moment if it still shows as a trial.' : 'Checkout cancelled. Nothing was charged. You can subscribe any time below.', 'cb-msg ' + (q[1] === 'success' ? 'ok' : ''));
+      note.style.margin = '0 0 14px';
+      $('banner').insertBefore(note, $('banner').firstChild);
+      history.replaceState(null, '', location.pathname); // so a refresh doesn't show it again
+    }
   }).catch(function () {});
 })();

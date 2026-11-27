@@ -119,6 +119,7 @@ login address instead. Customers can also tick "Also email me a copy of every en
 - widget.js puts the whole chat inside a sealed-off box (shadow DOM on a `<heario-chat>` element), so a website's own styles can't change how it looks.
 - widget.js must stay plain ASCII (symbols written as \uXXXX), so it reads correctly on pages that don't declare UTF-8. A test checks this.
 - Website addresses match with or without www, and over http or https.
+- "Chatbot is switched on" unticked: the chat disappears from the owner's website (widget-config returns 404 there), but the dashboard preview still shows. An ended trial is different: the bubble stays and tells visitors to contact the business directly.
 - A site can lift the chat button (e.g. above its own cookie bar) with CSS: `heario-chat { --heario-bottom: 90px; }`. The homepage uses this for its sticky "Start free trial" bar on phones.
 - When you change widget.js, bump `?v=` on its script tags (index.html, scripts/build-guides.mjs, dashboard.js preview) so browsers fetch the new version.
 

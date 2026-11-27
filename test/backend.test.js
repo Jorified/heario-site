@@ -278,6 +278,11 @@ test("widget config is origin-checked", async () => {
   const cfg = await (await get("https://murphyplumbing.ie")).json();
   assert.equal(cfg.title, "Chat with Murphy Plumbing");
   assert.match(cfg.greeting, /AI assistant/);
+
+  // Switched off: nothing on the owner's website, but the dashboard preview still loads.
+  await h.bot.PUT(req("/api/bot", { method: "PUT", cookie, body: settings({ enabled: false }) }));
+  assert.equal((await get("https://murphyplumbing.ie")).status, 404, "no chat bubble on their site");
+  assert.equal((await get(null, { "sec-fetch-site": "same-origin" })).status, 200, "dashboard preview still works");
 });
 
 test("Stripe: checkout URL, signed webhook activates the plan, bad signature is rejected", async () => {

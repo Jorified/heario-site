@@ -20,6 +20,11 @@ export async function GET(request) {
     await query("UPDATE bots SET site_seen_at = now() WHERE id = $1", [bot.id]).catch((err) => console.error("site_seen_at failed:", err.message));
   }
 
+  // Switched off by the owner: show nothing on their website. (Our dashboard preview still renders,
+  // so they can keep trying changes.) An ended trial is different: the bubble stays and tells
+  // visitors to contact the business directly, as the terms and FAQ say.
+  if (!bot.enabled && !isOwnOrigin(origin, request)) return json({ error: "Switched off." }, 404, { "access-control-allow-origin": origin, vary: "Origin" });
+
   return json(
     {
       title: bot.business_name ? `Chat with ${bot.business_name}` : "Chat with us",
